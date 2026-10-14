@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elementarium</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#e9e4d8;--ink:#1d2a2f;--panel:#f7f4ec;--line:#c9c2b1;--accent:#2f6f73}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171a;--ink:#e6e9e4;--panel:#1a2428;--line:#2e3b40;--accent:#7fc4c0}}
+:root[data-theme="dark"]{--bg:#10171a;--ink:#e6e9e4;--panel:#1a2428;--line:#2e3b40;--accent:#7fc4c0}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+main{max-width:1600px;margin:0 auto;padding:8px 16px;display:flex;flex-direction:column;gap:12px}
+h1{margin:0;font-size:1.6rem;font-weight:800;letter-spacing:-.02em}
+.sub{margin:2px 0 0;font-size:.9rem;opacity:.7}
+canvas{width:100%;max-width:100%;aspect-ratio:2/1;background:#12161c;border-radius:10px;border:2px solid var(--line);image-rendering:pixelated;touch-action:none;cursor:crosshair;display:block}
+header{display:none}
+.wrap{position:relative;width:100%;margin:0 auto;max-width:max(320px,calc((100vh - 195px)*2));max-width:max(320px,calc((100dvh - 195px)*2))}
+.info{position:absolute;right:6px;bottom:6px;background:rgba(10,14,18,.8);color:#f1f1ec;font-size:.7rem;font-weight:600;padding:3px 7px;border-radius:6px;pointer-events:none;font-variant-numeric:tabular-nums}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px}
+button{font:inherit;font-size:.9rem;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+button:hover{border-color:var(--accent)}
+button:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.sw{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.35)}
+.sp{flex:1}
+.grp{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vsep{width:1px;align-self:stretch;background:var(--line)}
+.panel{position:absolute;top:10px;right:10px;min-width:240px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.panel[hidden]{display:none}
+.fps{position:absolute;left:6px;top:6px;background:rgba(10,14,18,.8);color:#9be58f;font-size:.7rem;font-weight:600;padding:3px 7px;border-radius:6px;pointer-events:none;font-variant-numeric:tabular-nums}
+.fps[hidden]{display:none}
+select{font:inherit;font-size:.85rem;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;cursor:pointer}
+select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel select#langs{width:100%}
+.credit{align-self:flex-end;font-size:.72rem;opacity:.55;padding:0 2px;user-select:none}
+.toast{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(10,14,18,.92);color:#f1f1ec;font-size:.8rem;padding:6px 12px;border-radius:8px;pointer-events:none;white-space:nowrap}
+.toast[hidden]{display:none}
+.clog{position:absolute;inset:0;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:0 16px 14px;overflow:auto;z-index:6}
+.clog[hidden]{display:none}
+.clogHead{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--panel);padding:12px 0 8px;border-bottom:1px solid var(--line)}
+.clog h3{margin:14px 0 4px;font-size:.95rem}
+.clog ul{margin:0;padding-left:18px;font-size:.82rem;line-height:1.5}
+.clog .ver{opacity:.6;font-weight:400;font-size:.8rem;margin-left:6px}
+.modal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45);border-radius:10px;z-index:5}
+.modal[hidden]{display:none}
+.mbox{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;max-width:300px;text-align:center}
+.mbox p{margin:0}
+.msub{margin:0;font-size:.8rem;opacity:.7}
+.mbox .grp{justify-content:center}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.85rem}
+.panel input[type=number]{width:84px;font:inherit;font-size:.85rem;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.stack{flex-direction:column;align-items:stretch;gap:6px}
+#cats{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+#cats::-webkit-scrollbar{display:none}
+/* controls bar on narrow screens: slider on its own row, buttons share the rest evenly */
+@media (max-width:640px){
+ .ctrl{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+ .ctrl .sp{display:none}
+ .ctrl label{grid-column:1/-1}
+ .ctrl input[type=range]{flex:1;width:auto;min-width:0}
+ .ctrl button{justify-content:center;padding:7px 2px;font-size:.78rem;white-space:nowrap;min-width:0}
+}
+@media (max-width:440px){
+ .ctrl button{font-size:.72rem;padding:7px 1px}
+}
+.tab{border-color:transparent;opacity:.65;flex:1 0 auto;justify-content:center;white-space:nowrap}
+.tab[aria-selected="true"]{opacity:1;border-color:var(--ink);font-weight:600}
+label{font-size:.85rem;display:flex;align-items:center;gap:8px}
+input[type=range]{accent-color:var(--accent);width:110px}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Elementarium</h1>
+    <p class="sub">Hold to draw. Right-click to erase, scroll to change brush size. Hover any pixel to read its temperature. Try burning wood, boiling water with Heat, or freezing it with Cool.</p>
+  </header>
+  <div class="wrap"><canvas id="c" width="204" height="102" aria-label="Elementarium play area"></canvas><div class="info" id="info" hidden></div><div class="modal" id="confirm" hidden><div class="mbox"><p data-i="sure">Are you sure you want to clear everything?</p><p class="msub" data-i="sureSub">You can undo this afterwards. Press Enter to confirm or Esc to cancel.</p><div class="grp"><button id="cYes" data-i="clearAll">Clear all</button><button id="cNo" data-i="cancel">Cancel</button></div></div></div><div class="fps" id="fps" hidden></div><div class="toast" id="toast" hidden></div><div class="clog" id="changelog" hidden><div class="clogHead"><b data-i="changelog">Changelog</b><button id="clogClose" data-i="close">Close</button></div><div id="clogBody"></div></div><div class="panel" id="settings" hidden><div class="row"><span data-i="tempUnit">Temperature unit</span><span class="grp"><button id="uC" aria-pressed="true">°C</button><button id="uF" aria-pressed="false">°F</button><button id="uK" aria-pressed="false">K</button></span></div><div class="row"><label for="room" data-i="room">Room temperature</label><span class="grp"><input id="room" type="number" step="1" value="20"><b id="roomv">°C</b></span></div><div class="row"><span data-i="brushShape">Brush shape</span></div><div class="grp" id="shapes"><button data-shape="square" aria-pressed="true">Square</button><button data-shape="round" aria-pressed="false">Round</button><button data-shape="squareGrid" aria-pressed="false">Square grid</button><button data-shape="roundGrid" aria-pressed="false">Round grid</button></div><div class="row"><span data-i="confirmClear">Confirm before Clear all</span><button id="confirmToggle" aria-pressed="true">On</button></div><div class="row"><span data-i="showFps">Show FPS</span><button id="fpsToggle" aria-pressed="false">Off</button></div><div class="row"><span data-i="fpsLimit">FPS limit</span><select id="fpsLimit"><option value="30">30</option><option value="60">60</option><option value="120">120</option><option value="0" data-i="unlimited">Unlimited</option></select></div><input type="file" id="importFile" accept=".json,application/json" hidden><div class="row"><span data-i="language">Language</span></div><select id="langs" aria-label="Language"></select><p class="msub" data-i="shortcuts">Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, + / - brush size</p></div></div>
+  <div class="bar ctrl">
+    <label><span data-i="brushSize">Brush size</span> <input id="size" type="range" min="1" max="153" value="6"></label>
+    <span class="sp"></span>
+    <button id="pause" aria-pressed="false">Pause</button>
+    <button id="replaceBtn" data-i="replace" aria-pressed="false">Replace</button>
+    <button id="undoBtn" data-i="undo" disabled>Undo</button>
+    <button id="clear" data-i="clearAll">Clear all</button><button id="saveBtn" data-i="save">Save</button><button id="loadBtn" data-i="load">Load</button><button id="gear" data-i="settings" aria-pressed="false">Settings</button><button id="clogBtn" data-i="changelog">Changelog</button>
+  </div>
+  <div class="bar stack"><div class="grp" id="cats" role="tablist" aria-label="Category"></div><div class="grp" id="tools" role="toolbar" aria-label="Choose material"></div></div>
+<footer class="credit">made by Minkankz</footer>
+</main>
+<script>
+(function(){
+const W=204,H=102,N=W*H;
+let amb=20,tick=1,cur=0,size=6,paused=false,ready=false;
+const g=new Uint8Array(N),v=new Uint8Array(N),life=new Uint8Array(N),mv=new Uint32Array(N),temp=new Float32Array(N).fill(20),tmp2=new Float32Array(N);
+const E=[],ID={},KA=new Float32Array(256),INS=new Uint8Array(256),PIN=new Float32Array(256).fill(NaN),RAD=new Float32Array(256),ROOMP=new Uint8Array(256),ECA=new Float32Array(256),rnd=Math.random;
+const CATKIND={powders:"powder",liquids:"liquid",gases:"gas"};
+
+/* ===== Registry: ids are assigned automatically, elements refer to each other by key ===== */
+function finalize(){E.forEach((e,id)=>{KA[id]=e.k;INS[id]=e.insulator?1:0;PIN[id]=e.pinTemp!==undefined?e.pinTemp:NaN;RAD[id]=e.radiate||0;ROOMP[id]=e.pinRoom?1:0;ECA[id]=e.electroConduct||0;});}
+function define(key,d){
+ d.key=key;const mvt=d.movement||d.kind||CATKIND[d.category]||"solid";d.movement=mvt;d.kind=mvt==="clump"?"powder":mvt;if(mvt==="clump")d.slide=false;
+ d.heatConduct=d.heatConduct??d.conduct??.33;d.k=Math.min(.95,d.heatConduct*.3);d.electroConduct=d.electroConduct??0;
+ d.density=d.density??1000;d.acidp=(d.acidr||0)*.1;
+ d.reactions=d.reactions||[];
+ if(d.burn||d.flammable)d.burn=Object.assign({at:300,chance:.02,heat:450,spread:.012,water:.1,flames:.04,speed:.5},d.burn);d.rise=d.rise??.5;d.side=d.side??.5;d.color=d.color||[200,200,200];
+ if(d.viscosity!==undefined&&d.kind==="liquid"){d.visc=d.viscosity/(d.viscosity+40);d.flow=1/(1+d.viscosity/12);}
+ if(!d.swatch&&Array.isArray(d.color))d.swatch="rgb("+d.color.join(",")+")";
+ ID[key]=E.length;E.push(d);finalize();if(ready)buildUI();
+}
+define("air",{name:"Air",heatConduct:3,density:0});
+
+/* ===== Core helpers (also exposed as window.Sand for mods) ===== */
+const fr=k=>{let h=(k*374761393+tick*668265263)>>>0;h=((h^(h>>>13))*1274126177)>>>0;return((h^(h>>>16))>>>0)/4294967296;};
+function setCell(i,t){
+ const e=E[t];g[i]=t;v[i]=(rnd()*24)|0;
+ life[i]=e.lifetime?e.lifetime[0]+((rnd()*(e.lifetime[1]-e.lifetime[0]))|0):0;
+ if(e.startMin!==undefined&&temp[i]<e.startMin)temp[i]=e.startMin;
+ if(e.startMax!==undefined&&temp[i]>e.startMax)temp[i]=e.startMax;
+}
+function swap(i,j){let a=g[i];g[i]=g[j];g[j]=a;a=v[i];v[i]=v[j];v[j]=a;a=life[i];life[i]=life[j];life[j]=a;a=temp[i];temp[i]=temp[j];temp[j]=a;mv[i]=mv[j]=tick;}
+const become=(i,key,t)=>{if(ID[key]===undefined){bad(key);return;}setCell(i,ID[key]);if(t!==undefined)temp[i]=t;};
+const rm=i=>{g[i]=0;life[i]=0;};
+const nbrs=i=>{const x=i%W,r=[];if(x>0)r.push(i-1);if(x<W-1)r.push(i+1);if(i>=W)r.push(i-W);if(i<N-W)r.push(i+W);return r;};
+const ignite=(n,o)=>{const L=o&&o.life;life[n]=L?L[0]+((rnd()*(L[1]-L[0]+1))|0):150+((rnd()*100)|0);};
+function emit(i,key){
+ const x=i%W,c=[i>=W?i-W:-1,x>0?i-1:-1,x<W-1?i+1:-1,i<N-W?i+W:-1];
+ for(const n of c){if(n>=0&&g[n]===0){become(n,key);return;}}
+ for(let k=2;k<=14;k++){const j=i-k*W;if(j<0)break;if(g[j]===0){become(j,key);return;}}
+}
+// a heavier powder/liquid sinks through lighter liquids and gases
+const free=(j,e)=>{const o=g[j];if(!o)return true;const b=E[o];
+ if(b.kind==="gas")return e.density>b.density&&(e.kind!=="liquid"||rnd()<.12);
+ return b.kind==="liquid"&&e.density>b.density&&rnd()<.4;};
+// sideways flow: into empty cells, or push under a lighter liquid (so water levels out beneath oil)
+const side=(j,e)=>{const o=g[j];if(!o)return true;const b=E[o];return b.kind==="liquid"&&e.density>b.density&&rnd()<.5;};
+// reactions: [{with, above, below, chance, to, other, setT, capT, emit}]
+// resting = sitting on the floor, a solid or a powder (used by reactions with rest:true, e.g. molten metal only freezes once it has landed)
+function supported(i){if(i>=N-W)return true;const b=g[i+W];if(!b)return false;const k=E[b].kind;return k==="solid"||k==="powder";}
+const warned={};
+function bad(x){const k=JSON.stringify(x);if(!warned[k]){warned[k]=1;console.warn("Sand: unknown element key in",x);}}
+function react(e,i,tp){
+ for(const r of e.reactions){
+  if((r.to&&ID[r.to]===undefined)||(r.other&&r.other!=="air"&&ID[r.other]===undefined)||(r.emit&&ID[r.emit]===undefined)){bad(r);continue;}
+  if(r.rest&&!supported(i))continue;
+  if(r.above!==undefined&&!(tp>r.above))continue;
+  if(r.below!==undefined&&!(tp<r.below))continue;
+  if(r.chance!==undefined&&rnd()>=r.chance)continue;
+  let n;
+  if(r.with){const id=ID[r.with];n=nbrs(i).find(m=>g[m]===id);if(n===undefined)continue;}
+  if(r.other!==undefined&&n!==undefined){if(r.other==="air")rm(n);else setCell(n,ID[r.other]);}
+  if(r.heat)temp[i]+=r.heat;
+  if(r.warm)for(const n of nbrs(i))if(!INS[g[n]]&&!ROOMP[g[n]])temp[n]=Math.max(temp[n],r.warm);
+  if(!r.to)continue;
+  const keep=e.burn&&life[i]>0&&E[ID[r.to]].burn?life[i]:0;setCell(i,ID[r.to]);if(keep)life[i]=keep;
+  if(r.life)life[i]=r.life[0]+((rnd()*(r.life[1]-r.life[0]))|0);
+  if(r.setT!==undefined)temp[i]=r.setT;
+  if(r.capT!==undefined)temp[i]=Math.min(temp[i],r.capT);
+  if(r.emit)emit(i,r.emit);
+  return true;
+ }
+ return false;
+}
+// burning state lives in life[] (0 = not burning)
+function burn(c,o){
+ const i=c.i;
+ if(!life[i]){if(c.tp>o.at&&rnd()<o.chance)ignite(i,o);return false;}
+ if(temp[i]<o.heat)temp[i]=o.heat;
+ let out=false;
+ for(const n of nbrs(i)){
+  if((g[n]===c.t||E[g[n]].flammable)&&!life[n]){if(rnd()<o.spread)ignite(n,g[n]===c.t?o:undefined);}
+  else if(o.water&&g[n]===ID.water&&rnd()<o.water){out=true;become(n,"steam");}
+ }
+ if(out){life[i]=0;temp[i]=Math.min(temp[i],200);return true;}
+ if(c.y>0&&g[i-W]===0){const q=rnd();if(q<o.flames){become(i-W,"fire");life[i-W]=12+((rnd()*18)|0);}else if(q<o.flames+.03)become(i-W,"smoke");}
+ if(rnd()<o.speed&&--life[i]<=0){become(i,o.into||"smoke");if(o.emit)emit(i,o.emit);return true;}
+ return false;
+}
+function corrode(e,i){
+ for(const n of nbrs(i)){const p=E[g[n]].acidp;
+  if(p&&rnd()<p){const al=E[g[n]].acidLeaves;if(al&&rnd()<al.p)become(n,al.to);else rm(n);if(rnd()<.5){become(i,e.corrosive);return true;}break;}}
+ return false;
+}
+
+/* ===== ADD NEW ELEMENTS HERE: ELEMENTS.mykey={...}   (or Sand.define("mykey",{...}) from a mod)
+ name        display name                     category   "powders" | "solids" | "liquids" | "gases" | "phase" (melts and cryogens: states changed by heat or cold) | any new name (just the tab label)
+ movement    how it moves: "solid" (stays) | "powder" (falls, slides into piles) | "clump" (falls straight, never slides, like wet sand) | "liquid" (flows) | "gas" (drifts up)
+ lang        {es:"Sal", zh:"盐"} translated names (any language code, also ones added with Sand.addLanguage)
+ color       [r,g,b] or i=>[r,g,b]            swatch     css colour of the button (needed with a color function)
+ density     kg/m3, heavier sinks through lighter liquids/gases (water=1000, default 1000)
+ heatConduct heat conduction 0..1 (default .33)      electroConduct  electricity conduction 0..1 (default 0; metals ~1, salt water .5)
+ viscosity   Pa.s, liquids only; leave out to flow like water (mud 15, molten glass 60, magma 120)
+ acidr       how fast acid eats it: 0 = immune (default), 1 = fast      corrosive  key acid becomes when used up (makes it an acid)
+ spray       chance per pixel when painting
+ rise, side  gas movement chances (sink = chance to fall, for heavy gases; bubble:false = never rises through liquids)             lifetime  [min,max] starting life      decay  true | {below, into, chance}
+ startMin, startMax  temperature clamp at creation      keepTemp  minimum temperature while alive      tint  false = no hot/cold tint      insulator  true = blocks all heat (neighbours ignore it, its temperature never changes)      pinTemp  fixed temperature      pinRoom  true = fixed at room temperature      radiate  degrees added every tick to the 8 neighbouring cells (negative cools, no limit; the Heat/Cool tool does 6.67)      devour  true = deletes every neighbour      explosive  {at:temp, radius, heat} = explodes when hotter than 'at' or touching fire/plasma      unbreakable  true = survives explosions      charge  n = always electrified (a power source)      supply  n = charges every conductor around it without holding charge itself (a battery)      electroDecay  charge lost per tick (default 4; Wire uses 1)      clone  true = copies the first element it touches around itself      strike  {radius,heat} = a one-shot lightning bolt      spark  true = drifts down and hands its charge to the first conductor it touches, then vanishes      acidLeaves  {to:key, p:chance} = acid may turn it into this instead of removing it
+ flammable   fire can ignite it (gets a default burn; override with burn:{...}, missing fields use defaults)      ignites  chance per tick this element ignites flammable neighbours
+ burn        {at, chance, heat, spread, water, flames, speed}   (lights up above 'at' degrees, shows "Burning"; optional into:key = what is left, default smoke; life:[min,max] = burn length, at most 255; emit:key)
+ reactions   [{with:key, above|below:temp, chance, to:key, other:key|"air", setT, capT, emit:key}]   rest:true = only once resting on a solid/powder/floor; life:[min,max] = starting life of the new element; heat:n = degrees added to this cell; warm:n = heats the neighbours to at least n degrees
+             'with' = needs that neighbour, 'to' = this cell becomes, 'other' = the neighbour becomes, 'emit' = spawns in a free neighbour
+ update      c=>{...; return true if the cell changed}     c = {i,x,y,t,tp}   ===== */
+const ELEMENTS={};
+ELEMENTS.sand={name:"Sand",category:"powders",movement:"powder",color:[222,184,104],density:1600,heatConduct:.27,acidr:.8,spray:.45,
+ reactions:[{above:1000,chance:.1,to:"molten"},{with:"water",chance:.3,to:"wetsand",other:"air"},{with:"saltwater",chance:.3,to:"wetsand",other:"air"},{with:"sugarwater",chance:.3,to:"wetsand",other:"air"},{with:"dirty_water",chance:.3,to:"wetsand",other:"air"},{with:"pool_water",chance:.3,to:"wetsand",other:"air"},{with:"oil",chance:.3,to:"wetsand",other:"air"},{with:"carbonated_water",chance:.3,to:"wetsand",other:"air"}]};
+ELEMENTS.wetsand={name:"Wet Sand",electroConduct:0.05,category:"powders",movement:"clump",color:[168,138,76],density:1900,acidr:.8,spray:.45,
+ reactions:[{above:100,chance:.04,to:"sand",emit:"steam"}]};
+ELEMENTS.dirt={name:"Dirt",category:"powders",movement:"powder",color:[96,70,46],density:1500,heatConduct:.27,acidr:1,spray:.45,
+ reactions:[{above:1200,chance:.1,to:"molten_dirt"},{with:"water",chance:.3,to:"mud",other:"air"}]};
+ELEMENTS.stone={name:"Stone",category:"solids",movement:"solid",color:[104,106,112],density:2600,acidr:.2,
+ reactions:[{above:1000,chance:.1,to:"magma"}]};
+ELEMENTS.wood={name:"Wood",category:"solids",movement:"solid",color:[122,78,44],density:600,heatConduct:.13,acidr:.5,flammable:true,
+ burn:{at:280,chance:.02,heat:450,spread:.012,water:.15,flames:.05,speed:.6,into:"ash",emit:"carbon_dioxide"}};
+ELEMENTS.ice={name:"Ice",category:"solids",movement:"solid",color:[165,218,242],density:917,acidr:1,startMax:-10,
+ reactions:[{above:1,chance:.1,to:"water",capT:3}]};
+ELEMENTS.glass={name:"Glass",category:"solids",movement:"solid",color:[170,215,225],density:2500,heatConduct:.27,
+ reactions:[{above:1000,chance:.1,to:"molten"}]};
+ELEMENTS.water={name:"Water",electroConduct:0.15,category:"liquids",movement:"liquid",color:[58,130,214],density:1000,heatConduct:.4,spray:.45,
+ reactions:[{above:99.99,to:"steam",setT:100},{below:-1,to:"ice"}]};
+ELEMENTS.oil={name:"Oil",category:"liquids",movement:"liquid",color:[122,86,26],density:800,heatConduct:.27,spray:.45,
+ burn:{at:250,chance:.2,heat:500,spread:.03,water:0,flames:.08,speed:.3,into:"carbon_dioxide"}};
+ELEMENTS.acid={name:"Acid",electroConduct:0.4,category:"liquids",movement:"liquid",color:[140,232,60],density:1098,spray:.45,corrosive:"smoke",
+ reactions:[{above:200,chance:.1,to:"acid_gas"}]};
+ELEMENTS.mud={name:"Mud",electroConduct:0.1,category:"liquids",movement:"liquid",color:[74,56,40],density:1700,acidr:1,viscosity:15,
+ reactions:[{above:100,chance:.04,to:"dirt",emit:"steam"}]};
+ELEMENTS.molten={name:"Molten Glass",category:"phase",movement:"liquid",swatch:"#ff9628",density:2400,heatConduct:.2,viscosity:60,startMin:1100,
+ color:i=>[255,130+fr(i)*70,20+fr(i+7)*30],reactions:[{below:800,chance:.1,to:"glass"}]};
+ELEMENTS.magma={name:"Magma",category:"liquids",movement:"liquid",swatch:"#e8431a",density:2700,heatConduct:.2,viscosity:120,startMin:1200,
+ color:i=>[235+fr(i)*20,50+fr(i+7)*60,10],reactions:[{below:700,chance:.1,to:"stone"}]};
+ELEMENTS.fire={name:"Fire",electroConduct:0.05,bubble:false,category:"gases",movement:"gas",swatch:"#ff7a1a",density:.3,heatConduct:.5,startMin:600,keepTemp:550,lifetime:[40,90],
+ rise:.35,side:.15,spray:.4,tint:false,ignites:.03,decay:{below:1000,into:"smoke",chance:.5},
+ color:i=>[255,Math.min(255,70+fr(i)*90+Math.min(1,life[i]/50)*40),10+fr(i+7)*30],
+ reactions:[{above:7500,to:"plasma"},{with:"water",chance:.3,to:"steam",setT:105,other:"air"},{with:"oxygen",chance:1,other:"air",heat:30}]};
+ELEMENTS.plasma={name:"Plasma",electroConduct:0.8,bubble:false,category:"gases",movement:"gas",swatch:"#b46bff",density:.1,heatConduct:1,startMin:7500,rise:.6,side:.4,spray:.4,tint:false,
+ color:i=>[170+fr(i)*70,90+fr(i+7)*90,255],reactions:[{below:5000,to:"fire"}]};
+ELEMENTS.smoke={name:"Smoke",category:"gases",movement:"gas",heatConduct:1.5,swatch:"#5a5c62",density:1.1,lifetime:[30,60],rise:.6,side:.4,decay:true,
+ color:i=>{const f=life[i]/60,a=v[i]-12;return[(90+a)*f+18,(92+a)*f+22,(98+a)*f+26];}};
+ELEMENTS.steam={name:"Steam",category:"gases",movement:"gas",heatConduct:1.5,color:[205,218,228],density:.6,startMin:105,rise:.6,side:.4,
+ reactions:[{below:90,chance:.03,to:"water"}]};
+ELEMENTS.ash={name:"Ash",category:"powders",movement:"powder",color:[112,110,108],density:700,heatConduct:.2,acidr:1,spray:.45,
+ reactions:[{above:1100,chance:.1,to:"molten_ash"}]};
+ELEMENTS.saltwater={name:"Salt Water",electroConduct:0.5,category:"liquids",movement:"liquid",color:[96,158,214],density:1025,heatConduct:.4,spray:.45,
+ reactions:[{above:100,chance:.05,to:"salt",emit:"steam"},{below:-2,chance:.1,to:"salt_ice"}]};
+ELEMENTS.sugarwater={name:"Sugar Water",electroConduct:0.1,category:"liquids",movement:"liquid",color:[134,178,204],density:1012,heatConduct:.4,spray:.45,
+ reactions:[{above:100,chance:.05,to:"sugar",emit:"steam"},{below:-3,chance:.1,to:"sugar_ice"}]};
+ELEMENTS.meat={name:"Meat",category:"food",movement:"solid",color:[196,84,92],density:1050,heatConduct:.3,acidr:.8,flammable:true,
+ reactions:[{with:"dirty_water",chance:.05,to:"rotten_meat"},{with:"poison",chance:.1,to:"rotten_meat"},{above:70,chance:.02,to:"cookedmeat"}],
+ burn:{at:300,chance:.02,heat:450,spread:.01,water:.1,flames:.04,speed:.4,into:"ash"}};
+ELEMENTS.cookedmeat={name:"Cooked Meat",category:"food",movement:"solid",color:[140,88,58],density:1000,heatConduct:.3,acidr:.8,flammable:true,
+ burn:{at:280,chance:.02,heat:450,spread:.01,water:.1,flames:.04,speed:.5,into:"ash"}};
+ELEMENTS.salt={name:"Salt",category:"food",movement:"powder",color:[228,232,236],density:2170,heatConduct:.9,acidr:.6,spray:.45,
+ reactions:[{above:801,chance:.1,to:"molten_salt"},{with:"water",chance:.3,to:"saltwater",other:"air"}]};
+ELEMENTS.sugar={name:"Sugar",category:"food",movement:"powder",color:[252,248,240],density:1590,heatConduct:.3,acidr:1,spray:.45,
+ reactions:[{above:170,chance:.05,to:"caramel"},{with:"water",chance:.3,to:"sugarwater",other:"air"}]};
+ELEMENTS.caramel={name:"Caramel",category:"food",movement:"liquid",color:[196,120,36],density:1350,heatConduct:.3,acidr:1,viscosity:80,startMin:180,
+ reactions:[{below:110,chance:.05,to:"candy"}]};
+ELEMENTS.candy={name:"Candy",category:"food",movement:"solid",color:[240,96,150],density:1400,heatConduct:.3,acidr:.5,
+ reactions:[{above:170,chance:.05,to:"caramel"}]};
+ELEMENTS.coal={name:"Coal",electroConduct:0.3,category:"powders",movement:"powder",color:[44,44,50],heatConduct:.3,density:800,acidr:1,spray:.45,flammable:true,
+ burn:{into:"ash",emit:"carbon_dioxide",heat:600,speed:.15},
+ reactions:[{with:"water",chance:.05,other:"dirty_water"},{with:"carbonated_water",chance:.05,other:"dirty_water"}]};
+ELEMENTS.dirty_water={name:"Dirty Water",electroConduct:0.2,category:"liquids",movement:"liquid",color:[56,90,58],density:1010,heatConduct:.4,spray:.45,
+ reactions:[{above:99.99,to:"steam",setT:100},{below:-1,to:"ice"}]};
+ELEMENTS.wall={name:"Wall",category:"solids",movement:"solid",color:[70,76,92],density:9999,insulator:true,unbreakable:true,tint:false};
+ELEMENTS.iron={name:"Iron",electroConduct:0.6,category:"solids",movement:"solid",color:[154,158,166],density:7870,heatConduct:1,acidr:.4,
+ reactions:[{with:"coal",above:1100,chance:.1,to:"steel",other:"air"},{above:1538,chance:.1,to:"molten_iron"},{with:"oxygen",chance:.002,to:"rust",other:"air"},{with:"water",chance:.0015,to:"rust"}]};
+ELEMENTS.silver={name:"Silver",electroConduct:1,category:"solids",movement:"solid",color:[208,212,220],density:10490,heatConduct:2,acidr:.1,
+ reactions:[{above:962,chance:.1,to:"molten_silver"}]};
+ELEMENTS.molten_iron={name:"Molten Iron",electroConduct:0.6,category:"phase",movement:"liquid",swatch:"#ff8a2a",density:6980,heatConduct:1,viscosity:5,startMin:1600,
+ color:i=>[255,110+fr(i)*70,30+fr(i+7)*40],reactions:[{with:"coal",chance:.3,to:"molten_steel",other:"air"},{below:1400,chance:.1,rest:true,to:"iron"}]};
+ELEMENTS.molten_silver={name:"Molten Silver",electroConduct:1,category:"phase",movement:"liquid",swatch:"#ffd88c",density:9320,heatConduct:2,viscosity:5,startMin:1000,
+ color:i=>[255,214+fr(i)*26,140+fr(i+7)*40],reactions:[{below:900,chance:.1,rest:true,to:"silver"}]};
+ELEMENTS.rust={name:"Rust",electroConduct:0.05,category:"powders",movement:"powder",color:[150,70,36],density:5240,heatConduct:.2,acidr:.8,spray:.45,
+ reactions:[{above:1565,chance:.1,to:"molten_rust"},{with:"water",chance:.01,other:"dirty_water"},{with:"saltwater",chance:.01,other:"dirty_water"},{with:"sugarwater",chance:.01,other:"dirty_water"},{with:"carbonated_water",chance:.01,other:"dirty_water"}]};
+ELEMENTS.hydrogen={name:"Hydrogen",category:"gases",movement:"gas",color:[180,218,252],density:.09,heatConduct:2,rise:.9,side:.1,spray:.4,
+ reactions:[{with:"oxygen",above:500,chance:.3,to:"water",other:"air",setT:90},
+  {with:"fire",chance:.6,to:"fire",life:[2,6]},
+  {above:550,chance:.3,to:"fire",life:[2,6]},
+  {below:-253,chance:.1,to:"liquid_hydrogen"}]};
+ELEMENTS.oxygen={name:"Oxygen",category:"gases",movement:"gas",color:[150,205,250],density:1.43,heatConduct:1.5,rise:.1,side:.8,sink:.1,spray:.4,reactions:[{below:-183,chance:.1,to:"liquid_oxygen"}]};
+ELEMENTS.gold={name:"Gold",electroConduct:0.9,category:"solids",movement:"solid",color:[236,196,60],density:19300,heatConduct:1.7,
+ reactions:[{above:1064,chance:.1,to:"molten_gold"}]};
+ELEMENTS.electrum={name:"Electrum",electroConduct:0.85,category:"solids",movement:"solid",color:[222,206,140],density:13500,heatConduct:1.4,acidr:.05,acidLeaves:{to:"gold",p:.5},
+ reactions:[{above:1000,chance:.1,to:"molten_electrum"}]};
+ELEMENTS.molten_gold={name:"Molten Gold",electroConduct:0.9,category:"phase",movement:"liquid",swatch:"#ffc83c",density:17300,heatConduct:1.7,viscosity:5,startMin:1150,
+ color:i=>[255,195+fr(i)*35,60+fr(i+7)*40],
+ reactions:[{with:"molten_silver",chance:.5,to:"molten_electrum",other:"molten_electrum"},{below:1000,chance:.1,rest:true,to:"gold"}]};
+ELEMENTS.molten_electrum={name:"Molten Electrum",electroConduct:0.85,category:"phase",movement:"liquid",swatch:"#ffe28a",density:12500,heatConduct:1.4,viscosity:5,startMin:1050,
+ color:i=>[255,215+fr(i)*25,110+fr(i+7)*45],reactions:[{below:950,chance:.1,rest:true,to:"electrum"}]};
+ELEMENTS.steel={name:"Steel",electroConduct:0.6,category:"solids",movement:"solid",color:[118,130,148],density:7850,heatConduct:.9,acidr:.25,
+ reactions:[{above:1450,chance:.1,to:"molten_steel"},{with:"oxygen",chance:.0012,to:"rust",other:"air"},{with:"water",chance:.0008,to:"rust"}]};
+ELEMENTS.molten_steel={name:"Molten Steel",electroConduct:0.6,category:"phase",movement:"liquid",swatch:"#ffb060",density:7000,heatConduct:.9,viscosity:5,startMin:1550,
+ color:i=>[255,170+fr(i)*40,90+fr(i+7)*50],
+ reactions:[{with:"oxygen",chance:.002,to:"rust",other:"air"},{with:"water",chance:.002,to:"rust"},{below:1400,chance:.1,rest:true,to:"steel"}]};
+ELEMENTS.aluminium={name:"Aluminum",category:"solids",movement:"solid",color:[184,192,204],density:2700,heatConduct:1.6,electroConduct:.75,acidr:.3,
+ reactions:[{above:660,chance:.1,to:"molten_aluminium"}]};
+ELEMENTS.purple_gold={name:"Purple Gold",category:"solids",movement:"solid",color:[184,132,188],density:7900,heatConduct:1.2,electroConduct:.5,
+ reactions:[{above:1060,chance:.1,to:"molten_purple_gold"}]};
+ELEMENTS.salt_ice={name:"Salt Ice",category:"solids",movement:"solid",color:[196,226,242],density:930,startMax:-10,
+ reactions:[{above:-1.5,chance:.1,to:"saltwater",capT:0}]};
+ELEMENTS.sugar_ice={name:"Sugar Ice",category:"solids",movement:"solid",color:[226,236,224],density:940,startMax:-10,
+ reactions:[{above:-2.5,chance:.1,to:"sugarwater",capT:0}]};
+ELEMENTS.slag={name:"Slag",category:"solids",movement:"solid",color:[84,76,80],density:2700,heatConduct:.12,
+ reactions:[{above:1250,chance:.1,to:"molten_slag"}]};
+ELEMENTS.molten_aluminium={name:"Molten Aluminum",category:"phase",movement:"liquid",swatch:"#ffd6a0",density:2375,heatConduct:1.6,electroConduct:.75,viscosity:5,startMin:760,
+ color:i=>[255,200+fr(i)*30,150+fr(i+7)*40],
+ reactions:[{with:"molten_gold",chance:.5,to:"molten_purple_gold",other:"molten_purple_gold"},{with:"molten_rust",chance:.5,to:"molten_thermite",other:"molten_thermite"},{below:620,chance:.1,rest:true,to:"aluminium"}]};
+ELEMENTS.molten_purple_gold={name:"Molten Purple Gold",category:"phase",movement:"liquid",swatch:"#d58ae8",density:7000,heatConduct:1.2,electroConduct:.5,viscosity:5,startMin:1160,
+ color:i=>[225,110+fr(i)*40,225+fr(i+7)*25],reactions:[{below:1000,chance:.1,rest:true,to:"purple_gold"}]};
+ELEMENTS.molten_slag={name:"Molten Slag",category:"phase",movement:"liquid",swatch:"#ff7a3a",density:2500,heatConduct:.12,viscosity:30,startMin:1350,
+ color:i=>[255,90+fr(i)*50,30+fr(i+7)*30],reactions:[{below:1150,chance:.1,rest:true,to:"slag"}]};
+ELEMENTS.molten_ash={name:"Molten Ash",category:"phase",movement:"liquid",swatch:"#f08a3a",density:2000,heatConduct:.12,viscosity:20,startMin:1200,
+ color:i=>[240,110+fr(i)*50,40+fr(i+7)*30],reactions:[{below:900,chance:.1,rest:true,to:"slag"}]};
+ELEMENTS.molten_dirt={name:"Molten Dirt",category:"phase",movement:"liquid",swatch:"#e07a30",density:2200,heatConduct:.15,viscosity:30,startMin:1300,
+ color:i=>[225,95+fr(i)*45,30+fr(i+7)*25],reactions:[{below:1000,chance:.1,rest:true,to:"dirt"}]};
+ELEMENTS.molten_rust={name:"Molten Rust",category:"phase",movement:"liquid",swatch:"#e65a28",density:4600,heatConduct:.2,viscosity:15,startMin:1650,
+ color:i=>[230,80+fr(i)*40,35+fr(i+7)*25],reactions:[{below:1450,chance:.1,rest:true,to:"rust"}]};
+ELEMENTS.molten_salt={name:"Molten Salt",category:"phase",movement:"liquid",swatch:"#fae6be",density:1550,heatConduct:.9,electroConduct:.6,viscosity:3,startMin:880,
+ color:i=>[250,225+fr(i)*20,175+fr(i+7)*30],reactions:[{below:750,chance:.1,rest:true,to:"salt"}]};
+ELEMENTS.molten_thermite={name:"Molten Thermite",category:"phase",movement:"liquid",swatch:"#fff2b0",density:3200,heatConduct:.5,viscosity:5,startMin:2300,
+ color:i=>[255,235+fr(i)*20,170+fr(i+7)*60],
+ burn:{at:700,chance:1,heat:2600,spread:.05,water:0,flames:.25,speed:.85,life:[245,255],into:"molten_iron"}};
+ELEMENTS.liquid_oxygen={name:"Liquid Oxygen",category:"phase",movement:"liquid",color:[120,170,235],density:1141,heatConduct:.02,spray:.45,startMax:-190,
+ reactions:[{below:-218,chance:.1,to:"oxygen_ice"},{above:-183,chance:.03,to:"oxygen"}]};
+ELEMENTS.oxygen_ice={name:"Oxygen Ice",category:"phase",movement:"solid",color:[185,215,250],density:1540,heatConduct:.05,startMax:-225,
+ reactions:[{above:-218,chance:.1,to:"liquid_oxygen"}]};
+ELEMENTS.liquid_hydrogen={name:"Liquid Hydrogen",category:"phase",movement:"liquid",color:[200,214,236],density:71,heatConduct:.02,spray:.45,startMax:-256,
+ reactions:[{below:-259,chance:.1,to:"hydrogen_ice"},{above:-253,chance:.03,to:"hydrogen"}]};
+ELEMENTS.hydrogen_ice={name:"Hydrogen Ice",category:"phase",movement:"solid",color:[236,243,252],density:86,heatConduct:.05,startMax:-265,
+ reactions:[{above:-259,chance:.1,to:"liquid_hydrogen"}]};
+ELEMENTS.nitrogen={name:"Nitrogen",category:"gases",movement:"gas",color:[196,196,226],density:1.25,heatConduct:1.5,rise:.1,side:.8,sink:.1,spray:.4,
+ reactions:[{with:"hydrogen",above:400,chance:.3,to:"ammonia",other:"air"},{below:-196,chance:.1,to:"liquid_nitrogen"}]};
+ELEMENTS.ammonia={name:"Ammonia",category:"gases",movement:"gas",color:[214,226,170],density:.73,heatConduct:1.5,rise:.25,side:.65,sink:.1,spray:.4,
+ reactions:[{below:-33,chance:.1,to:"liquid_ammonia"}]};
+ELEMENTS.liquid_nitrogen={name:"Liquid Nitrogen",category:"phase",movement:"liquid",color:[160,170,210],density:807,heatConduct:.02,spray:.45,startMax:-200,
+ reactions:[{below:-210,chance:.1,to:"nitrogen_ice"},{above:-196,chance:.03,to:"nitrogen"}]};
+ELEMENTS.nitrogen_ice={name:"Nitrogen Ice",category:"phase",movement:"solid",color:[200,208,236],density:1026,heatConduct:.05,startMax:-215,
+ reactions:[{above:-210,chance:.1,to:"liquid_nitrogen"}]};
+ELEMENTS.liquid_ammonia={name:"Liquid Ammonia",category:"phase",movement:"liquid",color:[190,210,140],density:682,heatConduct:.02,spray:.45,startMax:-40,
+ reactions:[{below:-78,chance:.1,to:"ammonia_ice"},{above:-33,chance:.03,to:"ammonia"}]};
+ELEMENTS.ammonia_ice={name:"Ammonia Ice",category:"phase",movement:"solid",color:[226,236,200],density:817,heatConduct:.05,startMax:-85,
+ reactions:[{above:-78,chance:.1,to:"liquid_ammonia"}]};
+ELEMENTS.carbon_dioxide={name:"Carbon Dioxide",category:"gases",movement:"gas",color:[176,180,176],density:1.98,heatConduct:1.5,rise:0,side:.55,sink:.35,spray:.4,
+ reactions:[{with:"water",chance:.3,to:"air",other:"carbonated_water"},{below:-78,chance:.1,to:"dry_ice"}]};
+ELEMENTS.dry_ice={name:"Dry Ice",category:"phase",movement:"solid",color:[236,242,246],density:1560,heatConduct:.03,startMax:-85,
+ reactions:[{above:-78,chance:.1,to:"carbon_dioxide"}]};
+ELEMENTS.acid_gas={name:"Acid Gas",category:"gases",movement:"gas",electroConduct:.1,color:[168,230,110],density:3,heatConduct:1.5,rise:.35,side:.55,sink:.1,spray:.4,corrosive:"smoke",
+ reactions:[{below:150,chance:.1,to:"acid"}]};
+ELEMENTS.thermite={name:"Thermite",category:"powders",movement:"powder",color:[128,78,66],density:2400,heatConduct:.3,acidr:.5,spray:.45,
+ reactions:[{above:2200,chance:.1,to:"molten_thermite"}],
+ burn:{at:700,chance:.3,heat:2100,spread:.05,water:0,flames:.25,speed:.85,life:[245,255],into:"molten_iron"}};
+ELEMENTS.chlorine={name:"Chlorine",category:"gases",movement:"gas",color:[212,222,104],density:3.2,heatConduct:1.5,rise:0,side:.55,sink:.35,spray:.4,
+ reactions:[{with:"water",chance:.3,to:"air",other:"pool_water"},{with:"dirty_water",chance:.3,to:"air",other:"water"},{with:"hydrogen",chance:.3,to:"acid",other:"air"},{with:"ammonia",chance:.3,to:"bleach",other:"air"},{below:-34,chance:.1,to:"liquid_chlorine"}]};
+ELEMENTS.poison_gas={name:"Poison Gas",category:"gases",movement:"gas",color:[150,70,170],density:2,heatConduct:1.5,rise:.1,side:.65,sink:.25,spray:.4,
+ reactions:[{below:5,chance:.1,to:"poison"}]};
+ELEMENTS.pool_water={name:"Pool Water",category:"liquids",movement:"liquid",color:[110,205,232],density:1005,electroConduct:.2,heatConduct:.4,spray:.45,
+ reactions:[{above:99.99,to:"steam",setT:100,emit:"chlorine"},{below:-1,to:"ice"}]};
+ELEMENTS.bleach={name:"Bleach",category:"liquids",movement:"liquid",color:[236,240,196],density:1100,electroConduct:.3,heatConduct:.4,spray:.45,
+ reactions:[{with:"dirty_water",chance:.3,to:"air",other:"water"},{with:"ammonia",chance:.3,to:"poison_gas",other:"air"},{with:"liquid_ammonia",chance:.3,to:"poison_gas",other:"air"}]};
+ELEMENTS.poison={name:"Poison",category:"liquids",movement:"liquid",color:[118,50,150],density:1300,electroConduct:.1,heatConduct:.3,spray:.45,startMax:0,
+ reactions:[{above:10,chance:.1,to:"poison_gas"}]};
+ELEMENTS.liquid_chlorine={name:"Liquid Chlorine",category:"phase",movement:"liquid",color:[170,200,70],density:1560,heatConduct:.02,spray:.45,startMax:-40,
+ reactions:[{below:-101,chance:.1,to:"chlorine_ice"},{above:-34,chance:.03,to:"chlorine"}]};
+ELEMENTS.chlorine_ice={name:"Chlorine Ice",category:"phase",movement:"solid",color:[215,230,150],density:1900,heatConduct:.05,startMax:-110,
+ reactions:[{above:-101,chance:.1,to:"liquid_chlorine"}]};
+ELEMENTS.carbonated_water={name:"Carbonated Water",category:"liquids",movement:"liquid",color:[124,190,242],density:1002,electroConduct:.2,heatConduct:.4,spray:.45,
+ reactions:[{above:99.99,to:"steam",setT:100,emit:"carbon_dioxide"},{below:-1,to:"ice"}]};
+ELEMENTS.rotten_meat={name:"Rotten Meat",category:"food",movement:"solid",color:[112,122,70],density:1000,heatConduct:.3,acidr:.8,flammable:true,
+ burn:{at:300,chance:.02,heat:450,spread:.01,water:.1,flames:.04,speed:.4,into:"ash"}};
+ELEMENTS.heater={name:"Heater",category:"specials",movement:"solid",color:[214,74,48],density:9999,insulator:true,pinRoom:true,radiate:2.33,unbreakable:true,tint:false};
+ELEMENTS.cooler={name:"Cooler",category:"specials",movement:"solid",color:[64,160,214],density:9999,insulator:true,pinRoom:true,radiate:-2.33,unbreakable:true,tint:false};
+ELEMENTS.void={name:"Void",category:"specials",movement:"solid",color:[12,2,24],density:9999,devour:true,unbreakable:true,tint:false};
+ELEMENTS.tnt={name:"TNT",electroConduct:.3,category:"specials",movement:"solid",color:[176,32,44],density:1600,heatConduct:.2,acidr:.6,
+ explosive:{at:200,radius:9,heat:1200}};
+ELEMENTS.cloner={name:"Cloner",category:"specials",movement:"solid",color:[64,200,160],density:9999,clone:true,unbreakable:true,tint:false};
+ELEMENTS.electric={name:"Electric",category:"specials",movement:"gas",swatch:"#ffec5a",color:i=>[255,225+fr(i)*30,80+fr(i+7)*90],density:.2,rise:0,side:.4,sink:.12,spray:.5,lifetime:[50,130],decay:true,spark:true,tint:false};
+ELEMENTS.lightning={name:"Lightning",category:"specials",movement:"solid",swatch:"#fff6a8",color:i=>[255,255,200+fr(i)*55],density:9999,strike:{radius:4,heat:2500},unbreakable:true,tint:false};
+ELEMENTS.wire={name:"Wire",category:"specials",movement:"solid",color:[196,112,60],density:8960,heatConduct:1.8,electroConduct:1,electroDecay:1,acidr:.3};
+ELEMENTS.battery={name:"Battery",category:"specials",movement:"solid",color:[176,134,44],density:5000,heatConduct:.3,supply:255,acidr:.2,tint:false};
+for(const k in ELEMENTS)define(k,ELEMENTS[k]);
+cur=ID.sand;
+
+/* ===== Simulation ===== */
+const cv=document.getElementById("c"),ctx=cv.getContext("2d");
+const img=ctx.createImageData(W,H),px=new Uint32Array(img.data.buffer);
+const bgc=(255<<24)|(28<<16)|(22<<8)|18;
+const c={i:0,x:0,y:0,t:0,tp:0};
+
+// explosion: clears and burns everything in a radius, shoves loose survivors outward, sets off other explosives
+function explode(i,o){
+ const R=o.radius,T=o.heat,x0=i%W,y0=(i/W)|0;
+ for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){
+  const d=Math.hypot(dx,dy);if(d>R)continue;
+  const x=x0+dx,y=y0+dy;if(x<0||x>=W||y<0||y>=H)continue;
+  const j=y*W+x,t=g[j],f=1-d/R;
+  if(t&&E[t].unbreakable)continue;
+  temp[j]=Math.max(temp[j],T*f);
+  if(t&&(j===i||rnd()<.3+.7*f)){if(E[t].explosive&&j!==i)temp[j]=Math.max(temp[j],E[t].explosive.at+50);else rm(j);}
+  if(!g[j]&&rnd()<.15+.5*f){become(j,rnd()<.6?"fire":"smoke");if(g[j]===ID.fire)life[j]=6+((rnd()*14)|0);}
+ }
+ for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){
+  const d=Math.hypot(dx,dy);if(d>R||d<1)continue;
+  const x=x0+dx,y=y0+dy;if(x<0||x>=W||y<0||y>=H)continue;
+  const j=y*W+x,t=g[j];if(!t||mv[j]===tick||E[t].kind==="solid")continue;
+  const sx=Math.sign(dx),sy=Math.sign(dy);let k=Math.ceil(4*(1-d/R)),cx=x,cy=y,cj=j;
+  while(k-->0){const nx=cx+sx,ny=cy+sy;if(nx<0||nx>=W||ny<0||ny>=H)break;const nj=ny*W+nx;if(g[nj])break;swap(cj,nj);cx=nx;cy=ny;cj=nj;}
+ }
+}
+const CH=new Uint8Array(N),tmpC=new Uint8Array(N);
+// Electricity: CH[i] is the charge of a cell. It flows into neighbours that conduct (electroConduct) and fades with distance and time.
+function spreadC(j,c){const t=g[j];if(!t)return;const ec=ECA[t];if(!ec)return;const val=c-1-(1-ec)*12;if(val>tmpC[j])tmpC[j]=val|0;}
+// a supply (battery) does not hold charge itself, it charges every conductor touching it
+function supplyAround(i,v){
+ const x=i%W,y=(i/W)|0;
+ for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+  if(!dx&&!dy)continue;const xx=x+dx,yy=y+dy;if(xx<0||xx>=W||yy<0||yy>=H)continue;
+  const j=yy*W+xx;if(ECA[g[j]]&&!E[g[j]].supply&&CH[j]<v)CH[j]=v;
+ }
+}
+function electrify(){
+ for(let i=0;i<N;i++){const t=g[i];if(!t)continue;const e0=E[t];if(e0.charge)CH[i]=e0.charge;if(e0.supply)supplyAround(i,e0.supply);}
+ tmpC.set(CH);
+ for(let i=0;i<N;i++){
+  const c=CH[i];if(c<3)continue;
+  const x=i%W,y=(i/W)|0;
+  if(x>0)spreadC(i-1,c);if(x<W-1)spreadC(i+1,c);if(y>0)spreadC(i-W,c);if(y<H-1)spreadC(i+W,c);
+ }
+ for(let i=0;i<N;i++){
+  let c=tmpC[i];if(!c){CH[i]=0;continue;}
+  const t=g[i];if(!t||!ECA[t]){CH[i]=0;continue;}
+  const e=E[t];
+  if(!e.charge){const dk=e.electroDecay??4;c=c>dk?c-dk:0;}
+  CH[i]=c;
+  if(c>20){
+   if(!e.charge)temp[i]=Math.min(9999,temp[i]+(c/255)*(1.2-ECA[t])*4);
+   if(e.flammable&&c>100&&!life[i]&&rnd()<.05)ignite(i);
+   if(e.explosive&&c>60)temp[i]=Math.max(temp[i],e.explosive.at+50);
+  }
+ }
+}
+// Cloner: remembers the first element it touches (stored in life[]) and keeps copying it into free neighbours
+function cloneStep(i){
+ let t=life[i];
+ if(!t){for(const n of nbrs(i)){const m=g[n];if(m&&!E[m].clone){life[i]=t=m;break;}}if(!t)return;}
+ // hand the element over to cloners within 2 cells that have not learned one yet (cloners that already hold another element keep theirs)
+ const x=i%W,y=(i/W)|0;
+ for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const xx=x+dx,yy=y+dy;if(xx<0||xx>=W||yy<0||yy>=H)continue;const j=yy*W+xx;if(j!==i&&g[j]&&E[g[j]].clone&&!life[j]&&!nbrs(j).some(m=>g[m]&&!E[g[m]].clone))life[j]=t;}
+ for(const n of nbrs(i))if(!g[n]&&rnd()<.5)setCell(n,t);
+}
+// Lightning: a bolt of plasma straight down to the first thing it hits, which is blown apart and electrified
+function strike(i,o){
+ const x=i%W,y0=(i/W)|0;let hy=H-1;
+ for(let y=y0+1;y<H;y++)if(g[y*W+x]){hy=y;break;}
+ for(let y=y0;y<hy;y++){const k=y*W+x;if(y===y0||!g[k]){become(k,"plasma");CH[k]=255;}}
+ explode(hy*W+x,o);
+ const R=o.radius+2;
+ for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){const xx=x+dx,yy=hy+dy;if(xx<0||xx>=W||yy<0||yy>=H)continue;const k=yy*W+xx;if(ECA[g[k]])CH[k]=255;}
+}
+function step(){
+ tick++;
+ for(let y=H-1;y>=0;y--){
+  const ltr=(tick+y)&1;
+  for(let k=0;k<W;k++){
+   const x=ltr?k:W-1-k,i=y*W+x,t=g[i];
+   if(!t||mv[i]===tick)continue;
+   const e=E[t];c.i=i;c.x=x;c.y=y;c.t=t;c.tp=temp[i];
+   if(e.devour){for(const n of nbrs(i))if(g[n]&&!E[g[n]].devour)rm(n);}
+   if(e.clone)cloneStep(i);
+   if(e.strike){strike(i,e.strike);continue;}
+   if(e.spark){for(const n of nbrs(i)){const m=g[n];if(m&&ECA[m]&&!E[m].spark){CH[n]=255;rm(i);break;}}if(!g[i])continue;}
+   if(e.explosive&&(c.tp>e.explosive.at||nbrs(i).some(n=>g[n]===ID.fire||g[n]===ID.plasma))){explode(i,e.explosive);continue;}
+   if(e.reactions.length&&react(e,i,c.tp))continue;
+   if(e.keepTemp&&temp[i]<e.keepTemp)temp[i]=e.keepTemp;
+   if(e.ignites)for(const n of nbrs(i))if(E[g[n]].flammable&&!life[n]&&rnd()<e.ignites)ignite(n);
+   if(e.burn&&burn(c,e.burn))continue;
+   if(e.corrosive&&corrode(e,i))continue;
+   if(e.update&&e.update(c))continue;
+   const dc=e.decay;
+   if(dc&&(dc===true||c.tp<=(dc.below??Infinity))&&--life[i]<=0){
+    if(dc!==true&&dc.into&&rnd()<(dc.chance??1))become(i,dc.into);else rm(i);
+    continue;
+   }
+   if(e.visc&&rnd()<e.visc)continue;
+   const kd=e.kind,d=rnd()<.5?1:-1;
+   if(kd==="powder"||kd==="liquid"){
+    if(y<H-1){
+     const b=i+W;
+     if(free(b,e)){swap(i,b);continue;}
+     if(e.slide!==false){
+      if(x+d>=0&&x+d<W&&free(b+d,e)){swap(i,b+d);continue;}
+      if(x-d>=0&&x-d<W&&free(b-d,e)){swap(i,b-d);continue;}
+     }
+    }
+    if(kd==="liquid"&&(e.flow===undefined||rnd()<e.flow)){
+     for(let s=1;s<=3;s++){const xx=x+d*s;if(xx<0||xx>=W||!side(i+d*s,e))break;
+      if(s===3||xx+d<0||xx+d>=W||!side(i+d*(s+1),e)){swap(i,i+d*s);break;}}
+    }
+   }else if(kd==="gas"){
+    const r=rnd();
+    const up=i-W,uo=y>0?g[up]:-1;
+    if(y>0&&r<e.rise&&(uo===0||(e.bubble!==false&&E[uo].kind==="liquid"&&E[uo].density>e.density&&rnd()<.2)))swap(i,up);
+    else if(e.sink&&y<H-1&&r>=1-e.sink&&g[i+W]===0)swap(i,i+W);
+    else if(r<e.rise+e.side){const xx=x+d;if(xx>=0&&xx<W&&g[i+d]===0)swap(i,i+d);}
+   }
+  }
+ }
+}
+
+function heat(){
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+  const i=y*W+x,t=temp[i];
+  if(INS[g[i]]){tmp2[i]=ROOMP[g[i]]?amb:t;continue;}
+  const pv=PIN[g[i]];if(pv===pv){tmp2[i]=pv;continue;}
+  const l=x>0?(INS[g[i-1]]?t:temp[i-1]):amb,r=x<W-1?(INS[g[i+1]]?t:temp[i+1]):amb,u=y>0?(INS[g[i-W]]?t:temp[i-W]):amb,d=y<H-1?(INS[g[i+W]]?t:temp[i+W]):amb;
+  let n=t+KA[g[i]]*((l+r+u+d)/4-t);
+  n-=(n-amb)*(g[i]===0?.003:.0005);
+  tmp2[i]=n;
+ }
+ temp.set(tmp2);
+}
+
+// heaters/coolers: every tick add 'radiate' degrees to the 8 cells around them (no temperature limit)
+function radiate(){
+ for(let i=0;i<N;i++){
+  const r=RAD[g[i]];if(!r)continue;
+  const x=i%W,y=(i/W)|0;
+  for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+   if(!dx&&!dy)continue;
+   const xx=x+dx,yy=y+dy;if(xx<0||xx>=W||yy<0||yy>=H)continue;
+   const j=yy*W+xx;if(INS[g[j]])continue;
+   temp[j]+=r;
+  }
+ }
+}
+
+// convection: hot air parcels rise and swap places with cooler air above
+function convect(){
+ for(let y=1;y<H;y++)for(let x=0;x<W;x++){
+  const i=y*W+x,u=i-W;
+  if(g[i]===0&&g[u]===0&&temp[i]>temp[u]+8&&rnd()<.4){const a=temp[i];temp[i]=temp[u];temp[u]=a;}
+ }
+}
+
+function draw(){
+ for(let i=0;i<N;i++){
+  const t=g[i];
+  if(!t){const e=temp[i];
+   if(e>amb+25){const k=Math.min(22.4,(e-amb-25)*.1)|0;px[i]=(255<<24)|(28<<16)|((22+(k>>2))<<8)|(18+k);}
+   else if(e<amb-15){const k=Math.min(16,(amb-15-e)*.16)|0;px[i]=(255<<24)|((28+k)<<16)|((22+(k>>1))<<8)|18;}
+   else px[i]=bgc;
+   continue;}
+  const el=E[t];let r,gr,b;
+  if(typeof el.color==="function"){const o=el.color(i);r=o[0];gr=o[1];b=o[2];}
+  else{const o=el.color,a=v[i]-12;r=o[0]+a;gr=o[1]+a;b=o[2]+a;}
+  if(el.tint!==false&&!(el.burn&&life[i]>0)){const e=temp[i];
+   if(e>amb+100){const k=Math.min(30.4,(e-amb-100)*.06);r+=k;gr-=k*.2;b-=k*.3;}
+   else if(e<amb-20){const k=Math.min(12,(amb-20-e)*.12);b+=k;gr+=k*.4;}}
+  const cc=CH[i];if(cc>30){const f=(cc/255)*(.55+.45*fr(i))*.8;r+=(255-r)*f;gr+=(245-gr)*f;b+=(120-b)*f*.5;}
+  r=r<0?0:r>255?255:r;gr=gr<0?0:gr>255?255:gr;b=b<0?0:b>255?255:b;
+  px[i]=(255<<24)|((b|0)<<16)|((gr|0)<<8)|(r|0);
+ }
+ ctx.putImageData(img,0,0);
+ if(selRect){ctx.save();ctx.strokeStyle="rgba(130,200,255,.95)";ctx.lineWidth=.5;ctx.setLineDash([2,1]);ctx.lineDashOffset=-(tick>>2);ctx.strokeRect(selRect.x0+.1,selRect.y0+.1,selRect.x1-selRect.x0+.8,selRect.y1-selRect.y0+.8);ctx.restore();}
+ if(cur===-13&&clip&&hx>=0){ctx.save();ctx.globalAlpha=.45;
+  const gx=hx-(clip.w>>1),gy=hy-(clip.h>>1);
+  for(const c of clip.cells){const x=gx+c.dx,y=gy+c.dy;if(x<0||x>=W||y<0||y>=H)continue;if(g[y*W+x]&&!replaceOn)continue;ctx.fillStyle=E[c.t].swatch;ctx.fillRect(x,y,1,1);}
+  ctx.globalAlpha=1;ctx.strokeStyle="rgba(255,255,255,.6)";ctx.lineWidth=.3;ctx.setLineDash([1,1]);ctx.strokeRect(gx+.1,gy+.1,clip.w-.2,clip.h-.2);ctx.restore();}
+ if(shp&&hx>=0){ctx.save();
+  const sx=shp.sx+.5,sy=shp.sy+.5,ex=hx+.5,ey=hy+.5,rd=shape[0]==="r";
+  const path=()=>{ctx.beginPath();
+   if(shp.t===-6){ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);}
+   else if(shp.t===-7)ctx.rect(Math.min(sx,ex),Math.min(sy,ey),Math.abs(ex-sx),Math.abs(ey-sy));
+   else ctx.ellipse((sx+ex)/2,(sy+ey)/2,Math.max(.3,Math.abs(ex-sx)/2),Math.max(.3,Math.abs(ey-sy)/2),0,0,6.2832);};
+  ctx.fillStyle=ctx.strokeStyle="rgba(255,255,255,.32)";
+  if(shiftDown&&shp.t!==-6){path();ctx.fill();}
+  else{ctx.lineWidth=size;ctx.lineCap=rd?"round":"square";ctx.lineJoin=rd?"round":"miter";path();ctx.stroke();}
+  ctx.lineWidth=.4;ctx.lineCap="butt";ctx.setLineDash([1,1]);ctx.strokeStyle="rgba(255,255,255,.95)";path();ctx.stroke();ctx.restore();}
+ if(hx>=0&&hx<W&&hy>=0&&hy<H&&(cur>-10||cur===-14)){ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=.4;{const o=-((size-1)>>1),x0=hx+o,y0=hy+o;
+  if(shape.endsWith("Grid"))ctx.setLineDash([1,1]);
+  if(shape[0]==="r"){const rr=Math.max(.3,size/2-.2);ctx.beginPath();ctx.ellipse(x0+size/2,y0+size/2,rr,rr,0,0,6.2832);ctx.stroke();}
+  else ctx.strokeRect(x0+.2,y0+.2,size-.4,size-.4);
+  ctx.setLineDash([]);}}
+}
+
+/* ===== Painting ===== */
+// brush shape test: square | round | squareGrid | roundGrid (grid = checkerboard of pixels)
+function inBrush(cx,cy,dx,dy){
+ const n=size,lo=-((n-1)>>1),c=lo+(n-1)/2;
+ if(shape[0]==="r"&&(dx-c)*(dx-c)+(dy-c)*(dy-c)>n*n/4)return false;
+ if(shape.endsWith("Grid")&&((cx+dx+cy+dy)&1))return false;
+ return true;
+}
+function mixArea(cx,cy){
+ const lo=-((size-1)>>1),hi=lo+size-1,cl=[];
+ for(let dy=lo;dy<=hi;dy++)for(let dx=lo;dx<=hi;dx++){
+  const x=cx+dx,y=cy+dy;if(x<0||x>=W||y<0||y>=H)continue;if(!inBrush(cx,cy,dx,dy))continue;
+  const i=y*W+x,t=g[i];
+  if(t&&E[t].kind!=="solid")cl.push(i);
+ }
+ for(let k=cl.length-1;k>0;k--){const j=(rnd()*(k+1))|0;if(j!==k)swap(cl[k],cl[j]);}
+}
+// Shock tool: electrifies every conductor under the brush (full charge, it then spreads along the wire)
+function shockArea(cx,cy){
+ const lo=-((size-1)>>1),hi=lo+size-1;
+ for(let dy=lo;dy<=hi;dy++)for(let dx=lo;dx<=hi;dx++){
+  const x=cx+dx,y=cy+dy;if(x<0||x>=W||y<0||y>=H)continue;if(!inBrush(cx,cy,dx,dy))continue;
+  const i=y*W+x;if(ECA[g[i]])CH[i]=255;
+ }
+}
+function stamp(cx,cy,full){
+ if(!erasing&&cur===-4){mixArea(cx,cy);return;}
+ if(!erasing&&cur===-14){shockArea(cx,cy);return;}
+ if(!erasing&&cur<=-5)return;
+ const lo=-((size-1)>>1),hi=lo+size-1;
+ for(let dy=lo;dy<=hi;dy++)for(let dx=lo;dx<=hi;dx++){
+  const x=cx+dx,y=cy+dy;
+  if(x<0||x>=W||y<0||y>=H)continue;
+  const i=y*W+x;
+  if(!inBrush(cx,cy,dx,dy))continue;
+  if(!erasing&&cur<-1){if(INS[g[i]])continue;temp[i]=Math.max(-273,Math.min(9999,temp[i]+(cur===-2?6.67:-6.67)));continue;}
+  if(erasing||cur===-1){g[i]=0;temp[i]=amb;continue;}
+  if(g[i]!==0&&!(replaceOn&&cur>0&&g[i]!==cur))continue;
+  const sp=E[cur].spray;
+  if(!full&&sp!==undefined&&rnd()>sp)continue;
+  setCell(i,cur);
+ }
+}
+
+let down=false,erasing=false,lx=0,ly=0,hx=-1,hy=-1,shape="square";
+let dragging=false,held=[],dpx=0,dpy=0,shp=null,lastEl=0,shpFill=false,shiftDown=false;
+// Drag tool: grab everything inside the brush and carry it along with the cursor
+let picking=false,prevSize=6,sizeLocked=false;
+let replaceOn=false,selRect=null,selecting=false,selA=null,clip=null;
+// Select / Copy / Cut / Paste
+const normRect=(x0,y0,x1,y1)=>{const cl=(v,m)=>Math.max(0,Math.min(m-1,v));x0=cl(x0,W);x1=cl(x1,W);y0=cl(y0,H);y1=cl(y1,H);return{x0:Math.min(x0,x1),y0:Math.min(y0,y1),x1:Math.max(x0,x1),y1:Math.max(y0,y1)};};
+function doCopy(){
+ if(!selRect)return false;
+ const r=selRect,cells=[];
+ for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++){const i=y*W+x;if(g[i])cells.push({dx:x-r.x0,dy:y-r.y0,t:g[i],v:v[i],life:life[i],temp:temp[i]});}
+ clip={w:r.x1-r.x0+1,h:r.y1-r.y0+1,cells};return true;
+}
+function doCut(){
+ if(!doCopy())return false;snapshot();
+ const r=selRect;for(let y=r.y0;y<=r.y1;y++)for(let x=r.x0;x<=r.x1;x++){const i=y*W+x;if(g[i]){rm(i);temp[i]=amb;}}
+ return true;
+}
+// pasted cells are blocked by existing elements unless Replace is on
+function pasteAt(cx,cy){
+ const x0=cx-(clip.w>>1),y0=cy-(clip.h>>1);
+ for(const c of clip.cells){const x=x0+c.dx,y=y0+c.dy;if(x<0||x>=W||y<0||y>=H)continue;const j=y*W+x;if(g[j]&&!replaceOn)continue;g[j]=c.t;v[j]=c.v;life[j]=c.life;temp[j]=c.temp;}
+}
+// Undo: a snapshot is taken every time you click the play area (and before Clear all)
+const UNDO=[];
+function updateUndoBtn(){const b=document.getElementById("undoBtn");if(b)b.disabled=UNDO.length===0;}
+function snapshot(){UNDO.push({g:g.slice(),v:v.slice(),life:life.slice(),temp:temp.slice()});if(UNDO.length>60)UNDO.shift();updateUndoBtn();}
+function undo(){const s=UNDO.pop();if(!s)return;g.set(s.g);v.set(s.v);life.set(s.life);temp.set(s.temp);held=[];shp=null;dragging=false;updateUndoBtn();}
+function startDrag(cx,cy){
+ held=[];const lo=-((size-1)>>1),hi=lo+size-1;
+ for(let dy=lo;dy<=hi;dy++)for(let dx=lo;dx<=hi;dx++){
+  const x=cx+dx,y=cy+dy;if(x<0||x>=W||y<0||y>=H)continue;
+  if(!inBrush(cx,cy,dx,dy))continue;
+  const i=y*W+x;if(g[i])held.push({i,t:g[i]});
+ }
+ dragging=true;dpx=cx;dpy=cy;
+}
+function dragStep(sx,sy){
+ if(!sx&&!sy)return;
+ held=held.filter(h=>g[h.i]===h.t);
+ held.sort((a,b)=>((b.i%W)*sx+((b.i/W)|0)*sy)-((a.i%W)*sx+((a.i/W)|0)*sy));
+ for(const h of held){
+  const x=h.i%W+sx,y=((h.i/W)|0)+sy;if(x<0||x>=W||y<0||y>=H)continue;
+  const j=y*W+x;swap(h.i,j);h.i=j;
+ }
+}
+function pos(e){const r=cv.getBoundingClientRect();return[Math.floor((e.clientX-r.left)/r.width*W),Math.floor((e.clientY-r.top)/r.height*H)];}
+cv.addEventListener("contextmenu",e=>e.preventDefault());
+cv.addEventListener("pointerdown",e=>{down=true;shiftDown=!!e.shiftKey;erasing=(e.buttons&2)!==0;cv.setPointerCapture(e.pointerId);[lx,ly]=pos(e);
+ if(!erasing&&cur===-10){selecting=true;picking=true;selA={x:lx,y:ly};selRect=normRect(lx,ly,lx,ly);return;}
+ if(!erasing&&cur===-13){picking=true;if(clip){snapshot();pasteAt(lx,ly);}return;}
+ if(!erasing&&cur===-9){picking=true;const t=(lx>=0&&lx<W&&ly>=0&&ly<H)?g[ly*W+lx]:0;if(t>0)selectEl(t);return;}
+ snapshot();stamp(lx,ly,true);if(!erasing&&cur===-5)startDrag(lx,ly);if(!erasing&&cur<=-6&&cur>=-8)shp={t:cur,sx:lx,sy:ly};});
+cv.addEventListener("pointermove",e=>{const[x,y]=pos(e);hx=x;hy=y;if(!down)return;erasing=(e.buttons&2)!==0;shiftDown=!!e.shiftKey;if(selecting){selRect=normRect(selA.x,selA.y,x,y);return;}if(picking)return;
+ const n=Math.max(Math.abs(x-lx),Math.abs(y-ly),1);
+ for(let s=1;s<=n;s++){const px=Math.round(lx+(x-lx)*s/n),py=Math.round(ly+(y-ly)*s/n);
+  if(dragging&&!erasing){dragStep(px-dpx,py-dpy);dpx=px;dpy=py;}else if(shp&&!erasing){}else stamp(px,py);}
+ lx=x;ly=y;});
+// Line / Rectangle / Circle tools: drag a box, release to paint the last chosen element (the circle is an oval inscribed in the box; hold Shift to fill)
+function commitShape(fill){
+ const id=lastEl>0?lastEl:ID.sand,t=shp.t,sx=shp.sx,sy=shp.sy,ex=lx,ey=ly,keep=cur;
+ cur=id;
+ const dot=(x,y)=>stamp(x,y,true);
+ const line=(x0,y0,x1,y1)=>{const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0),1);for(let s=0;s<=n;s++)dot(Math.round(x0+(x1-x0)*s/n),Math.round(y0+(y1-y0)*s/n));};
+ const fillAt=(x,y)=>{if(x>=0&&x<W&&y>=0&&y<H&&(!g[y*W+x]||(replaceOn&&g[y*W+x]!==id)))setCell(y*W+x,id);};
+ if(t===-6)line(sx,sy,ex,ey);
+ else if(t===-7){
+  if(fill){for(let y=Math.min(sy,ey);y<=Math.max(sy,ey);y++)for(let x=Math.min(sx,ex);x<=Math.max(sx,ex);x++)fillAt(x,y);}
+  else{line(sx,sy,ex,sy);line(ex,sy,ex,ey);line(ex,ey,sx,ey);line(sx,ey,sx,sy);}
+ }else{
+  // oval inscribed in the dragged box (like Rectangle); drag a square box for a circle
+  const cx=(sx+ex)/2,cy=(sy+ey)/2,rx=Math.max(.5,Math.abs(ex-sx)/2),ry=Math.max(.5,Math.abs(ey-sy)/2);
+  if(fill){for(let y=Math.min(sy,ey);y<=Math.max(sy,ey);y++)for(let x=Math.min(sx,ex);x<=Math.max(sx,ex);x++)if(((x-cx)/rx)**2+((y-cy)/ry)**2<=1.0001)fillAt(x,y);}
+  else{const n=Math.max(8,Math.ceil(Math.max(rx,ry)*9.5));for(let a=0;a<=n;a++){const th=a/n*6.2832;dot(Math.round(cx+rx*Math.cos(th)),Math.round(cy+ry*Math.sin(th)));}}
+ }
+ cur=keep;
+}
+const up=e=>{if(e&&e.shiftKey!==undefined)shiftDown=!!e.shiftKey;if(shp&&!erasing)commitShape(shiftDown);if(selecting&&selRect&&selRect.x0===selRect.x1&&selRect.y0===selRect.y1)selRect=null;
+shp=null;selecting=false;picking=false;down=false;erasing=false;dragging=false;held=[];};
+cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);cv.addEventListener("pointerleave",()=>{hx=-1;});
+
+/* ===== Languages =====
+ LANGS[code]={label, ui:{...}, names:{elementKey:"Name"}}. Anything missing falls back to English (US).
+ An element can also carry its own translations: lang:{es:"Sal", zh:"盐"}.
+ Mods can add a language (or an easter egg): Sand.addLanguage("lol",{label:"LOLcat",ui:{pause:"WAIT"},names:{sand:"DESERT DUST"}}) */
+const LANGS={
+ "en-US":{label:"English (US)",names:{},ui:{
+  brushSize:"Brush size",pause:"Pause",resume:"Resume",undo:"Undo",clearAll:"Clear all",settings:"Settings",changelog:"Changelog",close:"Close",cancel:"Cancel",
+  tempUnit:"Temperature unit",room:"Room temperature",brushShape:"Brush shape",
+  "shape.square":"Square","shape.round":"Round","shape.squareGrid":"Square grid","shape.roundGrid":"Round grid",
+  confirmClear:"Confirm before Clear all",on:"On",off:"Off",language:"Language",
+  shortcuts:"Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, + / - brush size",
+  sure:"Are you sure you want to clear everything?",sureSub:"You can undo this afterwards. Press Enter to confirm or Esc to cancel.",
+  burning:"Burning",
+  "cat.powders":"Powders","cat.solids":"Solids","cat.liquids":"Liquids","cat.gases":"Gases","cat.food":"Food","cat.phase":"Phase","cat.specials":"Specials","cat.tools":"Tools",
+  "tool.heat":"Heat","tool.cool":"Cool","tool.mix":"Mix","tool.drag":"Drag","tool.line":"Line","tool.rectangle":"Rectangle","tool.circle":"Circle","tool.picker":"Picker","tool.eraser":"Eraser","tool.select":"Select","tool.copy":"Copy","tool.cut":"Cut","tool.paste":"Paste","tool.shock":"Shock",replace:"Replace",save:"Save",load:"Load",showFps:"Show FPS",worldFile:"World file",exportWorld:"Export",importWorld:"Import",saved:"World saved",loaded:"World loaded",noSave:"No saved world yet",loadFail:"Could not load that world",saveFail:"Could not save",noDownload:"Saving files is not available here",exported:"World file saved",fpsLimit:"FPS limit",unlimited:"Unlimited"}},
+ "en-GB":{label:"English (UK)",ui:{},names:{dirt:"Soil",candy:"Boiled Sweet",aluminium:"Aluminium",molten_aluminium:"Molten Aluminium"}},
+ es:{label:"Español",ui:{
+  brushSize:"Tamaño del pincel",pause:"Pausa",resume:"Reanudar",undo:"Deshacer",clearAll:"Borrar todo",settings:"Ajustes",changelog:"Cambios",close:"Cerrar",cancel:"Cancelar",
+  tempUnit:"Unidad de temperatura",room:"Temperatura ambiente",brushShape:"Forma del pincel",
+  "shape.square":"Cuadrado","shape.round":"Redondo","shape.squareGrid":"Cuadrado con rejilla","shape.roundGrid":"Redondo con rejilla",
+  confirmClear:"Confirmar antes de borrar todo",on:"Sí",off:"No",language:"Idioma",
+  shortcuts:"Atajos: P pausa, R borrar, S ajustes, Z o Ctrl+Z deshacer, + / - tamaño del pincel",
+  sure:"¿Seguro que quieres borrar todo?",sureSub:"Después podrás deshacerlo. Pulsa Intro para confirmar o Esc para cancelar.",
+  burning:"Ardiendo",
+  "cat.powders":"Polvos","cat.solids":"Sólidos","cat.liquids":"Líquidos","cat.gases":"Gases","cat.food":"Comida","cat.phase":"Fases","cat.specials":"Especiales","cat.tools":"Herramientas",
+  "tool.heat":"Calentar","tool.cool":"Enfriar","tool.mix":"Mezclar","tool.drag":"Arrastrar","tool.line":"Línea","tool.rectangle":"Rectángulo","tool.circle":"Círculo","tool.picker":"Cuentagotas","tool.eraser":"Borrador","tool.select":"Seleccionar","tool.copy":"Copiar","tool.cut":"Cortar","tool.paste":"Pegar","tool.shock":"Descarga",replace:"Reemplazar",save:"Guardar",load:"Cargar",showFps:"Mostrar FPS",worldFile:"Archivo del mundo",exportWorld:"Exportar",importWorld:"Importar",saved:"Mundo guardado en este navegador",loaded:"Mundo cargado",noSave:"Todavía no hay un mundo guardado",loadFail:"No se pudo cargar ese mundo",saveFail:"No se pudo guardar",noDownload:"Aquí no se pueden guardar archivos",exported:"Archivo del mundo guardado",fpsLimit:"Límite de FPS",unlimited:"Sin límite"},
+  names:{air:"Aire",sand:"Arena",wetsand:"Arena húmeda",dirt:"Tierra",stone:"Piedra",wood:"Madera",ice:"Hielo",glass:"Vidrio",water:"Agua",oil:"Aceite",acid:"Ácido",mud:"Barro",
+   molten:"Vidrio fundido",magma:"Magma",fire:"Fuego",plasma:"Plasma",smoke:"Humo",steam:"Vapor",ash:"Ceniza",saltwater:"Agua salada",sugarwater:"Agua azucarada",
+   meat:"Carne",cookedmeat:"Carne cocida",salt:"Sal",sugar:"Azúcar",caramel:"Caramelo",candy:"Caramelo duro",coal:"Carbón",dirty_water:"Agua sucia",wall:"Muro",
+   iron:"Hierro",silver:"Plata",molten_iron:"Hierro fundido",molten_silver:"Plata fundida",rust:"Óxido",hydrogen:"Hidrógeno",oxygen:"Oxígeno",
+   liquid_oxygen:"Oxígeno líquido",oxygen_ice:"Hielo de oxígeno",liquid_hydrogen:"Hidrógeno líquido",hydrogen_ice:"Hielo de hidrógeno",nitrogen:"Nitrógeno",ammonia:"Amoníaco",
+   liquid_nitrogen:"Nitrógeno líquido",nitrogen_ice:"Hielo de nitrógeno",liquid_ammonia:"Amoníaco líquido",ammonia_ice:"Hielo de amoníaco",gold:"Oro",electrum:"Electro",
+   molten_gold:"Oro fundido",molten_electrum:"Electro fundido",steel:"Acero",molten_steel:"Acero fundido",carbon_dioxide:"Dióxido de carbono",dry_ice:"Hielo seco",
+   heater:"Calentador",cooler:"Enfriador",void:"Vacío",tnt:"TNT",wire:"Cable",battery:"Batería",aluminium:"Aluminio",molten_aluminium:"Aluminio fundido",purple_gold:"Oro púrpura",molten_purple_gold:"Oro púrpura fundido",thermite:"Termita",cloner:"Clonador",electric:"Electricidad",lightning:"Rayo",salt_ice:"Hielo salado",sugar_ice:"Hielo azucarado",molten_dirt:"Tierra fundida",molten_ash:"Ceniza fundida",slag:"Escoria",molten_slag:"Escoria fundida",acid_gas:"Gas ácido",molten_rust:"Óxido fundido",molten_salt:"Sal fundida",molten_thermite:"Termita fundida",chlorine:"Cloro",liquid_chlorine:"Cloro líquido",chlorine_ice:"Hielo de cloro",pool_water:"Agua de piscina",bleach:"Lejía",poison_gas:"Gas venenoso",poison:"Veneno",carbonated_water:"Agua con gas",rotten_meat:"Carne podrida"}},
+ zh:{label:"中文",ui:{
+  brushSize:"笔刷大小",pause:"暂停",resume:"继续",undo:"撤销",clearAll:"清空全部",settings:"设置",changelog:"更新日志",close:"关闭",cancel:"取消",
+  tempUnit:"温度单位",room:"室温",brushShape:"笔刷形状",
+  "shape.square":"方形","shape.round":"圆形","shape.squareGrid":"方形网格","shape.roundGrid":"圆形网格",
+  confirmClear:"清空前确认",on:"开",off:"关",language:"语言",
+  shortcuts:"快捷键：P 暂停，R 清空，S 设置，Z 或 Ctrl+Z 撤销，+ / - 笔刷大小",
+  sure:"确定要清空所有内容吗？",sureSub:"之后可以撤销。按 Enter 确认，按 Esc 取消。",
+  burning:"燃烧中",
+  "cat.powders":"粉末","cat.solids":"固体","cat.liquids":"液体","cat.gases":"气体","cat.food":"食物","cat.phase":"相变","cat.specials":"特殊","cat.tools":"工具",
+  "tool.heat":"加热","tool.cool":"降温","tool.mix":"搅拌","tool.drag":"拖动","tool.line":"直线","tool.rectangle":"矩形","tool.circle":"圆形","tool.picker":"取色","tool.eraser":"橡皮擦","tool.select":"选择","tool.copy":"复制","tool.cut":"剪切","tool.paste":"粘贴","tool.shock":"电击",replace:"替换",save:"保存",load:"加载",showFps:"显示帧率",worldFile:"世界文件",exportWorld:"导出",importWorld:"导入",saved:"世界已保存在此浏览器中",loaded:"世界已加载",noSave:"还没有保存的世界",loadFail:"无法加载该世界",saveFail:"无法保存",noDownload:"此处无法保存文件",exported:"世界文件已保存",fpsLimit:"帧率上限",unlimited:"不限制"},
+  names:{air:"空气",sand:"沙子",wetsand:"湿沙",dirt:"泥土",stone:"石头",wood:"木头",ice:"冰",glass:"玻璃",water:"水",oil:"油",acid:"酸",mud:"泥浆",
+   molten:"熔融玻璃",magma:"岩浆",fire:"火",plasma:"等离子体",smoke:"烟",steam:"水蒸气",ash:"灰",saltwater:"盐水",sugarwater:"糖水",
+   meat:"生肉",cookedmeat:"熟肉",salt:"盐",sugar:"糖",caramel:"焦糖",candy:"硬糖",coal:"煤",dirty_water:"脏水",wall:"墙",
+   iron:"铁",silver:"银",molten_iron:"熔融铁",molten_silver:"熔融银",rust:"铁锈",hydrogen:"氢气",oxygen:"氧气",
+   liquid_oxygen:"液氧",oxygen_ice:"固态氧",liquid_hydrogen:"液氢",hydrogen_ice:"固态氢",nitrogen:"氮气",ammonia:"氨气",
+   liquid_nitrogen:"液氮",nitrogen_ice:"固态氮",liquid_ammonia:"液氨",ammonia_ice:"固态氨",gold:"金",electrum:"琥珀金",
+   molten_gold:"熔融金",molten_electrum:"熔融琥珀金",steel:"钢",molten_steel:"熔融钢",carbon_dioxide:"二氧化碳",dry_ice:"干冰",
+   heater:"加热器",cooler:"冷却器",void:"虚空",tnt:"TNT",wire:"电线",battery:"电池",aluminium:"铝",molten_aluminium:"熔融铝",purple_gold:"紫金",molten_purple_gold:"熔融紫金",thermite:"铝热剂",cloner:"克隆器",electric:"电",lightning:"闪电",salt_ice:"盐冰",sugar_ice:"糖冰",molten_dirt:"熔融泥土",molten_ash:"熔融灰",slag:"矿渣",molten_slag:"熔融矿渣",acid_gas:"酸气",molten_rust:"熔融铁锈",molten_salt:"熔融盐",molten_thermite:"熔融铝热剂",chlorine:"氯气",liquid_chlorine:"液氯",chlorine_ice:"固态氯",pool_water:"泳池水",bleach:"漂白剂",poison_gas:"毒气",poison:"毒液",carbonated_water:"苏打水",rotten_meat:"腐肉"}}
+};
+let lang="en-US";
+try{const sv=localStorage.getItem("sand-lang");
+ if(sv&&LANGS[sv])lang=sv;
+ else{const nl=navigator.language||"en-US";lang=nl.startsWith("zh")?"zh":nl.startsWith("es")?"es":/^en-(GB|AU|NZ|IE|ZA|IN)$/.test(nl)?"en-GB":"en-US";}}catch(e){}
+const T=k=>{const L=LANGS[lang];return(L&&L.ui&&L.ui[k])||LANGS["en-US"].ui[k]||k;};
+const nameOf=e=>(e.lang&&e.lang[lang])||(LANGS[lang]&&LANGS[lang].names&&LANGS[lang].names[e.key])||e.name;
+const catLabel=k=>{const s=T("cat."+k);return s!=="cat."+k?s:k[0].toUpperCase()+k.slice(1);};
+
+/* ===== Toolbar (built from the registry) ===== */
+const TOOLS=[{id:-2,key:"heat",name:"Heat",sw:"#e8412c"},{id:-3,key:"cool",name:"Cool",sw:"#7fd3ff"},{id:-4,key:"mix",name:"Mix",sw:"#b07cff"},{id:-5,key:"drag",name:"Drag",sw:"#f2b84b"},{id:-14,key:"shock",name:"Shock",sw:"#ffe14a"},{id:-9,key:"picker",name:"Picker",sw:"#f4f4f0"},{id:-6,key:"line",name:"Line",sw:"#9ad17a"},{id:-7,key:"rectangle",name:"Rectangle",sw:"#7ab8d1"},{id:-8,key:"circle",name:"Circle",sw:"#d17ab8"},{id:-10,key:"select",name:"Select",sw:"#8ab4f8"},{id:-11,key:"copy",name:"Copy",sw:"#a5d6a7"},{id:-12,key:"cut",name:"Cut",sw:"#ef9a9a"},{id:-13,key:"paste",name:"Paste",sw:"#ce93d8"},{id:-1,key:"eraser",name:"Eraser",sw:"#12161c"}];
+const CATORDER=["powders","solids","liquids","gases","food","phase","specials"];
+function getCats(){
+ const o={};
+ for(let id=1;id<E.length;id++){const e=E[id];(o[e.category]=o[e.category]||[]).push({id,name:e.name,sw:e.swatch});}
+ const keys=CATORDER.filter(k=>o[k]).concat(Object.keys(o).filter(k=>!CATORDER.includes(k)));
+ return keys.map(k=>({key:k,items:o[k]})).concat([{key:"tools",items:TOOLS}]);
+}
+const bar=document.getElementById("tools"),catBar=document.getElementById("cats");
+let catIdx=0,catList=[];
+function renderCats(){
+ catBar.innerHTML="";
+ catList.forEach((cat,ci)=>{
+  const b=document.createElement("button");
+  b.className="tab";b.setAttribute("role","tab");
+  b.setAttribute("aria-selected",ci===catIdx);
+  b.textContent=catLabel(cat.key);
+  b.onclick=()=>{catIdx=ci;renderCats();renderTools();};
+  catBar.appendChild(b);
+ });
+}
+function renderTools(){
+ bar.innerHTML="";
+ catList[catIdx].items.forEach(t=>{
+  const b=document.createElement("button"),sp=document.createElement("span");
+  b.setAttribute("aria-pressed",t.id===cur);
+  sp.className="sw";sp.style.background=t.sw||"#999";
+  b.appendChild(sp);b.append(t.key?T("tool."+t.key):nameOf(E[t.id]));
+  b.onclick=()=>sel(t.id);
+  b.dataset.id=t.id;bar.appendChild(b);
+ });
+}
+function sel(id){
+ if(id===-11||id===-12){if(!(id===-11?doCopy():doCut()))return;id=-13;selRect=null;}
+ if(id>-10||id<-13)selRect=null;
+ if(id===-9&&!sizeLocked){prevSize=size;size=1;sizeEl.value=1;sizeEl.disabled=true;sizeLocked=true;}
+ else if(id!==-9&&sizeLocked){size=prevSize;sizeEl.value=size;sizeEl.disabled=false;sizeLocked=false;}
+ cur=id;if(id>0)lastEl=id;[...bar.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id)===String(id)));}
+// pick an element: jump to its tab, select it and restore the brush size
+function selectEl(id){const ci=catList.findIndex(c=>c.items.some(it=>it.id===id));if(ci>=0)catIdx=ci;renderCats();renderTools();sel(id);}
+function buildUI(){catList=getCats();if(catIdx>=catList.length)catIdx=0;renderCats();renderTools();}
+ready=true;buildUI();
+
+/* ===== Controls ===== */
+function bump(dir){if(sizeLocked)return;const stp=Math.max(1,Math.round(size/10));size=Math.max(1,Math.min(153,size+dir*stp));sizeEl.value=size;}
+addEventListener("keydown",e=>{
+ if(e.key==="Shift")shiftDown=true;
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"&&e.target.tagName!=="INPUT"){e.preventDefault();undo();return;}
+ if((e.ctrlKey||e.metaKey)&&e.target.tagName!=="INPUT"){const kk=e.key.toLowerCase();if(kk==="c"&&doCopy()){e.preventDefault();return;}if(kk==="x"&&doCut()){e.preventDefault();return;}if(kk==="v"&&clip){e.preventDefault();sel(-13);return;}}
+ if(e.ctrlKey||e.metaKey||e.altKey)return;
+ if(e.target.tagName==="INPUT"&&e.target.type==="number")return;
+ const k=e.key.toLowerCase();
+ if(!confirmEl.hidden){if(k==="enter"||k==="y")doClear();else if(k==="escape"||k==="n")closeConfirm();e.preventDefault();return;}
+ if(e.repeat&&(k===" "||k==="p"||k==="r"||k==="s"||k==="z"))return;
+ if(k===" "||k==="p"){e.preventDefault();pb.click();}
+ else if(k==="r")askClear();
+ else if(k==="s")gear.click();
+ else if(k==="z")undo();
+ else if(k==="escape"&&!clog.hidden)clog.hidden=true;
+ else if(k==="escape"&&!panel.hidden)gear.click();
+ else if(k==="escape"&&selRect)selRect=null;
+ else if(k==="+")bump(1);
+ else if(k==="-")bump(-1);
+});
+addEventListener("keyup",e=>{if(e.key==="Shift")shiftDown=false;});
+addEventListener("blur",()=>{shiftDown=false;});
+const sizeEl=document.getElementById("size");
+sizeEl.oninput=e=>{if(sizeLocked)return;size=+e.target.value;};
+cv.addEventListener("wheel",e=>{e.preventDefault();if(sizeLocked)return;const stp=Math.max(1,Math.round(size/10));size=Math.max(1,Math.min(153,size+(e.deltaY<0?stp:-stp)));sizeEl.value=size;},{passive:false});
+const pb=document.getElementById("pause");
+pb.onclick=()=>{paused=!paused;pb.setAttribute("aria-pressed",paused);pb.textContent=paused?T("resume"):T("pause");};
+const confirmEl=document.getElementById("confirm");
+function askClear(){if(!confirmClear){doClear();return;}confirmEl.hidden=false;}
+function closeConfirm(){confirmEl.hidden=true;}
+function doClear(){snapshot();g.fill(0);CH.fill(0);life.fill(0);temp.fill(amb);closeConfirm();}
+document.getElementById("clear").onclick=askClear;
+document.getElementById("undoBtn").onclick=undo;
+const replaceBtn=document.getElementById("replaceBtn");
+replaceBtn.onclick=()=>{replaceOn=!replaceOn;replaceBtn.setAttribute("aria-pressed",replaceOn);};
+document.getElementById("cYes").onclick=doClear;
+document.getElementById("cNo").onclick=closeConfirm;
+
+// opening scene
+for(let x=27;x<100;x++)for(let y=91;y<95;y++)setCell(y*W+x,ID.stone);
+for(let x=118;x<146;x++)for(let y=87;y<101;y++)setCell(y*W+x,ID.wood);
+for(let x=50;x<77;x++)for(let y=55;y<73;y++)if(rnd()<.8)setCell(y*W+x,ID.sand);
+
+/* ===== Settings, info box, main loop ===== */
+let unit="C";
+const toU=t=>unit==="C"?t:unit==="F"?t*9/5+32:t+273.15;
+const fromU=n=>unit==="C"?n:unit==="F"?(n-32)*5/9:n-273.15;
+const fmt=t=>Math.round(toU(t))+(unit==="K"?" K":"°"+unit);
+const gear=document.getElementById("gear"),panel=document.getElementById("settings"),room=document.getElementById("room"),roomv=document.getElementById("roomv"),uC=document.getElementById("uC"),uF=document.getElementById("uF"),uK=document.getElementById("uK");
+function showRoom(){roomv.textContent=unit==="K"?"K":"°"+unit;room.value=Math.round(toU(amb));}
+gear.onclick=()=>{panel.hidden=!panel.hidden;gear.setAttribute("aria-pressed",String(!panel.hidden));};
+function setUnit(u){unit=u;uC.setAttribute("aria-pressed",u==="C");uF.setAttribute("aria-pressed",u==="F");uK.setAttribute("aria-pressed",u==="K");showRoom();}
+uC.onclick=()=>setUnit("C");uF.onclick=()=>setUnit("F");uK.onclick=()=>setUnit("K");
+const shapeBtns=[...document.querySelectorAll("#shapes button")];
+shapeBtns.forEach(b=>b.onclick=()=>{shape=b.dataset.shape;shapeBtns.forEach(x=>x.setAttribute("aria-pressed",x===b));});
+room.oninput=()=>{const n=parseFloat(room.value);if(isNaN(n))return;amb=Math.max(-273,Math.min(9999,fromU(n)));};room.onchange=showRoom;
+// Changelog: newest first. Add a new entry at the top whenever something changes.
+const CHANGELOG=[
+ {v:"v0.13.0",items:["Undo button, Picker, Replace, Save and Load", "Electrum is slowly eaten by acid, or turns into gold", "4 new languages: English (UK), English (US), Chinese and Spanish", "Aluminum, Molten Aluminum, Purple Gold, Thermite, Salt Ice, Sugar Ice, Molten Dirt, Molten Ash, Slag, Molten Slag, Acid Gas, Molten Rust, Molten Salt, Molten Thermite, Chlorine, Pool Water, Bleach, Poison, Poison Gas, Liquid Chlorine, Chlorine Ice, Carbonated Water, Rotten Meat", "Cloner, Select, Copy, Paste, Cut, Electric, Lightning, Shock, Battery, Wire", "Rust turns water into dirty water", "Salt water, sugar water, pool water and oil can turn sand into wet sand", "FPS counter and FPS limit settings", "New official name: Elementarium"]},
+ {v:"v0.12.0",items:["Category tabs are now evenly spaced, and the element row sits directly under them", "Fire that touches Oxygen gains 10°C and uses up the oxygen", "Fixed: Rectangle and Circle showed the wrong fill preview when Shift was pressed or released during the drag", "Nitrogen, Liquid Nitrogen, Nitrogen Ice, Carbon Dioxide, Dry Ice, Gold, Ammonia, Liquid Ammonia, Ammonia Ice, Molten Gold, Molten Electrum, Electrum, Steel, Molten Steel", "Oil, Wood and Coal now produce Carbon Dioxide when they burn out", "Iron can now rust when it touches water"]},
+ {v:"v0.11.0",items:["Hydrogen, Oxygen, Rust", "Liquid Hydrogen, Liquid Oxygen, Hydrogen Ice, Oxygen Ice", "Specials category: Heater, Cooler, Void, TNT", "Tools: Line, Rectangle, Circle (an oval; hold Shift to fill) and Drag", "Settings: Kelvin, and an option to turn the Clear all question on or off", "Renamed the Molten category to Phase", "Renamed the Cold tool to Cool", "Fixed: a single click did not fill the whole brush area", "Fixed: Heat and Cool did not work while paused", "Added this changelog"]},
+ {v:"v0.10.0",items:["Changed Dirty Water and Stone colors", "Smaller info box", "The controls bar (size, pause, clear, settings) is now above the element bar", "Changed Acid density to 1098 kg/m³", "Wall, Iron, Silver, Molten Iron, Molten Silver", "Molten category"]},
+ {v:"v0.9.0",items:["Coal, Dirty Water", "Pixels are about 10% larger", "Changed Salt Water and Sugar Water density", "Brush shapes: square, round, square grid, round grid"]},
+ {v:"v0.8.0",items:["Larger maximum brush size", "Food category: Meat, Cooked Meat, Salt, Sugar, Caramel, Candy", "Ash, Salt Water, Sugar Water", "Fixed: pressing _ or = still changed the brush size", "Steam now rises gradually through water instead of appearing at the surface", "Air conducts heat much better, and hot air rises (convection)", "Water spreads out underneath oil instead of piling up like powder"]},
+ {v:"v0.7.1",items:["Adding new elements is much easier"]},
+ {v:"v0.7.0",items:["Shortcuts: P to pause, R to clear all, S for settings, + and - to change brush size", "Clear all now asks \"Are you sure?\" before clearing", "Plasma", "Heat and Cool tools are slower", "Fixed: switching from left-click to right-click while holding the mouse kept painting instead of erasing", "Larger maximum brush size"]},
+ {v:"v0.6.0",items:["Settings button: Fahrenheit and adjustable room temperature", "Mix tool (it does not mix solids)", "Oil, Magma, Acid"]},
+ {v:"v0.5.0",items:["Wet Sand no longer slides sideways", "Fixed: fire color kept changing while paused", "Maximum brush size 51 -> 75", "Minimum brush size 3 -> 1"]},
+ {v:"v0.4.0",items:["Dirt, Wet Sand, Mud", "Reactions: Sand + Water = Wet Sand, Wet Sand + heat = Sand and Steam, Dirt + Water = Mud, Mud + heat = Dirt and Steam, Sand + heat = Molten Glass, Molten Glass + cooling = Glass", "Maximum brush size 10 -> 51", "Pixels are about 25% larger"]},
+ {v:"v0.3.0",items:["Burning effect", "Categories (Powders, Solids, Liquids, Gases, Tools)", "Longer screen", "Fixed: the first element of a category was selected automatically when opening that category"]},
+ {v:"v0.2.0",items:["Right-click to erase, mouse wheel to change brush size", "Temperature", "Brush outline", "Minimum temperature is -273°C", "Heat and Cool tools", "Hot and cold colors", "Info box (element name and temperature)"]},
+ {v:"v0.1.0",items:["Sand, Water, Stone, Wood and Fire", "Brush size, Pause button, Clear all button", "Keys 1-6 to change element"]}
+];
+const clog=document.getElementById("changelog"),clogBody=document.getElementById("clogBody");
+for(const c of CHANGELOG){
+ const h=document.createElement("h3"),ul=document.createElement("ul");
+ h.textContent=c.v;
+ for(const it of c.items){const li=document.createElement("li");li.textContent=it;ul.appendChild(li);}
+ clogBody.appendChild(h);clogBody.appendChild(ul);
+}
+document.getElementById("clogBtn").onclick=()=>{clog.hidden=!clog.hidden;};
+document.getElementById("clogClose").onclick=()=>{clog.hidden=true;};
+let confirmClear=true;
+const ctog=document.getElementById("confirmToggle");
+ctog.onclick=()=>{confirmClear=!confirmClear;ctog.setAttribute("aria-pressed",confirmClear);ctog.textContent=confirmClear?T("on"):T("off");};
+const info=document.getElementById("info");let lastTxt="";
+function updateInfo(){
+ if(hx<0||hx>=W||hy<0||hy>=H){info.hidden=true;return;}
+ const i=hy*W+hx,e=E[g[i]],txt=(e.burn&&life[i]>0?T("burning")+" ":"")+nameOf(e)+": "+fmt(temp[i])+(CH[i]>=3?", "+Math.round(CH[i]/255*1000)+" V":"");
+ if(txt!==lastTxt){info.textContent=txt;lastTxt=txt;}
+ info.hidden=false;
+}
+/* ===== Save / load the world, FPS counter ===== */
+const toast=document.getElementById("toast");let toastT=0;
+function say(key){toast.textContent=T(key);toast.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{toast.hidden=true;},2200);}
+const b64=u8=>{let s="";for(let i=0;i<u8.length;i+=8192)s+=String.fromCharCode.apply(null,u8.subarray(i,i+8192));return btoa(s);};
+const unb64=str=>{const s=atob(str),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;};
+// elements are saved by key, so a save still loads after ids change or mods are added; unknown keys become air
+function worldData(){
+ const pal=[0].concat([...new Set(g)].filter(Boolean)),idx=new Map(pal.map((id,k)=>[id,k]));
+ const cells=new Uint8Array(N),dv=new DataView(new ArrayBuffer(N*2));
+ for(let i=0;i<N;i++){cells[i]=idx.get(g[i])||0;dv.setInt16(i*2,Math.round(temp[i]),true);}
+ return{game:"elementarium",v:1,w:W,h:H,amb,keys:pal.map(id=>E[id].key),cells:b64(cells),sub:b64(v),life:b64(life),temp:b64(new Uint8Array(dv.buffer))};
+}
+function loadWorld(d){
+ if(!d||d.w!==W||d.h!==H||!Array.isArray(d.keys))return false;
+ const ids=d.keys.map(k=>ID[k]??0),cells=unb64(d.cells),sub=unb64(d.sub),lf=unb64(d.life),tb=unb64(d.temp);
+ if(cells.length!==N||sub.length!==N||lf.length!==N||tb.length!==N*2)return false;
+ snapshot();
+ const dv=new DataView(tb.buffer);
+ for(let i=0;i<N;i++){g[i]=ids[cells[i]]||0;v[i]=sub[i];life[i]=lf[i];temp[i]=dv.getInt16(i*2,true);}
+ if(typeof d.amb==="number"){amb=d.amb;showRoom();}
+ CH.fill(0);selRect=null;held=[];shp=null;dragging=false;
+ return true;
+}
+let dl=null;try{if(window.claude&&window.claude.use)window.claude.use("downloads").then(d=>{dl=d;}).catch(()=>{});}catch(e){}
+// plain browser download, used when the page runs outside claude.ai (where the downloads capability is missing)
+function downloadFile(name,text){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"application/json"}));a.download=name;(document.body||document.documentElement).appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+// Save: write the world to a .json file.  Load: pick a saved file.
+document.getElementById("saveBtn").onclick=async()=>{
+ const name="elementarium-"+new Date().toISOString().slice(0,10)+".json",text=JSON.stringify(worldData());
+ try{if(dl)await dl.save({filename:name,data:text});else downloadFile(name,text);say("exported");}
+ catch(e){if(!e||e.code!=="declined")say("saveFail");}
+};
+const importFile=document.getElementById("importFile");
+document.getElementById("loadBtn").onclick=()=>importFile.click();
+importFile.onchange=()=>{const f=importFile.files&&importFile.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{say(loadWorld(JSON.parse(r.result))?"loaded":"loadFail");}catch(e){say("loadFail");}importFile.value="";};r.readAsText(f);};
+let fpsOn=false;try{fpsOn=localStorage.getItem("sand-fps")==="1";}catch(e){}
+const fpsBox=document.getElementById("fps"),fpsToggle=document.getElementById("fpsToggle");
+let fpsFrames=0,fpsT=0,simAcc=0;
+function fpsTick(now,ms){fpsFrames++;simAcc+=ms;if(!fpsT)fpsT=now;if(now-fpsT>=500){fpsBox.textContent=Math.round(fpsFrames*1000/(now-fpsT))+" FPS \u00b7 "+(simAcc/fpsFrames).toFixed(1)+" ms";fpsFrames=0;simAcc=0;fpsT=now;}}
+function syncFps(){fpsBox.hidden=!fpsOn;fpsToggle.setAttribute("aria-pressed",fpsOn);fpsToggle.textContent=fpsOn?T("on"):T("off");}
+// frame limiter: skips animation frames that come sooner than 1000/limit ms after the last drawn one (0 = every screen frame)
+let fpsLimit=60,lastFrame=0;try{const sv=localStorage.getItem("sand-fpslimit");if(sv!==null&&!isNaN(+sv))fpsLimit=+sv;}catch(e){}
+const fpsSel=document.getElementById("fpsLimit");
+fpsSel.onchange=()=>{fpsLimit=+fpsSel.value;lastFrame=0;fpsT=0;fpsFrames=0;simAcc=0;try{localStorage.setItem("sand-fpslimit",String(fpsLimit));}catch(e){}};
+fpsToggle.onclick=()=>{fpsOn=!fpsOn;fpsT=0;fpsFrames=0;simAcc=0;try{localStorage.setItem("sand-fps",fpsOn?"1":"0");}catch(e){}syncFps();};
+
+const langBox=document.getElementById("langs");
+function renderLangs(){langBox.innerHTML="";for(const code of Object.keys(LANGS)){const o=document.createElement("option");o.value=code;o.textContent=LANGS[code].label;langBox.appendChild(o);}langBox.value=lang;}
+langBox.onchange=()=>setLang(langBox.value);
+function setLang(code){if(!LANGS[code])return;lang=code;try{localStorage.setItem("sand-lang",code);}catch(e){}applyLang();}
+function applyLang(){
+ if(document.documentElement)document.documentElement.lang=lang.split("-")[0];
+ document.querySelectorAll("[data-i]").forEach(el=>{el.textContent=T(el.dataset.i);});
+ shapeBtns.forEach(b=>{b.textContent=T("shape."+b.dataset.shape);});
+ pb.textContent=paused?T("resume"):T("pause");
+ ctog.textContent=confirmClear?T("on"):T("off");
+ syncFps();fpsSel.value=String(fpsLimit);
+ lastTxt="";renderLangs();buildUI();
+}
+function addLanguage(code,def){LANGS[code]=Object.assign({label:code,ui:{},names:{}},def);if(ready)renderLangs();}
+applyLang();
+function loop(){
+ if(fpsLimit){const nw=performance.now();if(lastFrame&&nw-lastFrame<1000/fpsLimit-2){requestAnimationFrame(loop);return;}lastFrame=nw;}
+ const t0=fpsOn?performance.now():0;if(down&&!picking)stamp(lx,ly);if(!paused){if(dragging)for(const h of held)mv[h.i]=tick+1;step();heat();radiate();electrify();convect();}draw();updateInfo();if(fpsOn){const t1=performance.now();fpsTick(t1,t1-t0);}requestAnimationFrame(loop);}
+loop();
+
+window.Sand={define,E,ID,g,v,temp,life,W,H,rnd,fr,setCell,swap,become,rm,nbrs,burn,ignite,emit,ELEMENTS,LANGS,addLanguage,setLang,CH,ECA,explode};
+})();
+</script>
+</body>
+</html>
