@@ -344,7 +344,7 @@ ELEMENTS.liquid_ammonia={name:"Liquid Ammonia",category:"phase",movement:"liquid
  reactions:[{below:-78,chance:.1,to:"ammonia_ice"},{above:-33,chance:.03,to:"ammonia"}]};
 ELEMENTS.ammonia_ice={name:"Ammonia Ice",category:"phase",movement:"solid",color:[226,236,200],density:817,heatConduct:.05,startMax:-85,
  reactions:[{above:-78,chance:.1,to:"liquid_ammonia"}]};
-ELEMENTS.carbon_dioxide={name:"Carbon Dioxide",category:"gases",movement:"gas",color:[176,180,176],density:1.98,heatConduct:1.5,rise:0,side:.55,sink:.35,spray:.4,
+ELEMENTS.carbon_dioxide={name:"Carbon Dioxide",category:"gases",movement:"gas",color:[96,98,104],density:1.98,heatConduct:1.5,rise:.12,side:.76,sink:.12,spray:.4,
  reactions:[{with:"water",chance:.3,to:"air",other:"carbonated_water"},{below:-78,chance:.1,to:"dry_ice"}]};
 ELEMENTS.dry_ice={name:"Dry Ice",category:"phase",movement:"solid",color:[236,242,246],density:1560,heatConduct:.03,startMax:-85,
  reactions:[{above:-78,chance:.1,to:"carbon_dioxide"}]};
@@ -353,9 +353,9 @@ ELEMENTS.acid_gas={name:"Acid Gas",category:"gases",movement:"gas",electroConduc
 ELEMENTS.thermite={name:"Thermite",category:"powders",movement:"powder",color:[128,78,66],density:2400,heatConduct:.3,acidr:.5,spray:.45,
  reactions:[{above:2200,chance:.1,to:"molten_thermite"}],
  burn:{at:700,chance:.3,heat:2100,spread:.05,water:0,flames:.25,speed:.85,life:[245,255],into:"molten_iron"}};
-ELEMENTS.chlorine={name:"Chlorine",category:"gases",movement:"gas",color:[212,222,104],density:3.2,heatConduct:1.5,rise:0,side:.55,sink:.35,spray:.4,
+ELEMENTS.chlorine={name:"Chlorine",category:"gases",movement:"gas",color:[212,222,104],density:3.2,heatConduct:1.5,rise:.12,side:.76,sink:.12,spray:.4,
  reactions:[{with:"water",chance:.3,to:"air",other:"pool_water"},{with:"dirty_water",chance:.3,to:"air",other:"water"},{with:"hydrogen",chance:.3,to:"acid",other:"air"},{with:"ammonia",chance:.3,to:"bleach",other:"air"},{below:-34,chance:.1,to:"liquid_chlorine"}]};
-ELEMENTS.poison_gas={name:"Poison Gas",category:"gases",movement:"gas",color:[150,70,170],density:2,heatConduct:1.5,rise:.1,side:.65,sink:.25,spray:.4,
+ELEMENTS.poison_gas={name:"Poison Gas",category:"gases",movement:"gas",color:[150,70,170],density:2,heatConduct:1.5,rise:.12,side:.76,sink:.12,spray:.4,
  reactions:[{below:5,chance:.1,to:"poison"}]};
 ELEMENTS.pool_water={name:"Pool Water",category:"liquids",movement:"liquid",color:[110,205,232],density:1005,electroConduct:.2,heatConduct:.4,spray:.45,
  reactions:[{above:99.99,to:"steam",setT:100,emit:"chlorine"},{below:-1,to:"ice"}]};
@@ -502,8 +502,8 @@ function step(){
    }else if(kd==="gas"){
     const r=rnd();
     const up=i-W,uo=y>0?g[up]:-1;
-    if(y>0&&r<e.rise&&(uo===0||(e.bubble!==false&&E[uo].kind==="liquid"&&E[uo].density>e.density&&rnd()<.2)))swap(i,up);
-    else if(e.sink&&y<H-1&&r>=1-e.sink&&g[i+W]===0)swap(i,i+W);
+    if(y>0&&r<e.rise&&(uo===0||(E[uo].kind==="gas"&&E[uo].density>e.density&&rnd()<.5)||(e.bubble!==false&&E[uo].kind==="liquid"&&E[uo].density>e.density&&rnd()<.2)))swap(i,up);
+    else if(e.sink&&y<H-1&&r>=1-e.sink&&(g[i+W]===0||(E[g[i+W]].kind==="gas"&&E[g[i+W]].density<e.density&&rnd()<.5)))swap(i,i+W);
     else if(r<e.rise+e.side){const xx=x+d;if(xx>=0&&xx<W&&g[i+d]===0)swap(i,i+d);}
    }
   }
@@ -875,7 +875,8 @@ shapeBtns.forEach(b=>b.onclick=()=>{shape=b.dataset.shape;shapeBtns.forEach(x=>x
 room.oninput=()=>{const n=parseFloat(room.value);if(isNaN(n))return;amb=Math.max(-273,Math.min(9999,fromU(n)));};room.onchange=showRoom;
 // Changelog: newest first. Add a new entry at the top whenever something changes.
 const CHANGELOG=[
- {v:"v0.13.0",items:["Undo button, Picker, Replace, Save and Load", "Electrum is slowly eaten by acid, or turns into gold", "4 new languages: English (UK), English (US), Chinese and Spanish", "Aluminum, Molten Aluminum, Purple Gold, Thermite, Salt Ice, Sugar Ice, Molten Dirt, Molten Ash, Slag, Molten Slag, Acid Gas, Molten Rust, Molten Salt, Molten Thermite, Chlorine, Pool Water, Bleach, Poison, Poison Gas, Liquid Chlorine, Chlorine Ice, Carbonated Water, Rotten Meat", "Cloner, Select, Copy, Paste, Cut, Electric, Lightning, Shock, Battery, Wire", "Rust turns water into dirty water", "Salt water, sugar water, pool water and oil can turn sand into wet sand", "FPS counter and FPS limit settings", "New official name: Elementarium"]},
+ {v:"v1.0.1",items:["Fixed: gases could block other gases from rising", "Carbon Dioxide is now darker", "Heavy gases no longer fall to the floor, they spread out instead"]},
+ {v:"v1.0.0",items:["Undo button, Picker, Replace, Save and Load", "Electrum is slowly eaten by acid, or turns into gold", "4 new languages: English (UK), English (US), Chinese and Spanish", "Aluminum, Molten Aluminum, Purple Gold, Thermite, Salt Ice, Sugar Ice, Molten Dirt, Molten Ash, Slag, Molten Slag, Acid Gas, Molten Rust, Molten Salt, Molten Thermite, Chlorine, Pool Water, Bleach, Poison, Poison Gas, Liquid Chlorine, Chlorine Ice, Carbonated Water, Rotten Meat", "Cloner, Select, Copy, Paste, Cut, Electric, Lightning, Shock, Battery, Wire", "Rust turns water into dirty water", "Salt water, sugar water, pool water and oil can turn sand into wet sand", "FPS counter and FPS limit settings", "New official name: Elementarium"]},
  {v:"v0.12.0",items:["Category tabs are now evenly spaced, and the element row sits directly under them", "Fire that touches Oxygen gains 10°C and uses up the oxygen", "Fixed: Rectangle and Circle showed the wrong fill preview when Shift was pressed or released during the drag", "Nitrogen, Liquid Nitrogen, Nitrogen Ice, Carbon Dioxide, Dry Ice, Gold, Ammonia, Liquid Ammonia, Ammonia Ice, Molten Gold, Molten Electrum, Electrum, Steel, Molten Steel", "Oil, Wood and Coal now produce Carbon Dioxide when they burn out", "Iron can now rust when it touches water"]},
  {v:"v0.11.0",items:["Hydrogen, Oxygen, Rust", "Liquid Hydrogen, Liquid Oxygen, Hydrogen Ice, Oxygen Ice", "Specials category: Heater, Cooler, Void, TNT", "Tools: Line, Rectangle, Circle (an oval; hold Shift to fill) and Drag", "Settings: Kelvin, and an option to turn the Clear all question on or off", "Renamed the Molten category to Phase", "Renamed the Cold tool to Cool", "Fixed: a single click did not fill the whole brush area", "Fixed: Heat and Cool did not work while paused", "Added this changelog"]},
  {v:"v0.10.0",items:["Changed Dirty Water and Stone colors", "Smaller info box", "The controls bar (size, pause, clear, settings) is now above the element bar", "Changed Acid density to 1098 kg/m³", "Wall, Iron, Silver, Molten Iron, Molten Silver", "Molten category"]},
