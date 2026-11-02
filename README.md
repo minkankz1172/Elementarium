@@ -13,5 +13,6 @@ Keep your hands on the keyboard for maximum efficiency:
 * **`S`** : Open Settings menu
 * **`Ctrl + Z`** or **`Z`** : **Undo** your last brush stroke
 * **`+`** / **`-`** : Increase / Decrease brush size
+* **`C`** or **`F2`** : Screenshot
 ---
 This project is open for players to explore and enjoy. All simulation logic, chemistry reaction loops, and UI design are coded from scratch by **Minkankz**
