@@ -1,0 +1,45 @@
+{
+  "library": 1,
+  "updated": "2026-11-04",
+  "mods": [
+    {
+      "id": "kitchen-chemistry",
+      "file": "mods/kitchen-chemistry.json",
+      "title": "Kitchen Chemistry",
+      "author": "Elementarium",
+      "version": "1.0",
+      "description": "Baking soda and vinegar make a fizzy volcano.",
+      "added": "2026-11-04",
+      "tags": [
+        "hot"
+      ],
+      "note": ""
+    },
+    {
+      "id": "example-pack",
+      "file": "mods/example-pack.json",
+      "title": "Example Pack",
+      "author": "Elementarium",
+      "version": "1.0",
+      "description": "Sodium that blows up in water, a glowing slime and a neon gas.",
+      "added": "2026-11-04",
+      "tags": [
+        "new"
+      ],
+      "note": ""
+    },
+    {
+      "id": "hungry-goo",
+      "file": "mods/hungry-goo.json",
+      "title": "Hungry Goo",
+      "author": "Elementarium",
+      "version": "1.0",
+      "description": "A goo that eats what it touches and keeps growing.",
+      "added": "2026-11-04",
+      "tags": [
+        "warning"
+      ],
+      "note": "Spreads and eats almost everything. Fire and salt kill it. Press Undo if it gets out of hand."
+    }
+  ]
+}
