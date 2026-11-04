@@ -1,0 +1,112 @@
+{
+  "mod": "Example Pack",
+  "version": "1.0",
+  "author": "Your name",
+  "description": "Sodium that blows up in water, a glowing slime and a neon gas.",
+  "elements": [
+    {
+      "key": "sodium",
+      "name": "Sodium",
+      "lang": {
+        "es": "Sodio",
+        "zh": "钠"
+      },
+      "category": "solids",
+      "movement": "solid",
+      "color": [
+        205,
+        208,
+        214
+      ],
+      "density": 970,
+      "heatConduct": 1.4,
+      "electroConduct": 0.7,
+      "reactions": [
+        {
+          "with": "water",
+          "chance": 0.35,
+          "to": "fire",
+          "other": "hydrogen",
+          "heat": 400
+        },
+        {
+          "above": 98,
+          "chance": 0.1,
+          "to": "fire"
+        }
+      ]
+    },
+    {
+      "key": "glow_slime",
+      "name": "Glow Slime",
+      "lang": {
+        "es": "Baba brillante",
+        "zh": "发光黏液"
+      },
+      "category": "liquids",
+      "movement": "liquid",
+      "color": {
+        "from": [
+          40,
+          200,
+          80
+        ],
+        "to": [
+          170,
+          255,
+          120
+        ],
+        "animated": true
+      },
+      "density": 1200,
+      "viscosity": 40,
+      "reactions": [
+        {
+          "with": "fire",
+          "chance": 0.2,
+          "to": "smoke"
+        }
+      ]
+    },
+    {
+      "key": "neon_gas",
+      "name": "Neon Gas",
+      "lang": {
+        "es": "Gas neón",
+        "zh": "氖气"
+      },
+      "category": "gases",
+      "movement": "gas",
+      "color": {
+        "from": [
+          255,
+          90,
+          60
+        ],
+        "to": [
+          255,
+          170,
+          90
+        ],
+        "animated": true
+      },
+      "density": 0.8,
+      "rise": 0.5,
+      "side": 0.5,
+      "spray": 0.4
+    }
+  ],
+  "patches": [
+    {
+      "element": "magma",
+      "reactions": [
+        {
+          "with": "glow_slime",
+          "chance": 0.3,
+          "to": "obsidian",
+          "other": "smoke"
+        }
+      ]
+    }
+  ]
+}
