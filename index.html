@@ -41,12 +41,26 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .searchbox{width:100%;font:inherit;font-size:.85rem;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 .searchbox:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button.pinned{box-shadow:0 0 0 2px #e8b923}
-.credit{align-self:flex-end;font-size:.72rem;opacity:.55;padding:0 2px;user-select:none}
+.credit{align-self:stretch;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.72rem;padding:0 2px;user-select:none}.credit span{opacity:.55}.credit button{font-size:.72rem;padding:3px 10px;border-radius:6px;opacity:.8}.credit button:hover{opacity:1}
 .toast{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(10,14,18,.92);color:#f1f1ec;font-size:.8rem;padding:6px 12px;border-radius:8px;pointer-events:none;white-space:nowrap}
 .toast[hidden]{display:none}
 .clog{position:absolute;inset:0;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:0 16px 14px;overflow:auto;z-index:6}
 .clog[hidden]{display:none}
 .clogHead{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--panel);padding:12px 0 8px;border-bottom:1px solid var(--line)}
+.modTabs{margin:10px 0 2px}#modFilters{margin:8px 0 2px;gap:6px}#modFilters button{padding:3px 10px;font-size:.78rem}
+.chip{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.02em;padding:1px 8px;border-radius:999px;border:1px solid;margin-left:8px;vertical-align:1px}
+.chip.new{color:#2f9e5a}.chip.hot{color:#e0801f}.chip.warning{color:#d4574c}.chip.outdated{color:#8a8f98}
+.modItem.warn{border-color:#d4574c}
+.modNote{font-size:.78rem;padding:4px 8px;border-left:3px solid var(--line)}.modNote.warning{border-left-color:#d4574c}.modNote.outdated{border-left-color:#8a8f98}
+.modItem input[type=text]{flex:1;min-width:130px;font:inherit;font-size:.78rem;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+.modItem{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;display:flex;flex-direction:column;gap:6px}
+.modItem .mt{font-size:.88rem}.modItem .mt small{opacity:.65;font-weight:400;margin-left:6px}.modItem .md{font-size:.78rem;opacity:.75}.modItem .grp{gap:6px}.modItem.off .mt{opacity:.55}
+.modItem button{padding:4px 10px;font-size:.8rem}
+#modText{width:100%;min-height:96px;margin:8px 0 6px;box-sizing:border-box;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.75rem;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px;resize:vertical}
+.modMsg{font-size:.8rem;margin:8px 0;padding:8px 10px;border-radius:8px;border:1px solid var(--line)}.modMsg.ok{border-color:#3e9b53}.modMsg.err{border-color:#d4574c}
+.modMsg ul{margin:4px 0 0;padding-left:18px}.modMsg b{display:block}
+.modDocs{margin:12px 0 4px;font-size:.8rem}.modDocs summary{cursor:pointer}.modDocs pre{white-space:pre-wrap;font-size:.72rem;line-height:1.45;margin:8px 0;opacity:.85}
+.clog>.msub{margin-top:10px}
 .clog h3{margin:14px 0 4px;font-size:.95rem}
 .clog ul{margin:0;padding-left:18px;font-size:.82rem;line-height:1.5}
 .clog .ver{opacity:.6;font-weight:400;font-size:.8rem;margin-left:6px}
@@ -84,17 +98,17 @@ input[type=range]{accent-color:var(--accent);width:110px}
     <h1>Elementarium</h1>
     <p class="sub">Hold to draw. Right-click to erase, scroll to change brush size. Hover any pixel to read its temperature. Try burning wood, boiling water with Heat, or freezing it with Cool.</p>
   </header>
-  <div class="wrap"><canvas id="c" width="204" height="102" aria-label="Elementarium play area"></canvas><div class="info" id="info" hidden></div><div class="modal" id="confirm" hidden><div class="mbox"><p data-i="sure">Are you sure you want to clear everything?</p><p class="msub" data-i="sureSub">You can undo this afterwards. Press Enter to confirm or Esc to cancel.</p><div class="grp"><button id="cYes" data-i="clearAll">Clear all</button><button id="cNo" data-i="cancel">Cancel</button></div></div></div><div class="fps" id="fps" hidden></div><div class="toast" id="toast" hidden></div><div class="clog" id="changelog" hidden><div class="clogHead"><b data-i="changelog">Changelog</b><button id="clogClose" data-i="close">Close</button></div><div id="clogBody"></div></div><div class="panel" id="settings" hidden><div class="row"><span data-i="tempUnit">Temperature unit</span><span class="grp"><button id="uC" aria-pressed="true">°C</button><button id="uF" aria-pressed="false">°F</button><button id="uK" aria-pressed="false">K</button></span></div><div class="row"><label for="room" data-i="room">Room temperature</label><span class="grp"><input id="room" type="number" step="1" value="20"><b id="roomv">°C</b></span></div><div class="row"><span data-i="brushShape">Brush shape</span></div><div class="grp" id="shapes"><button data-shape="square" aria-pressed="true">Square</button><button data-shape="round" aria-pressed="false">Round</button><button data-shape="squareGrid" aria-pressed="false">Square grid</button><button data-shape="roundGrid" aria-pressed="false">Round grid</button></div><div class="row"><span data-i="confirmClear">Confirm before Clear all</span><button id="confirmToggle" aria-pressed="true">On</button></div><div class="row"><span data-i="showFps">Show FPS</span><button id="fpsToggle" aria-pressed="false">Off</button></div><div class="row"><span data-i="fpsLimit">FPS limit</span><select id="fpsLimit"><option value="30">30</option><option value="60">60</option><option value="120">120</option><option value="0" data-i="unlimited">Unlimited</option></select></div><input type="file" id="importFile" accept=".json,application/json" hidden><div class="row"><span data-i="language">Language</span></div><select id="langs" aria-label="Language"></select><p class="msub" data-i="shortcuts">Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, C screenshot, + / - brush size. Right-click an element to pin it.</p></div></div>
+  <div class="wrap"><canvas id="c" width="204" height="102" aria-label="Elementarium play area"></canvas><div class="info" id="info" hidden></div><div class="modal" id="confirm" hidden><div class="mbox"><p data-i="sure">Are you sure you want to clear everything?</p><p class="msub" data-i="sureSub">You can undo this afterwards. Press Enter to confirm or Esc to cancel.</p><div class="grp"><button id="cYes" data-i="clearAll">Clear all</button><button id="cNo" data-i="cancel">Cancel</button></div></div></div><div class="fps" id="fps" hidden></div><div class="toast" id="toast" hidden></div><div class="clog" id="changelog" hidden><div class="clogHead"><b data-i="changelog">Changelog</b><button id="clogClose" data-i="close">Close</button></div><div id="clogBody"></div></div><div class="clog" id="modsPanel" hidden><div class="clogHead"><b data-i="modsTitle">Mods</b><button id="modsClose" data-i="close">Close</button></div><div class="grp modTabs"><button id="modTabLib" data-i="modLib" aria-pressed="true">Library</button><button id="modTabMine" data-i="modMine" aria-pressed="false">My mods</button></div><div id="modMsg" class="modMsg" hidden></div><div id="modsLib"><p class="msub" data-i="modLibIntro">Mods picked by the author of the game.</p><div id="modAdmin" class="modMsg" hidden></div><div class="grp" id="modFilters"></div><div id="modLibList"></div><div class="grp" style="margin-top:10px"><button id="modSubmit" data-i="modSubmit">Send your mod to the author</button></div></div><div id="modsMine" hidden><p class="msub" data-i="modsIntro">Mods add new elements and reactions.</p><h3 data-i="modsAdd">Add a mod</h3><div class="grp"><button id="modFileBtn" data-i="modChoose">Choose file...</button><input type="file" id="modFile" accept=".json,application/json" hidden><button id="modTemplate" data-i="modTemplate">Download template</button></div><textarea id="modText" spellcheck="false" aria-label="Mod JSON"></textarea><div class="grp"><button id="modInstall" data-i="modInstall">Install pasted mod</button></div><h3 data-i="modsInstalled">Installed mods</h3><div id="modList"></div><details class="modDocs"><summary data-i="modFormat">Mod format (for creators)</summary><pre id="modDocs"></pre></details></div></div><div class="panel" id="settings" hidden><div class="row"><span data-i="tempUnit">Temperature unit</span><span class="grp"><button id="uC" aria-pressed="true">°C</button><button id="uF" aria-pressed="false">°F</button><button id="uK" aria-pressed="false">K</button></span></div><div class="row"><label for="room" data-i="room">Room temperature</label><span class="grp"><input id="room" type="number" step="1" value="20"><b id="roomv">°C</b></span></div><div class="row"><span data-i="brushShape">Brush shape</span></div><div class="grp" id="shapes"><button data-shape="square" aria-pressed="true">Square</button><button data-shape="round" aria-pressed="false">Round</button><button data-shape="squareGrid" aria-pressed="false">Square grid</button><button data-shape="roundGrid" aria-pressed="false">Round grid</button></div><div class="row"><span data-i="confirmClear">Confirm before Clear all</span><button id="confirmToggle" aria-pressed="true">On</button></div><div class="row"><span data-i="showFps">Show FPS</span><button id="fpsToggle" aria-pressed="false">Off</button></div><div class="row"><span data-i="fpsLimit">FPS limit</span><select id="fpsLimit"><option value="30">30</option><option value="60">60</option><option value="120">120</option><option value="0" data-i="unlimited">Unlimited</option></select></div><input type="file" id="importFile" accept=".json,application/json" hidden><div class="row"><span data-i="language">Language</span></div><select id="langs" aria-label="Language"></select><p class="msub" data-i="shortcuts">Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, C screenshot, + / - brush size. Right-click an element to pin it.</p></div></div>
   <div class="bar ctrl">
     <label><span data-i="brushSize">Brush size</span> <input id="size" type="range" min="1" max="153" value="6"></label>
     <span class="sp"></span>
     <button id="pause" aria-pressed="false">Pause</button>
     <button id="replaceBtn" data-i="replace" aria-pressed="false">Replace</button>
     <button id="undoBtn" data-i="undo" disabled>Undo</button>
-    <button id="clear" data-i="clearAll">Clear all</button><button id="saveBtn" data-i="save">Save</button><button id="loadBtn" data-i="load">Load</button><button id="gear" data-i="settings" aria-pressed="false">Settings</button><button id="clogBtn" data-i="changelog">Changelog</button>
+    <button id="clear" data-i="clearAll">Clear all</button><button id="saveBtn" data-i="save">Save</button><button id="loadBtn" data-i="load">Load</button><button id="gear" data-i="settings" aria-pressed="false">Settings</button><button id="clogBtn" data-i="changelog">Changelog</button><button id="modsBtn" data-i="mods">Add mods</button>
   </div>
   <div class="bar stack"><input id="search" type="search" class="searchbox" autocomplete="off" aria-label="Search"><div class="grp" id="cats" role="tablist" aria-label="Category"></div><div class="grp" id="tools" role="toolbar" aria-label="Choose material"></div></div>
-<footer class="credit">made by Minkankz</footer>
+<footer class="credit"><button id="feedbackBtn" data-i="feedback">Feedback</button><span>made by Minkankz</span></footer>
 </main>
 <script>
 (function(){
@@ -106,7 +120,7 @@ const CATKIND={powders:"powder",liquids:"liquid",gases:"gas"};
 
 /* ===== Registry: ids are assigned automatically, elements refer to each other by key ===== */
 function finalize(){E.forEach((e,id)=>{KA[id]=e.k;INS[id]=e.insulator?1:0;PIN[id]=e.pinTemp!==undefined?e.pinTemp:NaN;RAD[id]=e.radiate||0;ROOMP[id]=e.pinRoom?1:0;ECA[id]=e.electroConduct||0;});}
-function define(key,d){
+function define(key,d,slot){
  d.key=key;const mvt=d.movement||d.kind||CATKIND[d.category]||"solid";d.movement=mvt;d.kind=mvt==="clump"?"powder":mvt;if(mvt==="clump")d.slide=false;
  d.heatConduct=d.heatConduct??d.conduct??.33;d.k=Math.min(.95,d.heatConduct*.3);d.electroConduct=d.electroConduct??0;
  d.density=d.density??1000;d.acidp=(d.acidr||0)*.1;
@@ -114,7 +128,7 @@ function define(key,d){
  if(d.burn||d.flammable)d.burn=Object.assign({at:300,chance:.02,heat:450,spread:.012,water:.1,flames:.04,speed:.5},d.burn);d.rise=d.rise??.5;d.side=d.side??.5;d.color=d.color||[200,200,200];
  if(d.viscosity!==undefined&&d.kind==="liquid"){d.visc=d.viscosity/(d.viscosity+40);d.flow=1/(1+d.viscosity/12);}
  if(!d.swatch&&Array.isArray(d.color))d.swatch="rgb("+d.color.join(",")+")";
- ID[key]=E.length;E.push(d);finalize();if(ready)buildUI();
+ const sl=slot===undefined?E.length:slot;E[sl]=d;ID[key]=sl;finalize();if(ready)buildUI();
 }
 define("air",{name:"Air",heatConduct:3,density:0});
 
@@ -162,7 +176,7 @@ function react(e,i,tp){
   if(r.heat)temp[i]+=r.heat;
   if(r.warm)for(const n of nbrs(i))if(!INS[g[n]]&&!ROOMP[g[n]])temp[n]=Math.max(temp[n],r.warm);
   if(!r.to)continue;
-  const keep=e.burn&&life[i]>0&&E[ID[r.to]].burn?life[i]:0;setCell(i,ID[r.to]);if(keep)life[i]=keep;
+  const keep=(e.burn&&life[i]>0&&E[ID[r.to]].burn)||r.keepLife?life[i]:0;setCell(i,ID[r.to]);if(keep)life[i]=keep;
   if(r.life)life[i]=r.life[0]+((rnd()*(r.life[1]-r.life[0]))|0);
   if(r.setT!==undefined)temp[i]=r.setT;
   if(r.capT!==undefined)temp[i]=Math.min(temp[i],r.capT);
@@ -279,7 +293,7 @@ ELEMENTS.iron={name:"Iron",electroConduct:0.6,category:"solids",movement:"solid"
 ELEMENTS.silver={name:"Silver",electroConduct:1,category:"solids",movement:"solid",color:[208,212,220],density:10490,heatConduct:2,acidr:.1,
  reactions:[{above:962,chance:.1,to:"molten_silver"}]};
 ELEMENTS.molten_iron={name:"Molten Iron",electroConduct:0.6,category:"phase",movement:"liquid",swatch:"#ff8a2a",density:6980,heatConduct:1,viscosity:5,startMin:1600,
- color:i=>[255,110+fr(i)*70,30+fr(i+7)*40],reactions:[{with:"coal",chance:.3,to:"molten_steel",other:"air"},{below:1400,chance:.1,rest:true,to:"iron"}]};
+ color:i=>[255,110+fr(i)*70,30+fr(i+7)*40],reactions:[{with:"oxygen",chance:.4,to:"slag",other:"air"},{with:"coal",chance:.3,to:"molten_steel",other:"air"},{below:1400,chance:.1,rest:true,to:"iron"}]};
 ELEMENTS.molten_silver={name:"Molten Silver",electroConduct:1,category:"phase",movement:"liquid",swatch:"#ffd88c",density:9320,heatConduct:2,viscosity:5,startMin:1000,
  color:i=>[255,214+fr(i)*26,140+fr(i+7)*40],reactions:[{below:900,chance:.1,rest:true,to:"silver"}]};
 ELEMENTS.rust={name:"Rust",electroConduct:0.05,category:"powders",movement:"powder",color:[150,70,36],density:5240,heatConduct:.2,acidr:.8,spray:.45,
@@ -299,11 +313,28 @@ ELEMENTS.molten_gold={name:"Molten Gold",electroConduct:0.9,category:"phase",mov
  reactions:[{with:"molten_silver",chance:.5,to:"molten_electrum",other:"molten_electrum"},{below:1000,chance:.1,rest:true,to:"gold"}]};
 ELEMENTS.molten_electrum={name:"Molten Electrum",electroConduct:0.85,category:"phase",movement:"liquid",swatch:"#ffe28a",density:12500,heatConduct:1.4,viscosity:5,startMin:1050,
  color:i=>[255,215+fr(i)*25,110+fr(i+7)*45],reactions:[{below:950,chance:.1,rest:true,to:"electrum"}]};
+ELEMENTS.copper={name:"Copper",electroConduct:0.96,category:"solids",movement:"solid",color:[196,110,66],density:8960,heatConduct:1.9,
+ rustRate:.6,rustInto:"oxidized_copper",   // slowly oxidizes next to Oxygen and any kind of water; no acidr, so acid cannot touch it
+ reactions:[{with:"chlorine",chance:.08,to:"oxidized_copper",other:"air",life:[1,1]},{with:"liquid_chlorine",chance:.08,to:"oxidized_copper",other:"air",life:[1,1]},{with:"carbon_dioxide",chance:.002,to:"oxidized_copper",other:"air"},{above:1085,chance:.1,to:"molten_copper"}]};
+// Oxidized copper: green patina. life=1 marks copper that was oxidized by Chlorine, which is blue-green instead.
+ELEMENTS.oxidized_copper={name:"Oxidized Copper",electroConduct:0.05,category:"solids",movement:"solid",swatch:"#58a878",density:5000,heatConduct:.3,acidr:.6,
+ color:i=>{const f=v[i]/24;return life[i]===1?[58+f*22,164+f*24,160+f*18]:[70+f*22,148+f*26,108+f*22];},
+ reactions:[{above:1230,chance:.1,to:"molten_oxidized_copper",keepLife:true}]};
+ELEMENTS.rose_gold={name:"Rose Gold",electroConduct:0.8,category:"solids",movement:"solid",color:[230,152,134],density:15200,heatConduct:1.5,
+ reactions:[{above:960,chance:.1,to:"molten_rose_gold"}]};
+ELEMENTS.molten_copper={name:"Molten Copper",electroConduct:0.96,category:"phase",movement:"liquid",swatch:"#ff8c3c",density:8000,heatConduct:1.9,viscosity:5,startMin:1150,
+ color:i=>[255,125+fr(i)*45,50+fr(i+7)*40],
+ rustRate:3,rustInto:"molten_oxidized_copper",   // 5x the rate of solid copper
+ reactions:[{with:"molten_gold",chance:.5,to:"molten_rose_gold",other:"molten_rose_gold"},{with:"oxygen",chance:.15,to:"molten_oxidized_copper",other:"air"},{with:"chlorine",chance:.4,to:"molten_oxidized_copper",other:"air",life:[1,1]},{with:"liquid_chlorine",chance:.4,to:"molten_oxidized_copper",other:"air",life:[1,1]},{with:"carbon_dioxide",chance:.01,to:"molten_oxidized_copper",other:"air"},{below:1000,chance:.1,rest:true,to:"copper"}]};
+ELEMENTS.molten_oxidized_copper={name:"Molten Oxidized Copper",electroConduct:0.05,category:"phase",movement:"liquid",swatch:"#0b4e2c",density:4600,heatConduct:.3,viscosity:5,startMin:1300,
+ color:i=>[6+fr(i)*14,62+fr(i+7)*34,34+fr(i+3)*22],reactions:[{below:1100,chance:.1,rest:true,to:"oxidized_copper",keepLife:true}]};
+ELEMENTS.molten_rose_gold={name:"Molten Rose Gold",electroConduct:0.8,category:"phase",movement:"liquid",swatch:"#ff9a44",density:14000,heatConduct:1.5,viscosity:5,startMin:1050,
+ color:i=>[255,140+fr(i)*38,60+fr(i+7)*35],reactions:[{below:900,chance:.1,rest:true,to:"rose_gold"}]};
 ELEMENTS.steel={name:"Steel",electroConduct:0.6,category:"solids",movement:"solid",color:[118,130,148],density:7850,heatConduct:.9,acidr:.25,
  reactions:[{above:1450,chance:.1,to:"molten_steel"}],rustRate:.6};
 ELEMENTS.molten_steel={name:"Molten Steel",electroConduct:0.6,category:"phase",movement:"liquid",swatch:"#ffb060",density:7000,heatConduct:.9,viscosity:5,startMin:1550,
  color:i=>[255,170+fr(i)*40,90+fr(i+7)*50],
- reactions:[{below:1400,chance:.1,rest:true,to:"steel"}],rustRate:1.2};
+ reactions:[{with:"oxygen",chance:.4,to:"slag",other:"air"},{below:1400,chance:.1,rest:true,to:"steel"}]};
 ELEMENTS.aluminium={name:"Aluminum",category:"solids",movement:"solid",color:[184,192,204],density:2700,heatConduct:1.6,electroConduct:.75,acidr:.3,
  reactions:[{above:660,chance:.1,to:"molten_aluminium"}]};
 ELEMENTS.purple_gold={name:"Purple Gold",category:"solids",movement:"solid",color:[184,132,188],density:7900,heatConduct:1.2,electroConduct:.5,
@@ -312,9 +343,9 @@ ELEMENTS.slag={name:"Slag",category:"solids",movement:"solid",color:[84,76,80],d
  reactions:[{above:1250,chance:.1,to:"molten_slag"}]};
 ELEMENTS.molten_aluminium={name:"Molten Aluminum",category:"phase",movement:"liquid",swatch:"#ffd6a0",density:2375,heatConduct:1.6,electroConduct:.75,viscosity:5,startMin:760,
  color:i=>[255,200+fr(i)*30,150+fr(i+7)*40],
- reactions:[{with:"molten_gold",chance:.5,to:"molten_purple_gold",other:"molten_purple_gold"},{with:"molten_rust",chance:.5,to:"molten_thermite",other:"molten_thermite"},{below:620,chance:.1,rest:true,to:"aluminium"}]};
-ELEMENTS.molten_purple_gold={name:"Molten Purple Gold",category:"phase",movement:"liquid",swatch:"#d58ae8",density:7000,heatConduct:1.2,electroConduct:.5,viscosity:5,startMin:1160,
- color:i=>[225,110+fr(i)*40,225+fr(i+7)*25],reactions:[{below:1000,chance:.1,rest:true,to:"purple_gold"}]};
+ reactions:[{with:"oxygen",chance:.6,to:"slag",other:"air"},{with:"molten_gold",chance:.5,to:"molten_purple_gold",other:"molten_purple_gold"},{with:"molten_rust",chance:.5,to:"molten_thermite",other:"molten_thermite"},{below:620,chance:.1,rest:true,to:"aluminium"}]};
+ELEMENTS.molten_purple_gold={name:"Molten Purple Gold",category:"phase",movement:"liquid",swatch:"#ffb24c",density:7000,heatConduct:1.2,electroConduct:.5,viscosity:5,startMin:1160,
+ color:i=>[255,160+fr(i)*40,75+fr(i+7)*40],reactions:[{with:"oxygen",chance:.063,to:"slag",other:"air"},{with:"oxygen",chance:.2529,to:"gold",other:"air"},{below:1000,chance:.1,rest:true,to:"purple_gold"}]};
 ELEMENTS.molten_slag={name:"Molten Slag",category:"phase",movement:"liquid",swatch:"#ff7a3a",density:2500,heatConduct:.12,viscosity:30,startMin:1350,
  color:i=>[255,90+fr(i)*50,30+fr(i+7)*30],reactions:[{below:1150,chance:.1,rest:true,to:"slag"}]};
 ELEMENTS.molten_ash={name:"Molten Ash",category:"phase",movement:"liquid",swatch:"#f08a3a",density:2000,heatConduct:.12,viscosity:20,startMin:1200,
@@ -482,6 +513,7 @@ function strike(i,o){
  const x=i%W,y0=(i/W)|0;let hy=H-1;
  for(let y=y0+1;y<H;y++)if(g[y*W+x]){hy=y;break;}
  for(let y=y0;y<hy;y++){const k=y*W+x;if(y===y0||!g[k]){become(k,"plasma");CH[k]=255;}}
+ if(g[i]===ID.lightning){become(i,"plasma");CH[i]=255;}   // bottom row: nothing below to replace the bolt, so it turns into plasma itself
  explode(hy*W+x,o);
  const R=o.radius+2;
  for(let dy=-R;dy<=R;dy++)for(let dx=-R;dx<=R;dx++){const xx=x+dx,yy=hy+dy;if(xx<0||xx>=W||yy<0||yy>=H)continue;const k=yy*W+xx;if(ECA[g[k]])CH[k]=255;}
@@ -541,7 +573,7 @@ function step(){
    const e=E[t];c.i=i;c.x=x;c.y=y;c.t=t;c.tp=temp[i];
    if(e.devour){for(const n of nbrs(i))if(g[n]&&!E[g[n]].devour)rm(n);}
    if(e.clone)cloneStep(i);
-   if(e.rustRate){let ba=null,bn=-1;for(const n of nbrs(i)){const a=E[g[n]];if(a.rusts&&(!ba||a.rusts>ba.rusts)){ba=a;bn=n;}}if(ba&&rnd()<ba.rusts*e.rustRate){setCell(i,ID.rust);if(ba.rustUses)rm(bn);}if(g[i]!==t)continue;}
+   if(e.rustRate){let ba=null,bn=-1;for(const n of nbrs(i)){const a=E[g[n]];if(a.rusts&&(!ba||a.rusts>ba.rusts)){ba=a;bn=n;}}if(ba&&rnd()<ba.rusts*e.rustRate){setCell(i,e.rustInto?ID[e.rustInto]:ID.rust);if(ba.rustUses)rm(bn);}if(g[i]!==t)continue;}
    if(e.strike){strike(i,e.strike);continue;}
    if(e.spark){for(const n of nbrs(i)){const m=g[n];if(m&&ECA[m]&&!E[m].spark){CH[n]=255;rm(i);break;}}if(!g[i])continue;}
    if(e.explosive&&(c.tp>e.explosive.at||nbrs(i).some(n=>g[n]===ID.fire||g[n]===ID.plasma))){explode(i,e.explosive);continue;}
@@ -604,7 +636,7 @@ function radiate(){
    if(!dx&&!dy)continue;
    const xx=x+dx,yy=y+dy;if(xx<0||xx>=W||yy<0||yy>=H)continue;
    const j=yy*W+xx;if(INS[g[j]])continue;
-   temp[j]+=r;
+   temp[j]=Math.max(-273,Math.min(9999,temp[j]+r));
   }
  }
 }
@@ -641,16 +673,14 @@ function draw(){
   const gx=hx-(clip.w>>1),gy=hy-(clip.h>>1);
   for(const c of clip.cells){const x=gx+c.dx,y=gy+c.dy;if(x<0||x>=W||y<0||y>=H)continue;if(g[y*W+x]&&!replaceOn)continue;ctx.fillStyle=E[c.t].swatch;ctx.fillRect(x,y,1,1);}
   ctx.globalAlpha=1;ctx.strokeStyle="rgba(255,255,255,.6)";ctx.lineWidth=.3;ctx.setLineDash([1,1]);ctx.strokeRect(gx+.1,gy+.1,clip.w-.2,clip.h-.2);ctx.restore();}
- if(shp&&hx>=0){ctx.save();
-  const sx=shp.sx+.5,sy=shp.sy+.5,ex=hx+.5,ey=hy+.5,rd=shape[0]==="r";
-  const path=()=>{ctx.beginPath();
-   if(shp.t===-6){ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);}
-   else if(shp.t===-7)ctx.rect(Math.min(sx,ex),Math.min(sy,ey),Math.abs(ex-sx),Math.abs(ey-sy));
-   else ctx.ellipse((sx+ex)/2,(sy+ey)/2,Math.max(.3,Math.abs(ex-sx)/2),Math.max(.3,Math.abs(ey-sy)/2),0,0,6.2832);};
-  ctx.fillStyle=ctx.strokeStyle="rgba(255,255,255,.32)";
-  if(shiftDown&&shp.t!==-6){path();ctx.fill();}
-  else{ctx.lineWidth=size;ctx.lineCap=rd?"round":"square";ctx.lineJoin=rd?"round":"miter";path();ctx.stroke();}
-  ctx.lineWidth=.4;ctx.lineCap="butt";ctx.setLineDash([1,1]);ctx.strokeStyle="rgba(255,255,255,.95)";path();ctx.stroke();ctx.restore();}
+ if(shp&&hx>=0){
+  // preview = exactly the cells that will be painted (cells already occupied are skipped unless Replace is on)
+  const fl=shiftDown&&shp.t!==-6,key=shp.t+","+shp.sx+","+shp.sy+","+hx+","+hy+","+size+","+shape+","+fl;
+  if(key!==shpKey){shpKey=key;shpList=shapeCells(shp.t,shp.sx,shp.sy,hx,hy,fl);}
+  const pid=lastEl>0?lastEl:ID.sand;
+  ctx.save();ctx.fillStyle="rgba(255,255,255,.55)";
+  for(const i of shpList)if(!g[i]||(replaceOn&&g[i]!==pid))ctx.fillRect(i%W,(i/W)|0,1,1);
+  ctx.restore();}
  if(hx>=0&&hx<W&&hy>=0&&hy<H&&(cur>-10||cur===-14)){ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=.4;{const o=-((size-1)>>1),x0=hx+o,y0=hy+o;
   if(shape.endsWith("Grid"))ctx.setLineDash([1,1]);
   if(shape[0]==="r"){const rr=Math.max(.3,size/2-.2);ctx.beginPath();ctx.ellipse(x0+size/2,y0+size/2,rr,rr,0,0,6.2832);ctx.stroke();}
@@ -728,8 +758,8 @@ function pasteAt(cx,cy){
 // Undo: a snapshot is taken every time you click the play area (and before Clear all)
 const UNDO=[];
 function updateUndoBtn(){const b=document.getElementById("undoBtn");if(b)b.disabled=UNDO.length===0;}
-function snapshot(){UNDO.push({g:g.slice(),v:v.slice(),life:life.slice(),temp:temp.slice()});if(UNDO.length>60)UNDO.shift();updateUndoBtn();}
-function undo(){const s=UNDO.pop();if(!s)return;g.set(s.g);v.set(s.v);life.set(s.life);temp.set(s.temp);held=[];shp=null;dragging=false;updateUndoBtn();}
+function snapshot(){UNDO.push({g:g.slice(),v:v.slice(),life:life.slice(),temp:temp.slice(),CH:CH.slice()});if(UNDO.length>60)UNDO.shift();updateUndoBtn();}
+function undo(){const s=UNDO.pop();if(!s)return;g.set(s.g);v.set(s.v);life.set(s.life);temp.set(s.temp);CH.set(s.CH);held=[];shp=null;dragging=false;updateUndoBtn();}
 function startDrag(cx,cy){
  held=[];const lo=-((size-1)>>1),hi=lo+size-1;
  for(let dy=lo;dy<=hi;dy++)for(let dx=lo;dx<=hi;dx++){
@@ -761,23 +791,28 @@ cv.addEventListener("pointermove",e=>{const[x,y]=pos(e);hx=x;hy=y;if(!down)retur
   if(dragging&&!erasing){dragStep(px-dpx,py-dpy);dpx=px;dpy=py;}else if(shp&&!erasing){}else stamp(px,py);}
  lx=x;ly=y;});
 // Line / Rectangle / Circle tools: drag a box, release to paint the last chosen element (the circle is an oval inscribed in the box; hold Shift to fill)
-function commitShape(fill){
- const id=lastEl>0?lastEl:ID.sand,t=shp.t,sx=shp.sx,sy=shp.sy,ex=lx,ey=ly,keep=cur;
- cur=id;
- const dot=(x,y)=>stamp(x,y,true);
- const line=(x0,y0,x1,y1)=>{const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0),1);for(let s=0;s<=n;s++)dot(Math.round(x0+(x1-x0)*s/n),Math.round(y0+(y1-y0)*s/n));};
- const fillAt=(x,y)=>{if(x>=0&&x<W&&y>=0&&y<H&&(!g[y*W+x]||(replaceOn&&g[y*W+x]!==id)))setCell(y*W+x,id);};
+const shpMask=new Uint8Array(N);let shpList=[],shpKey="";
+// The cells a Line / Rectangle / Circle will cover (brush included). The preview and the final paint both use this list, so what you see is what you get.
+function shapeCells(t,sx,sy,ex,ey,fill){
+ shpMask.fill(0);const lo=-((size-1)>>1),hi=lo+size-1;
+ const dot=(cx,cy)=>{for(let dy=lo;dy<=hi;dy++){const y=cy+dy;if(y<0||y>=H)continue;for(let dx=lo;dx<=hi;dx++){const x=cx+dx;if(x<0||x>=W||!inBrush(cx,cy,dx,dy))continue;shpMask[y*W+x]=1;}}};
+ const cell=(x,y)=>{if(x>=0&&x<W&&y>=0&&y<H)shpMask[y*W+x]=1;};
+ const line=(x0,y0,x1,y1)=>{const n=Math.max(Math.abs(x1-x0),Math.abs(y1-y0),1);for(let k=0;k<=n;k++)dot(Math.round(x0+(x1-x0)*k/n),Math.round(y0+(y1-y0)*k/n));};
  if(t===-6)line(sx,sy,ex,ey);
  else if(t===-7){
-  if(fill){for(let y=Math.min(sy,ey);y<=Math.max(sy,ey);y++)for(let x=Math.min(sx,ex);x<=Math.max(sx,ex);x++)fillAt(x,y);}
+  if(fill){for(let y=Math.min(sy,ey);y<=Math.max(sy,ey);y++)for(let x=Math.min(sx,ex);x<=Math.max(sx,ex);x++)cell(x,y);}
   else{line(sx,sy,ex,sy);line(ex,sy,ex,ey);line(ex,ey,sx,ey);line(sx,ey,sx,sy);}
  }else{
   // oval inscribed in the dragged box (like Rectangle); drag a square box for a circle
   const cx=(sx+ex)/2,cy=(sy+ey)/2,rx=Math.max(.5,Math.abs(ex-sx)/2),ry=Math.max(.5,Math.abs(ey-sy)/2);
-  if(fill){for(let y=Math.min(sy,ey);y<=Math.max(sy,ey);y++)for(let x=Math.min(sx,ex);x<=Math.max(sx,ex);x++)if(((x-cx)/rx)**2+((y-cy)/ry)**2<=1.0001)fillAt(x,y);}
-  else{const n=Math.max(8,Math.ceil(Math.max(rx,ry)*9.5));for(let a=0;a<=n;a++){const th=a/n*6.2832;dot(Math.round(cx+rx*Math.cos(th)),Math.round(cy+ry*Math.sin(th)));}}
+  if(fill){for(let y=Math.min(sy,ey);y<=Math.max(sy,ey);y++)for(let x=Math.min(sx,ex);x<=Math.max(sx,ex);x++)if(((x-cx)/rx)**2+((y-cy)/ry)**2<=1.0001)cell(x,y);}
+  else{const n=Math.max(8,Math.ceil(Math.max(rx,ry)*9.5));for(let k=0;k<=n;k++){const th=k/n*6.2832;dot(Math.round(cx+rx*Math.cos(th)),Math.round(cy+ry*Math.sin(th)));}}
  }
- cur=keep;
+ const out=[];for(let i=0;i<N;i++)if(shpMask[i])out.push(i);return out;
+}
+function commitShape(fill){
+ const id=lastEl>0?lastEl:ID.sand,cells=shapeCells(shp.t,shp.sx,shp.sy,lx,ly,fill);
+ for(const i of cells)if(!g[i]||(replaceOn&&g[i]!==id))setCell(i,id);
 }
 const up=e=>{if(e&&e.shiftKey!==undefined)shiftDown=!!e.shiftKey;if(shp&&!erasing)commitShape(shiftDown);if(selecting&&selRect&&selRect.x0===selRect.x1&&selRect.y0===selRect.y1)selRect=null;
 shp=null;selecting=false;picking=false;down=false;erasing=false;dragging=false;held=[];};
@@ -789,25 +824,25 @@ cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);cv.a
  Mods can add a language (or an easter egg): Sand.addLanguage("lol",{label:"LOLcat",ui:{pause:"WAIT"},names:{sand:"DESERT DUST"}}) */
 const LANGS={
  "en-US":{label:"English (US)",names:{},ui:{
-  brushSize:"Brush size",pause:"Pause",resume:"Resume",undo:"Undo",clearAll:"Clear all",settings:"Settings",changelog:"Changelog",close:"Close",cancel:"Cancel",
+  brushSize:"Brush size",pause:"Pause",resume:"Resume",undo:"Undo",clearAll:"Clear all",settings:"Settings",changelog:"Changelog",feedback:"Feedback",feedbackBlocked:"Could not open the form - link copied",modsMissing:"Some elements in this world are missing (from mods that are not installed or are turned off)",mods:"Add mods",modsTitle:"Mods",modsIntro:"Mods add new elements and reactions. Choose a .json file, drop it onto the game, or paste it below. A mod is just data, it cannot run any code.",modsAdd:"Add a mod",modChoose:"Choose file...",modTemplate:"Download template",modPaste:"Or paste the mod JSON here",modInstall:"Install pasted mod",modsInstalled:"Installed mods",modsNone:"No mods installed yet",modOn:"On",modOff:"Off",modExport:"Export",modRemove:"Remove",modSure:"Click again to remove",modOk:"Installed",modErrors:"Could not install this mod:",modFormat:"Mod format (for creators)",modElements:"elements",modReactions:"added reactions",modFull:"Too many elements: the game supports 255 in total",modEmpty:"Choose a file or paste a mod first",modTooBig:"This file is too big (300 KB max)",modBadJson:"This is not valid JSON",modNotMod:"This is not a mod: it needs a \"mod\" name",modLoadFail:"Could not load this mod",modUpdated:"Updated",modWorld:"This is a saved world, use the Load button for it",modLib:"Library",modMine:"My mods",modAll:"All",modNew:"New",modHot:"Popular",modWarn:"Warning",modOld:"Outdated",modWarnText:"May break the game or cause problems.",modOldText:"Made for an older version, it may not work.",modGet:"Install",modGot:"Installed",modUpd:"Update",modAnyway:"Install anyway?",modLibEmpty:"No mods here yet",modLibIntro:"Mods picked by the author of the game. Press Install to add one. You can turn it off or remove it any time in My mods.",modSubmit:"Send your mod to the author",modAdded:"Added",libLoading:"Loading...",libDownloading:"Downloading",libFetchFail:"Could not download this mod",close:"Close",cancel:"Cancel",
   tempUnit:"Temperature unit",room:"Room temperature",brushShape:"Brush shape",
   "shape.square":"Square","shape.round":"Round","shape.squareGrid":"Square grid","shape.roundGrid":"Round grid",
   confirmClear:"Confirm before Clear all",on:"On",off:"Off",language:"Language",
   shortcuts:"Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, C screenshot, + / - brush size. Right-click an element to pin it.",
   sure:"Are you sure you want to clear everything?",sureSub:"You can undo this afterwards. Press Enter to confirm or Esc to cancel.",
   burning:"Burning",
-  "cat.powders":"Powders","cat.solids":"Solids","cat.liquids":"Liquids","cat.gases":"Gases","cat.food":"Food","cat.phase":"Phase","cat.specials":"Specials","cat.tools":"Tools",
+  "cat.powders":"Powders","cat.solids":"Solids","cat.liquids":"Liquids","cat.gases":"Gases","cat.food":"Food","cat.phase":"Phase","cat.specials":"Specials","cat.tools":"Tools","cat.mods":"Mods",
   "tool.heat":"Heat","tool.cool":"Cool","tool.mix":"Mix","tool.drag":"Drag","tool.line":"Line","tool.rectangle":"Rectangle","tool.circle":"Circle","tool.picker":"Picker","tool.eraser":"Eraser","tool.select":"Select","tool.copy":"Copy","tool.cut":"Cut","tool.paste":"Paste","tool.shock":"Shock",replace:"Replace",save:"Save",load:"Load",showFps:"Show FPS",worldFile:"World file",exportWorld:"Export",importWorld:"Import",saved:"World saved",loaded:"World loaded",noSave:"No saved world yet",loadFail:"Could not load that world",saveFail:"Could not save",noDownload:"Saving files is not available here",exported:"World file saved",fpsLimit:"FPS limit",unlimited:"Unlimited","cat.search":"Search","cat.life":"Life",shot:"Screenshot saved",pinned:"Pinned",unpinned:"Unpinned",pinHint:"Right-click to pin",searchPh:"Search elements…",recent:"Recent",noRecent:"Elements you use will show up here",noResults:"No elements found"}},
  "en-GB":{label:"English (UK)",ui:{},names:{dirt:"Soil",candy:"Boiled Sweet",aluminium:"Aluminium",molten_aluminium:"Molten Aluminium"}},
  es:{label:"Español",ui:{
-  brushSize:"Tamaño del pincel",pause:"Pausa",resume:"Reanudar",undo:"Deshacer",clearAll:"Borrar todo",settings:"Ajustes",changelog:"Cambios",close:"Cerrar",cancel:"Cancelar",
+  brushSize:"Tamaño del pincel",pause:"Pausa",resume:"Reanudar",undo:"Deshacer",clearAll:"Borrar todo",settings:"Ajustes",changelog:"Cambios",feedback:"Comentarios",feedbackBlocked:"No se pudo abrir - enlace copiado",modsMissing:"Faltan algunos elementos de este mundo (de mods no instalados o desactivados)",mods:"Añadir mods",modsTitle:"Mods",modsIntro:"Los mods añaden elementos y reacciones nuevos. Elige un archivo .json, suéltalo sobre el juego o pégalo abajo. Un mod son solo datos, no puede ejecutar código.",modsAdd:"Añadir un mod",modChoose:"Elegir archivo...",modTemplate:"Descargar plantilla",modPaste:"O pega aquí el JSON del mod",modInstall:"Instalar mod pegado",modsInstalled:"Mods instalados",modsNone:"Aún no hay mods instalados",modOn:"Activado",modOff:"Desactivado",modExport:"Exportar",modRemove:"Quitar",modSure:"Pulsa otra vez para quitar",modOk:"Instalado",modErrors:"No se pudo instalar este mod:",modFormat:"Formato de mod (para creadores)",modElements:"elementos",modReactions:"reacciones añadidas",modFull:"Demasiados elementos: el juego admite 255 en total",modEmpty:"Elige un archivo o pega un mod primero",modTooBig:"Este archivo es demasiado grande (máx. 300 KB)",modBadJson:"Esto no es JSON válido",modNotMod:"Esto no es un mod: necesita un nombre \"mod\"",modLoadFail:"No se pudo cargar este mod",modUpdated:"Actualizado",modWorld:"Esto es un mundo guardado, usa el botón Cargar",modLib:"Biblioteca",modMine:"Mis mods",modAll:"Todos",modNew:"Nuevo",modHot:"Popular",modWarn:"Aviso",modOld:"Obsoleto",modWarnText:"Puede romper el juego o dar problemas.",modOldText:"Hecho para una versión antigua, puede no funcionar.",modGet:"Instalar",modGot:"Instalado",modUpd:"Actualizar",modAnyway:"¿Instalar igualmente?",modLibEmpty:"Aún no hay mods aquí",modLibIntro:"Mods elegidos por el autor del juego. Pulsa Instalar para añadir uno. Puedes desactivarlo o quitarlo cuando quieras en Mis mods.",modSubmit:"Envía tu mod al autor",modAdded:"Añadido",libLoading:"Cargando...",libDownloading:"Descargando",libFetchFail:"No se pudo descargar este mod",close:"Cerrar",cancel:"Cancelar",
   tempUnit:"Unidad de temperatura",room:"Temperatura ambiente",brushShape:"Forma del pincel",
   "shape.square":"Cuadrado","shape.round":"Redondo","shape.squareGrid":"Cuadrado con rejilla","shape.roundGrid":"Redondo con rejilla",
   confirmClear:"Confirmar antes de borrar todo",on:"Sí",off:"No",language:"Idioma",
   shortcuts:"Atajos: P pausa, R borrar, S ajustes, Z o Ctrl+Z deshacer, C captura, + / - tamaño del pincel. Clic derecho en un elemento para fijarlo.",
   sure:"¿Seguro que quieres borrar todo?",sureSub:"Después podrás deshacerlo. Pulsa Intro para confirmar o Esc para cancelar.",
   burning:"Ardiendo",
-  "cat.powders":"Polvos","cat.solids":"Sólidos","cat.liquids":"Líquidos","cat.gases":"Gases","cat.food":"Comida","cat.phase":"Fases","cat.specials":"Especiales","cat.tools":"Herramientas",
+  "cat.powders":"Polvos","cat.solids":"Sólidos","cat.liquids":"Líquidos","cat.gases":"Gases","cat.food":"Comida","cat.phase":"Fases","cat.specials":"Especiales","cat.tools":"Herramientas","cat.mods":"Mods",
   "tool.heat":"Calentar","tool.cool":"Enfriar","tool.mix":"Mezclar","tool.drag":"Arrastrar","tool.line":"Línea","tool.rectangle":"Rectángulo","tool.circle":"Círculo","tool.picker":"Cuentagotas","tool.eraser":"Borrador","tool.select":"Seleccionar","tool.copy":"Copiar","tool.cut":"Cortar","tool.paste":"Pegar","tool.shock":"Descarga",replace:"Reemplazar",save:"Guardar",load:"Cargar",showFps:"Mostrar FPS",worldFile:"Archivo del mundo",exportWorld:"Exportar",importWorld:"Importar",saved:"Mundo guardado en este navegador",loaded:"Mundo cargado",noSave:"Todavía no hay un mundo guardado",loadFail:"No se pudo cargar ese mundo",saveFail:"No se pudo guardar",noDownload:"Aquí no se pueden guardar archivos",exported:"Archivo del mundo guardado",fpsLimit:"Límite de FPS",unlimited:"Sin límite","cat.search":"Buscar","cat.life":"Vida",shot:"Captura guardada",pinned:"Fijado",unpinned:"Desfijado",pinHint:"Clic derecho para fijar",searchPh:"Buscar elementos…",recent:"Recientes",noRecent:"Los elementos que uses aparecerán aquí",noResults:"No se encontró ningún elemento"},
   names:{air:"Aire",sand:"Arena",wetsand:"Arena húmeda",dirt:"Tierra",stone:"Piedra",wood:"Madera",ice:"Hielo",glass:"Vidrio",water:"Agua",oil:"Aceite",acid:"Ácido",mud:"Barro",
    molten:"Vidrio fundido",magma:"Magma",fire:"Fuego",plasma:"Plasma",smoke:"Humo",steam:"Vapor",ash:"Ceniza",saltwater:"Agua salada",sugarwater:"Agua azucarada",
@@ -815,17 +850,17 @@ const LANGS={
    iron:"Hierro",silver:"Plata",molten_iron:"Hierro fundido",molten_silver:"Plata fundida",rust:"Óxido",hydrogen:"Hidrógeno",oxygen:"Oxígeno",
    liquid_oxygen:"Oxígeno líquido",oxygen_ice:"Hielo de oxígeno",liquid_hydrogen:"Hidrógeno líquido",hydrogen_ice:"Hielo de hidrógeno",nitrogen:"Nitrógeno",ammonia:"Amoníaco",
    liquid_nitrogen:"Nitrógeno líquido",nitrogen_ice:"Hielo de nitrógeno",liquid_ammonia:"Amoníaco líquido",ammonia_ice:"Hielo de amoníaco",gold:"Oro",electrum:"Electro",
-   molten_gold:"Oro fundido",molten_electrum:"Electro fundido",steel:"Acero",molten_steel:"Acero fundido",carbon_dioxide:"Dióxido de carbono",dry_ice:"Hielo seco",
+   molten_gold:"Oro fundido",molten_electrum:"Electro fundido",copper:"Cobre",oxidized_copper:"Cobre oxidado",rose_gold:"Oro rosa",molten_copper:"Cobre fundido",molten_oxidized_copper:"Cobre oxidado fundido",molten_rose_gold:"Oro rosa fundido",steel:"Acero",molten_steel:"Acero fundido",carbon_dioxide:"Dióxido de carbono",dry_ice:"Hielo seco",
    heater:"Calentador",cooler:"Enfriador",void:"Vacío",tnt:"TNT",wire:"Cable",battery:"Batería",aluminium:"Aluminio",molten_aluminium:"Aluminio fundido",purple_gold:"Oro púrpura",molten_purple_gold:"Oro púrpura fundido",thermite:"Termita",cloner:"Clonador",electric:"Electricidad",lightning:"Rayo",salt_ice:"Hielo salado",sugar_ice:"Hielo azucarado",molten_dirt:"Tierra fundida",molten_ash:"Ceniza fundida",slag:"Escoria",molten_slag:"Escoria fundida",acid_gas:"Gas ácido",molten_rust:"Óxido fundido",molten_salt:"Sal fundida",molten_thermite:"Termita fundida",chlorine:"Cloro",liquid_chlorine:"Cloro líquido",chlorine_ice:"Hielo de cloro",pool_water:"Agua de piscina",bleach:"Lejía",poison_gas:"Gas venenoso",poison:"Veneno",carbonated_water:"Agua con gas",rotten_meat:"Carne podrida",dirty_ice:"Hielo sucio",carbonated_ice:"Hielo con gas",pool_ice:"Hielo de piscina",cloud:"Nube",obsidian:"Obsidiana",basalt:"Basalto",sapling:"Brote",root:"Raíz",leaf:"Hoja"}},
  zh:{label:"中文",ui:{
-  brushSize:"笔刷大小",pause:"暂停",resume:"继续",undo:"撤销",clearAll:"清空全部",settings:"设置",changelog:"更新日志",close:"关闭",cancel:"取消",
+  brushSize:"笔刷大小",pause:"暂停",resume:"继续",undo:"撤销",clearAll:"清空全部",settings:"设置",changelog:"更新日志",feedback:"反馈",feedbackBlocked:"无法打开表单，链接已复制",modsMissing:"这个世界里有些元素缺失（来自未安装或已关闭的模组）",mods:"添加模组",modsTitle:"模组",modsIntro:"模组可以添加新元素和新反应。选择 .json 文件、把它拖到游戏上，或粘贴到下方。模组只是数据，不能运行任何代码。",modsAdd:"添加模组",modChoose:"选择文件...",modTemplate:"下载模板",modPaste:"或在此粘贴模组 JSON",modInstall:"安装粘贴的模组",modsInstalled:"已安装的模组",modsNone:"尚未安装模组",modOn:"开",modOff:"关",modExport:"导出",modRemove:"移除",modSure:"再点一次确认移除",modOk:"已安装",modErrors:"无法安装此模组：",modFormat:"模组格式（给创作者）",modElements:"个元素",modReactions:"条新增反应",modFull:"元素太多：游戏最多支持 255 个",modEmpty:"请先选择文件或粘贴模组",modTooBig:"文件太大（最大 300 KB）",modBadJson:"这不是有效的 JSON",modNotMod:"这不是模组：需要一个 \"mod\" 名称",modLoadFail:"无法加载此模组",modUpdated:"已更新",modWorld:"这是存档世界，请使用“加载”按钮",modLib:"模组库",modMine:"我的模组",modAll:"全部",modNew:"新",modHot:"热门",modWarn:"警告",modOld:"已过时",modWarnText:"可能会破坏游戏或造成问题。",modOldText:"为旧版本制作，可能无法使用。",modGet:"安装",modGot:"已安装",modUpd:"更新",modAnyway:"仍要安装？",modLibEmpty:"这里还没有模组",modLibIntro:"由游戏作者挑选的模组。点击“安装”添加，随时可以在“我的模组”里关闭或移除。",modSubmit:"把你的模组发给作者",modAdded:"添加于",libLoading:"加载中...",libDownloading:"下载中",libFetchFail:"无法下载此模组",close:"关闭",cancel:"取消",
   tempUnit:"温度单位",room:"室温",brushShape:"笔刷形状",
   "shape.square":"方形","shape.round":"圆形","shape.squareGrid":"方形网格","shape.roundGrid":"圆形网格",
   confirmClear:"清空前确认",on:"开",off:"关",language:"语言",
   shortcuts:"快捷键：P 暂停，R 清空，S 设置，Z 或 Ctrl+Z 撤销，C 截图，+ / - 笔刷大小。右键点击元素可置顶。",
   sure:"确定要清空所有内容吗？",sureSub:"之后可以撤销。按 Enter 确认，按 Esc 取消。",
   burning:"燃烧中",
-  "cat.powders":"粉末","cat.solids":"固体","cat.liquids":"液体","cat.gases":"气体","cat.food":"食物","cat.phase":"相变","cat.specials":"特殊","cat.tools":"工具",
+  "cat.powders":"粉末","cat.solids":"固体","cat.liquids":"液体","cat.gases":"气体","cat.food":"食物","cat.phase":"相变","cat.specials":"特殊","cat.tools":"工具","cat.mods":"模组",
   "tool.heat":"加热","tool.cool":"降温","tool.mix":"搅拌","tool.drag":"拖动","tool.line":"直线","tool.rectangle":"矩形","tool.circle":"圆形","tool.picker":"取色","tool.eraser":"橡皮擦","tool.select":"选择","tool.copy":"复制","tool.cut":"剪切","tool.paste":"粘贴","tool.shock":"电击",replace:"替换",save:"保存",load:"加载",showFps:"显示帧率",worldFile:"世界文件",exportWorld:"导出",importWorld:"导入",saved:"世界已保存在此浏览器中",loaded:"世界已加载",noSave:"还没有保存的世界",loadFail:"无法加载该世界",saveFail:"无法保存",noDownload:"此处无法保存文件",exported:"世界文件已保存",fpsLimit:"帧率上限",unlimited:"不限制","cat.search":"搜索","cat.life":"生命",shot:"截图已保存",pinned:"已置顶",unpinned:"已取消置顶",pinHint:"右键置顶",searchPh:"搜索元素…",recent:"最近使用",noRecent:"你用过的元素会显示在这里",noResults:"没有找到元素"},
   names:{air:"空气",sand:"沙子",wetsand:"湿沙",dirt:"泥土",stone:"石头",wood:"木头",ice:"冰",glass:"玻璃",water:"水",oil:"油",acid:"酸",mud:"泥浆",
    molten:"熔融玻璃",magma:"岩浆",fire:"火",plasma:"等离子体",smoke:"烟",steam:"水蒸气",ash:"灰",saltwater:"盐水",sugarwater:"糖水",
@@ -833,7 +868,7 @@ const LANGS={
    iron:"铁",silver:"银",molten_iron:"熔融铁",molten_silver:"熔融银",rust:"铁锈",hydrogen:"氢气",oxygen:"氧气",
    liquid_oxygen:"液氧",oxygen_ice:"固态氧",liquid_hydrogen:"液氢",hydrogen_ice:"固态氢",nitrogen:"氮气",ammonia:"氨气",
    liquid_nitrogen:"液氮",nitrogen_ice:"固态氮",liquid_ammonia:"液氨",ammonia_ice:"固态氨",gold:"金",electrum:"琥珀金",
-   molten_gold:"熔融金",molten_electrum:"熔融琥珀金",steel:"钢",molten_steel:"熔融钢",carbon_dioxide:"二氧化碳",dry_ice:"干冰",
+   molten_gold:"熔融金",molten_electrum:"熔融琥珀金",copper:"铜",oxidized_copper:"氧化铜",rose_gold:"玫瑰金",molten_copper:"熔融铜",molten_oxidized_copper:"熔融氧化铜",molten_rose_gold:"熔融玫瑰金",steel:"钢",molten_steel:"熔融钢",carbon_dioxide:"二氧化碳",dry_ice:"干冰",
    heater:"加热器",cooler:"冷却器",void:"虚空",tnt:"TNT",wire:"电线",battery:"电池",aluminium:"铝",molten_aluminium:"熔融铝",purple_gold:"紫金",molten_purple_gold:"熔融紫金",thermite:"铝热剂",cloner:"克隆器",electric:"电",lightning:"闪电",salt_ice:"盐冰",sugar_ice:"糖冰",molten_dirt:"熔融泥土",molten_ash:"熔融灰",slag:"矿渣",molten_slag:"熔融矿渣",acid_gas:"酸气",molten_rust:"熔融铁锈",molten_salt:"熔融盐",molten_thermite:"熔融铝热剂",chlorine:"氯气",liquid_chlorine:"液氯",chlorine_ice:"固态氯",pool_water:"泳池水",bleach:"漂白剂",poison_gas:"毒气",poison:"毒液",carbonated_water:"苏打水",rotten_meat:"腐肉",dirty_ice:"脏冰",carbonated_ice:"苏打冰",pool_ice:"泳池冰",cloud:"云",obsidian:"黑曜石",basalt:"玄武岩",sapling:"树苗",root:"根",leaf:"树叶"}}
 };
 let lang="en-US";
@@ -846,10 +881,10 @@ const catLabel=k=>{const s=T("cat."+k);return s!=="cat."+k?s:k[0].toUpperCase()+
 
 /* ===== Toolbar (built from the registry) ===== */
 const TOOLS=[{id:-2,key:"heat",name:"Heat",sw:"#e8412c"},{id:-3,key:"cool",name:"Cool",sw:"#7fd3ff"},{id:-4,key:"mix",name:"Mix",sw:"#b07cff"},{id:-5,key:"drag",name:"Drag",sw:"#f2b84b"},{id:-14,key:"shock",name:"Shock",sw:"#ffe14a"},{id:-9,key:"picker",name:"Picker",sw:"#f4f4f0"},{id:-6,key:"line",name:"Line",sw:"#9ad17a"},{id:-7,key:"rectangle",name:"Rectangle",sw:"#7ab8d1"},{id:-8,key:"circle",name:"Circle",sw:"#d17ab8"},{id:-10,key:"select",name:"Select",sw:"#8ab4f8"},{id:-11,key:"copy",name:"Copy",sw:"#a5d6a7"},{id:-12,key:"cut",name:"Cut",sw:"#ef9a9a"},{id:-13,key:"paste",name:"Paste",sw:"#ce93d8"},{id:-1,key:"eraser",name:"Eraser",sw:"#12161c"}];
-const CATORDER=["powders","solids","liquids","gases","life","food","phase","specials"];
+const CATORDER=["powders","solids","liquids","gases","life","food","phase","specials","mods"];
 function getCats(){
  const o={};
- for(let id=1;id<E.length;id++){const e=E[id];(o[e.category]=o[e.category]||[]).push({id,name:e.name,sw:e.swatch});}
+ for(let id=1;id<E.length;id++){const e=E[id];if(!e.category)continue;(o[e.category]=o[e.category]||[]).push({id,name:e.name,sw:e.swatch});}
  const keys=CATORDER.filter(k=>o[k]).concat(Object.keys(o).filter(k=>!CATORDER.includes(k)));
  return keys.map(k=>({key:k,items:o[k]})).concat([{key:"tools",items:TOOLS}]);
 }
@@ -920,16 +955,521 @@ function sel(id){
 // pick an element: jump to its tab, select it and restore the brush size
 function selectEl(id){const ci=catList.findIndex(c=>c.items.some(it=>it.id===id));if(ci>=0)catIdx=ci;searchMode=false;searchInput.value="";renderCats();renderTools();sel(id);}
 function buildUI(){catList=getCats();if(catIdx>=catList.length)catIdx=0;renderCats();renderTools();}
+/* ===== Mods =====
+   A mod is a plain .json file. It is data only (it can never run code) and can
+   - add new elements, and
+   - add reactions to elements that already exist ("patches").
+   Everything is checked against a whitelist before it touches the game. */
+const MOD_KEY="elementarium.mods.v1",MOD_MAX={text:300000,elements:100,reactions:24,patches:40,errors:12};
+const MOD_MOVES=["solid","powder","liquid","gas","clump"];
+const MOD_NUM={density:[.001,30000],heatConduct:[0,3],electroConduct:[0,1],acidr:[0,3],viscosity:[0,300],rise:[0,1],side:[0,1],sink:[0,1],spray:[0,1],startMin:[-273,9999],startMax:[-273,9999],radiate:[-5,5],rustRate:[0,5],rusts:[0,1]};
+const MOD_BOOL=["flammable","insulator","unbreakable","rustUses"];
+let MODS=[];   // {id,name,version,author,description,enabled,text,keys,patches,error}
+const modNum=(x,lo,hi)=>typeof x==="number"&&isFinite(x)&&x>=lo&&x<=hi;
+const modInt=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi;
+const modCol=a=>Array.isArray(a)&&a.length===3&&a.every(c=>modInt(c,0,255));
+const modStr=(s,n)=>typeof s==="string"&&s.trim().length>0&&s.length<=n;
+const modObj=o=>o&&typeof o==="object"&&!Array.isArray(o);
+const modSlug=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,40)||"mod";
+const modName=id=>{const m=MODS.find(x=>x.id===id);return m?m.name:id;};
+
+function modColor(c){
+ if(modCol(c))return{color:c.slice()};
+ if(modObj(c)&&modCol(c.from)&&modCol(c.to)){
+  const a=c.from.slice(),b=c.to.slice(),an=c.animated===true;
+  return{color:i=>{const t=an?fr(i):v[i]/24;return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];},
+         swatch:"rgb("+a.map((x,k)=>Math.round((x+b[k])/2)).join(",")+")"};
+ }
+ return null;
+}
+function modReaction(r,p,ok,err){
+ if(!modObj(r)){err.push(p+": must be an object");return null;}
+ const o={},bad=(f,m)=>err.push(p+"."+f+": "+m);
+ for(const f of Object.keys(r)){
+  const x=r[f];if(f[0]==="_")continue;
+  switch(f){
+   case"with":case"to":case"emit":if(ok(x))o[f]=x;else bad(f,'unknown element "'+x+'"');break;
+   case"other":if(x==="air"||ok(x))o.other=x;else bad(f,'unknown element "'+x+'"');break;
+   case"chance":if(modNum(x,0,1))o.chance=x;else bad(f,"number from 0 to 1");break;
+   case"above":case"below":case"setT":case"capT":case"warm":if(modNum(x,-273,9999))o[f]=x;else bad(f,"temperature from -273 to 9999");break;
+   case"heat":if(modNum(x,-5000,5000))o.heat=x;else bad(f,"number from -5000 to 5000");break;
+   case"lifeBelow":if(modInt(x,0,255))o.lifeBelow=x;else bad(f,"whole number 0 to 255");break;
+   case"top":if(modInt(x,0,101))o.top=x;else bad(f,"whole number 0 to 101");break;
+   case"life":if(Array.isArray(x)&&x.length===2&&modInt(x[0],0,255)&&modInt(x[1],0,255)&&x[0]<=x[1])o.life=x.slice();else bad(f,"[min,max] whole numbers 0 to 255");break;
+   case"rest":case"keepLife":if(typeof x==="boolean")o[f]=x;else bad(f,"true or false");break;
+   default:bad(f,"unknown field");
+  }
+ }
+ if(o.to===undefined&&o.other===undefined&&o.heat===undefined&&o.warm===undefined)err.push(p+": does nothing (add to, other, heat or warm)");
+ return o;
+}
+function modReactions(list,p,ok,err){
+ if(!Array.isArray(list)){err.push(p+": must be a list");return[];}
+ if(list.length>MOD_MAX.reactions)err.push(p+": too many reactions (max "+MOD_MAX.reactions+")");
+ return list.slice(0,MOD_MAX.reactions).map((r,i)=>modReaction(r,p+"["+i+"]",ok,err)).filter(Boolean);
+}
+function modElement(r,p,ok,err){
+ if(!modObj(r)){err.push(p+": must be an object");return null;}
+ const o={},bad=(f,m)=>err.push(p+"."+f+": "+m);
+ for(const f of Object.keys(r)){
+  const x=r[f];if(f[0]==="_")continue;
+  if(MOD_NUM[f]){const[lo,hi]=MOD_NUM[f];if(modNum(x,lo,hi))o[f]=x;else bad(f,"number from "+lo+" to "+hi);continue;}
+  if(MOD_BOOL.includes(f)){if(typeof x==="boolean")o[f]=x;else bad(f,"true or false");continue;}
+  switch(f){
+   case"key":if(typeof x==="string"&&/^[a-z][a-z0-9_]{1,31}$/.test(x))o.key=x;else bad(f,"2-32 lowercase letters, digits or _ (start with a letter)");break;
+   case"name":if(modStr(x,32))o.name=x.trim();else bad(f,"text, 1-32 characters");break;
+   case"lang":if(modObj(x)&&Object.keys(x).every(k=>/^[A-Za-z-]{2,8}$/.test(k)&&modStr(x[k],32)))o.lang=Object.assign({},x);else bad(f,'object like {"es":"Nombre"}');break;
+   case"category":if(CATORDER.includes(x))o.category=x;else bad(f,"one of "+CATORDER.join(", "));break;
+   case"movement":if(MOD_MOVES.includes(x))o.movement=x;else bad(f,"one of "+MOD_MOVES.join(", "));break;
+   case"color":{const c=modColor(x);if(c){o.color=c.color;if(c.swatch)o.swatch=c.swatch;}else bad(f,'[r,g,b] (0-255) or {"from":[r,g,b],"to":[r,g,b],"animated":true}');break;}
+   case"swatch":if(typeof x==="string"&&/^#[0-9a-fA-F]{6}$/.test(x))o.swatchForce=x;else bad(f,'"#rrggbb"');break;
+   case"lifetime":if(Array.isArray(x)&&x.length===2&&modInt(x[0],1,255)&&modInt(x[1],1,255)&&x[0]<=x[1])o.lifetime=x.slice();else bad(f,"[min,max] whole numbers 1 to 255");break;
+   case"corrosive":case"rustInto":if(ok(x))o[f]=x;else bad(f,'unknown element "'+x+'"');break;
+   case"decay":
+    if(x===true)o.decay=true;
+    else if(modObj(x)){const d={};let good=true;
+     for(const q of Object.keys(x)){
+      if(q==="below"&&modNum(x[q],-273,9999))d.below=x[q];
+      else if(q==="into"&&ok(x[q]))d.into=x[q];
+      else if(q==="chance"&&modNum(x[q],0,1))d.chance=x[q];
+      else{bad("decay."+q,"not allowed here");good=false;}
+     }
+     if(good)o.decay=d;}
+    else bad(f,'true or {"below":T,"into":"key","chance":0-1}');
+    break;
+   case"burn":
+    if(modObj(x)){const b={};let good=true;
+     for(const q of Object.keys(x)){
+      if(["at"].includes(q)&&modNum(x[q],-273,9999))b[q]=x[q];
+      else if(["chance","spread","water","flames"].includes(q)&&modNum(x[q],0,1))b[q]=x[q];
+      else if(q==="heat"&&modNum(x[q],0,5000))b[q]=x[q];
+      else if(q==="speed"&&modNum(x[q],0,5))b[q]=x[q];
+      else if((q==="into"||q==="emit")&&ok(x[q]))b[q]=x[q];
+      else{bad("burn."+q,"not allowed here");good=false;}
+     }
+     if(good)o.burn=b;}
+    else bad(f,"object, e.g. {\"at\":280,\"chance\":0.02,\"into\":\"ash\"}");
+    break;
+   case"explosive":
+    if(modObj(x)){const b={at:200,radius:6,heat:1000};let good=true;
+     for(const q of Object.keys(x)){
+      if(q==="at"&&modNum(x[q],-273,9999))b.at=x[q];
+      else if(q==="radius"&&modNum(x[q],1,20))b.radius=x[q];
+      else if(q==="heat"&&modNum(x[q],0,5000))b.heat=x[q];
+      else{bad("explosive."+q,"not allowed here");good=false;}
+     }
+     if(good)o.explosive=b;}
+    else bad(f,'object like {"at":200,"radius":8,"heat":1200}');
+    break;
+   case"reactions":o.reactions=modReactions(x,p+".reactions",ok,err);break;
+   default:bad(f,"unknown field");
+  }
+ }
+ if(o.swatchForce){o.swatch=o.swatchForce;delete o.swatchForce;}
+ if(!o.category)o.category="mods";
+ return o;
+}
+// Reads and checks a mod. Returns {errors:[...]} or {errors:[],mod:{...}}.
+function parseMod(text){
+ const err=[];let d;
+ if(typeof text!=="string"||!text.trim())return{errors:[T("modEmpty")]};
+ if(text.length>MOD_MAX.text)return{errors:[T("modTooBig")]};
+ try{d=JSON.parse(text);}catch(e){return{errors:[T("modBadJson")+": "+e.message]};}
+ if(modObj(d)&&d.game==="elementarium")return{errors:[T("modWorld")]};
+ if(!modObj(d)||!modStr(d.mod,40))return{errors:[T("modNotMod")]};
+ const id=modSlug(d.mod),els=d.elements===undefined?[]:d.elements,pts=d.patches===undefined?[]:d.patches;
+ if(!Array.isArray(els))err.push('"elements" must be a list');
+ if(!Array.isArray(pts))err.push('"patches" must be a list');
+ if(err.length)return{errors:err};
+ const own=new Set();
+ els.forEach(r=>{if(modObj(r)&&typeof r.key==="string")own.add(r.key);});
+ const ok=k=>typeof k==="string"&&(own.has(k)||ID[k]!==undefined);
+ const elements=[],seen=new Set();
+ if(els.length>MOD_MAX.elements)err.push("too many elements in this mod (max "+MOD_MAX.elements+")");
+ els.slice(0,MOD_MAX.elements).forEach((r,i)=>{
+  const p="elements["+i+"]",o=modElement(r,p,ok,err);if(!o)return;
+  if(!o.key)err.push(p+': missing "key"');
+  if(!o.name)err.push(p+': missing "name"');
+  if(o.key){
+   if(seen.has(o.key))err.push(p+'.key: "'+o.key+'" is used twice');
+   seen.add(o.key);
+   const used=ID[o.key];
+   if(used!==undefined&&E[used]._mod!==id)err.push(p+'.key: "'+o.key+'" is already used by '+(E[used]._mod?"the mod "+modName(E[used]._mod):"the game"));
+  }
+  elements.push(o);
+ });
+ const patches=[];
+ if(pts.length>MOD_MAX.patches)err.push("too many patches (max "+MOD_MAX.patches+")");
+ pts.slice(0,MOD_MAX.patches).forEach((r,i)=>{
+  const p="patches["+i+"]";
+  if(!modObj(r)){err.push(p+": must be an object");return;}
+  for(const f of Object.keys(r))if(f[0]!=="_"&&!["element","reactions","first"].includes(f))err.push(p+"."+f+": unknown field");
+  if(!ok(r.element)){err.push(p+'.element: unknown element "'+r.element+'"');return;}
+  patches.push({element:r.element,first:r.first===true,reactions:modReactions(r.reactions,p+".reactions",ok,err)});
+ });
+ if(!elements.length&&!patches.length&&!err.length)err.push("the mod has no elements and no patches");
+ if(err.length)return{errors:err};
+ const cut=(x,n)=>typeof x==="string"?x.slice(0,n):"";
+ return{errors:[],mod:{id,name:d.mod.trim(),version:cut(d.version,20),author:cut(d.author,40),description:cut(d.description,200),elements,patches}};
+}
+const modFresh=m=>m.elements.filter(e=>!(ID[e.key]!==undefined&&E[ID[e.key]]._mod===m.id)).length;
+// Puts a checked mod into the game: defines (or revives) its elements, then adds its patches.
+function applyMod(m){
+ const wasReady=ready;ready=false;
+ for(const e of m.elements){
+  const slot=ID[e.key]!==undefined&&E[ID[e.key]]._mod===m.id?ID[e.key]:undefined;
+  const d=Object.assign({},e);d._mod=m.id;
+  define(e.key,d,slot);
+ }
+ for(const p of m.patches){
+  const base=E[ID[p.element]];base.reactions=base.reactions||[];
+  const rs=p.reactions.map(r=>Object.assign({_mod:m.id},r));
+  if(p.first)base.reactions.unshift(...rs);else base.reactions.push(...rs);
+ }
+ ready=wasReady;
+}
+// Takes a mod out of the game. Its elements stay as hidden slots (ids never change) and are revived if the mod comes back.
+function modHide(k,erase){
+ const e=E[k];e.category=null;
+ if(erase){for(let i=0;i<N;i++)if(g[i]===k){g[i]=0;life[i]=0;CH[i]=0;}}
+ if(cur===k)sel(ID.sand);
+ if(typeof lastEl!=="undefined"&&lastEl===k)lastEl=0;
+}
+function unapplyMod(id,erase,keep){
+ for(let k=1;k<E.length;k++){
+  const e=E[k];
+  if(e._mod===id){if(e.category&&!(keep&&keep.has(e.key)))modHide(k,erase);}
+  else if(e.reactions&&e.reactions.some(r=>r._mod===id))e.reactions=e.reactions.filter(r=>r._mod!==id);
+ }
+}
+function modSave(){try{localStorage.setItem(MOD_KEY,JSON.stringify(MODS.map(m=>({id:m.id,enabled:m.enabled,text:m.text}))));}catch(e){}}
+function modRecord(m,text,enabled){return{id:m.id,name:m.name,version:m.version,author:m.author,description:m.description,enabled,text,keys:m.elements.map(e=>e.key),patches:m.patches.reduce((a,p)=>a+p.reactions.length,0),error:null};}
+// Install (or update) a mod from its text. Returns {ok:true,rec,updated} or {ok:false,errors}.
+function installMod(text){
+ const p=parseMod(text);
+ if(!p.mod)return{ok:false,errors:p.errors};
+ const m=p.mod,old=MODS.find(x=>x.id===m.id);
+ if(E.length+modFresh(m)>256)return{ok:false,errors:[T("modFull")]};
+ if(old&&old.enabled)unapplyMod(m.id,false,new Set(m.elements.map(e=>e.key)));
+ applyMod(m);
+ const rec=modRecord(m,text,true);
+ if(old)MODS[MODS.indexOf(old)]=rec;else MODS.push(rec);
+ modSave();buildUI();
+ const first=m.elements[0];
+ if(first&&!searchMode){const ix=catList.findIndex(c=>c.key===first.category);if(ix>=0){catIdx=ix;renderCats();renderTools();}}
+ return{ok:true,rec,updated:!!old};
+}
+function modToggle(id){
+ const m=MODS.find(x=>x.id===id);if(!m)return;
+ if(m.enabled){unapplyMod(id,true);m.enabled=false;}
+ else{
+  const p=parseMod(m.text);
+  if(!p.mod){modShow(false,p.errors);return;}
+  if(E.length+modFresh(p.mod)>256){modShow(false,[T("modFull")]);return;}
+  applyMod(p.mod);m.enabled=true;m.error=null;
+ }
+ modSave();buildUI();renderModsUI();
+}
+function modRemove(id){
+ const m=MODS.find(x=>x.id===id);if(!m)return;
+ if(m.enabled)unapplyMod(id,true);
+ MODS=MODS.filter(x=>x!==m);modSave();buildUI();renderModsUI();
+}
+// Startup: re-install the mods that were saved in this browser.
+function modsLoad(){
+ let raw=[];try{raw=JSON.parse(localStorage.getItem(MOD_KEY)||"[]");}catch(e){raw=[];}
+ if(!Array.isArray(raw))raw=[];
+ for(const r of raw){
+  if(!modObj(r)||typeof r.text!=="string")continue;
+  const p=parseMod(r.text),want=r.enabled!==false;
+  if(!p.mod){MODS.push({id:String(r.id||"mod"),name:String(r.id||"mod"),version:"",author:"",description:"",enabled:false,text:r.text,keys:[],patches:0,error:p.errors[0]});continue;}
+  const m=p.mod;let on=want;
+  if(on&&E.length+modFresh(m)>256)on=false;
+  if(on)applyMod(m);
+  MODS.push(modRecord(m,r.text,on));
+ }
+}
+/* ----- mod panel ----- */
+const modsPanel=document.getElementById("modsPanel"),modMsg=document.getElementById("modMsg"),modList=document.getElementById("modList"),modText=document.getElementById("modText"),modFile=document.getElementById("modFile");
+const MOD_TEMPLATE={mod:"Example Pack",version:"1.0",author:"Your name",description:"Sodium that blows up in water, a glowing slime and a neon gas.",
+ elements:[
+  {key:"sodium",name:"Sodium",lang:{es:"Sodio",zh:"钠"},category:"solids",movement:"solid",color:[205,208,214],density:970,heatConduct:1.4,electroConduct:.7,
+   reactions:[{with:"water",chance:.35,to:"fire",other:"hydrogen",heat:400},{above:98,chance:.1,to:"fire"}]},
+  {key:"glow_slime",name:"Glow Slime",lang:{es:"Baba brillante",zh:"发光黏液"},category:"liquids",movement:"liquid",color:{from:[40,200,80],to:[170,255,120],animated:true},density:1200,viscosity:40,
+   reactions:[{with:"fire",chance:.2,to:"smoke"}]},
+  {key:"neon_gas",name:"Neon Gas",lang:{es:"Gas neón",zh:"氖气"},category:"gases",movement:"gas",color:{from:[255,90,60],to:[255,170,90],animated:true},density:.8,rise:.5,side:.5,spray:.4}
+ ],
+ patches:[{element:"magma",reactions:[{with:"glow_slime",chance:.3,to:"obsidian",other:"smoke"}]}]};
+document.getElementById("modDocs").textContent=
+`{ "mod": "Name", "version": "1.0", "author": "You", "description": "...",
+  "elements": [ {
+    "key": "my_element", "name": "My Element", "lang": {"es": "...", "zh": "..."},
+    "category": "powders|solids|liquids|gases|life|food|phase|specials|mods",
+    "movement": "solid|powder|liquid|gas|clump",
+    "color": [r,g,b]   or   {"from":[r,g,b], "to":[r,g,b], "animated":true},
+    "swatch": "#rrggbb",
+    "density", "heatConduct", "electroConduct", "acidr", "viscosity",
+    "rise", "side", "sink", "spray", "startMin", "startMax", "radiate",
+    "lifetime": [min,max],  "decay": {"below":T, "into":"key", "chance":0-1},
+    "burn": {"at","chance","heat","spread","water","flames","speed","into","emit"},
+    "explosive": {"at","radius","heat"},
+    "flammable", "insulator", "unbreakable", "corrosive": "key",
+    "rustRate", "rustInto": "key", "rusts", "rustUses",
+    "reactions": [ {"with":"water", "chance":0.3, "to":"steam", "other":"air", "above":100} ]
+  } ],
+  "patches": [ {"element":"water", "first":false, "reactions":[ ... ]} ] }
+
+Reaction fields: with, to, other (element or "air"), emit, chance,
+above, below, heat, warm, setT, capT, life, lifeBelow, rest, top, keepLife.
+Elements and reactions may use the keys of the game or of the same mod.
+Limits: 100 elements per mod, 255 elements in total, 300 KB per mod.`;
+function modShow(ok,lines,title){
+ modMsg.hidden=false;modMsg.className="modMsg "+(ok?"ok":"err");modMsg.textContent="";
+ const b=document.createElement("b");b.textContent=title||(ok?T("modOk"):T("modErrors"));modMsg.appendChild(b);
+ if(lines&&lines.length){const ul=document.createElement("ul");
+  lines.slice(0,MOD_MAX.errors).forEach(l=>{const li=document.createElement("li");li.textContent=l;ul.appendChild(li);});
+  if(lines.length>MOD_MAX.errors){const li=document.createElement("li");li.textContent="+"+(lines.length-MOD_MAX.errors);ul.appendChild(li);}
+  modMsg.appendChild(ul);}
+}
+function modRun(text){
+ const r=installMod(text);
+ if(r.ok){modShow(true,[],(r.updated?T("modUpdated"):T("modOk"))+": "+r.rec.name+" ("+r.rec.keys.length+" "+T("modElements")+")");modText.value="";renderModsUI();}
+ else modShow(false,r.errors);
+ return r.ok;
+}
+function modReadFile(f){return new Promise(res=>{const fr_=new FileReader();fr_.onload=()=>res(String(fr_.result));fr_.onerror=()=>res("");fr_.readAsText(f);});}
+async function modInstallFile(f){
+ modsPanel.hidden=false;if(typeof clog!=="undefined")clog.hidden=true;
+ modView("mine");modRun(await modReadFile(f));
+}
+async function modSaveFile(name,text){
+ try{if(dl)await dl.save({filename:name,data:text});else downloadFile(name,text);}catch(e){}
+}
+function renderModsUI(){renderMine();renderLibrary();}
+function renderMine(){
+ modText.placeholder=T("modPaste");
+ modList.textContent="";
+ if(!MODS.length){const p=document.createElement("p");p.className="msub";p.textContent=T("modsNone");modList.appendChild(p);return;}
+ for(const m of MODS){
+  const it=document.createElement("div");it.className="modItem"+(m.enabled?"":" off");
+  const t=document.createElement("div");t.className="mt";
+  const nb=document.createElement("b");nb.textContent=m.name;t.appendChild(nb);
+  const meta=[m.version&&("v"+m.version),m.author].filter(Boolean).join(" · ");
+  if(meta){const sm=document.createElement("small");sm.textContent=meta;t.appendChild(sm);}
+  it.appendChild(t);
+  const d=document.createElement("div");d.className="md";
+  d.textContent=m.error?(T("modLoadFail")+": "+m.error):[m.description,m.keys.length+" "+T("modElements")+(m.patches?" · "+m.patches+" "+T("modReactions"):"")].filter(Boolean).join(" - ");
+  it.appendChild(d);
+  const row=document.createElement("div");row.className="grp";
+  if(!m.error){const tg=document.createElement("button");tg.textContent=m.enabled?T("modOn"):T("modOff");tg.setAttribute("aria-pressed",m.enabled?"true":"false");tg.onclick=()=>modToggle(m.id);row.appendChild(tg);
+   const ex=document.createElement("button");ex.textContent=T("modExport");ex.onclick=()=>modSaveFile(m.id+".json",m.text);row.appendChild(ex);}
+  if(ADMIN&&!m.error){const ab=document.createElement("button");ab.textContent="Add to library";ab.onclick=()=>libAdd(m);row.appendChild(ab);}
+  const rm=document.createElement("button");rm.textContent=T("modRemove");
+  rm.onclick=()=>{if(rm.dataset.sure){modRemove(m.id);}else{rm.dataset.sure="1";rm.textContent=T("modSure");setTimeout(()=>{rm.dataset.sure="";rm.textContent=T("modRemove");},3000);}};
+  row.appendChild(rm);it.appendChild(row);modList.appendChild(it);
+ }
+}
+document.getElementById("modsBtn").onclick=()=>{modsPanel.hidden=!modsPanel.hidden;if(!modsPanel.hidden){if(typeof clog!=="undefined")clog.hidden=true;renderModsUI();}};
+document.getElementById("modsClose").onclick=()=>{modsPanel.hidden=true;};
+document.getElementById("modFileBtn").onclick=()=>modFile.click();
+modFile.onchange=async()=>{const f=modFile.files&&modFile.files[0];modFile.value="";if(f)await modInstallFile(f);};
+document.getElementById("modInstall").onclick=()=>{modRun(modText.value);};
+document.getElementById("modTemplate").onclick=()=>modSaveFile("example-mod.json",JSON.stringify(MOD_TEMPLATE,null,2));
+// drop a .json file anywhere on the game to install it as a mod
+addEventListener("dragover",e=>{if(e.dataTransfer&&Array.from(e.dataTransfer.types||[]).includes("Files"))e.preventDefault();});
+addEventListener("drop",e=>{const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(!f)return;e.preventDefault();modInstallFile(f);});
+/* ----- Mod library: mods picked by the author of the game -----
+   The list is read from library.json (next to this page, e.g. in a GitHub repo). Only people who can change that
+   file can change the list. If the file cannot be read, the small built-in list below is shown instead.
+   Entry tags: "new", "hot" (popular), "warning" (may break the game), "outdated". */
+const LIB_URL="library.json";
+const MOD_LIBRARY=[
+ {added:"2026-11-04",tags:["hot"],note:"",mod:{mod:"Kitchen Chemistry",version:"1.0",author:"Elementarium",description:"Baking soda and vinegar make a fizzy volcano.",
+  elements:[
+   {key:"baking_soda",name:"Baking Soda",lang:{es:"Bicarbonato",zh:"小苏打"},category:"powders",movement:"powder",color:[240,240,236],density:1100,
+    reactions:[{with:"vinegar",chance:.35,to:"carbon_dioxide",other:"water",emit:"carbon_dioxide"}]},
+   {key:"vinegar",name:"Vinegar",lang:{es:"Vinagre",zh:"醋"},category:"liquids",movement:"liquid",color:[238,226,160],density:1010,
+    reactions:[{above:100,chance:.1,to:"steam"}]}
+  ]}},
+ {added:"2026-11-04",tags:["new"],note:"",mod:Object.assign({},MOD_TEMPLATE,{author:"Elementarium"})},
+ {added:"2026-11-04",tags:["warning"],note:"Spreads and eats almost everything. Fire and salt kill it. Press Undo if it gets out of hand.",mod:{mod:"Hungry Goo",version:"1.0",author:"Elementarium",description:"A goo that eats what it touches and keeps growing.",
+  elements:[
+   {key:"hungry_goo",name:"Hungry Goo",lang:{es:"Baba hambrienta",zh:"饥饿黏液"},category:"liquids",movement:"liquid",color:{from:[60,170,60],to:[140,230,90],animated:true},density:1300,viscosity:30,
+    reactions:[
+     {with:"fire",chance:.3,to:"smoke"},
+     {with:"salt",chance:.4,to:"smoke",other:"air"},
+     {with:"sand",chance:.2,to:"hungry_goo",other:"hungry_goo"},
+     {with:"dirt",chance:.2,to:"hungry_goo",other:"hungry_goo"},
+     {with:"water",chance:.2,to:"hungry_goo",other:"hungry_goo"},
+     {with:"wood",chance:.1,to:"hungry_goo",other:"hungry_goo"},
+     {with:"stone",chance:.04,to:"hungry_goo",other:"hungry_goo"}
+    ]}
+  ]}}
+];
+const MOD_TAGS=["new","hot","warning","outdated"],MOD_TAGKEY={new:"modNew",hot:"modHot",warning:"modWarn",outdated:"modOld"};
+const ADMIN=/(^|[?&#])admin(\b|=|$)/.test(location.search+location.hash);   // shows the author's tools; the real lock is who can change library.json
+const libToday=()=>new Date().toISOString().slice(0,10);
+const libCut=(x,n)=>typeof x==="string"?x.slice(0,n):"";
+function libFromMod(m,x){   // m: a mod object (file contents)
+ const id=modSlug(m.mod);
+ return{id,file:"mods/"+id+".json",title:libCut(m.mod,40),author:libCut(m.author,40),version:libCut(m.version,20),description:libCut(m.description,200),added:x.added||"",tags:(x.tags||[]).slice(),note:x.note||"",mod:m};
+}
+let libList=MOD_LIBRARY.map(x=>libFromMod(x.mod,x)),libSource="loading",libFilter="all",libFiles={},libDirty=0;
+// Reads library.json. Returns a clean list or null if it is not a valid library.
+function libClean(d){
+ if(!modObj(d)||!Array.isArray(d.mods))return null;
+ const out=[];
+ for(const x of d.mods.slice(0,200)){
+  if(!modObj(x)||!modStr(x.title,40)||typeof x.file!=="string"||!/^mods\/[a-z0-9._-]{1,60}\.json$/.test(x.file))continue;
+  out.push({id:modSlug(typeof x.id==="string"&&x.id?x.id:x.title),file:x.file,title:x.title.trim(),author:libCut(x.author,40),version:libCut(x.version,20),description:libCut(x.description,200),
+   added:/^\d{4}-\d\d-\d\d$/.test(x.added||"")?x.added:"",
+   tags:(Array.isArray(x.tags)?x.tags:[]).filter(t=>MOD_TAGS.includes(t)),note:libCut(x.note,200)});
+ }
+ return out;
+}
+async function libLoad(){
+ libSource="loading";renderLibrary();
+ try{
+  const ac=typeof AbortController!=="undefined"?new AbortController():null,tm=setTimeout(()=>ac&&ac.abort(),8000);
+  const r=await fetch(LIB_URL,{cache:"no-cache",signal:ac?ac.signal:undefined});clearTimeout(tm);
+  if(!r.ok)throw new Error("http "+r.status);
+  const list=libClean(await r.json());
+  if(!list)throw new Error("bad library");
+  libList=list;libSource="online";
+ }catch(e){libList=MOD_LIBRARY.map(x=>libFromMod(x.mod,x));libSource="builtin";}
+ libFiles={};libDirty=0;renderLibrary();
+}
+const libTags=e=>(e.tags||[]).filter(t=>MOD_TAGS.includes(t));
+const libRank=e=>{const t=libTags(e);return(t.includes("outdated")?-100:0)+(t.includes("hot")?20:0)+(t.includes("new")?10:0);};
+function libDate(s){try{return new Date(s+"T00:00:00Z").toLocaleDateString(lang,{year:"numeric",month:"short",day:"numeric",timeZone:"UTC"});}catch(e){return s;}}
+function modView(view){
+ const lib=view!=="mine";
+ document.getElementById("modsLib").hidden=!lib;document.getElementById("modsMine").hidden=lib;
+ document.getElementById("modTabLib").setAttribute("aria-pressed",lib?"true":"false");
+ document.getElementById("modTabMine").setAttribute("aria-pressed",lib?"false":"true");
+}
+async function libInstall(e){
+ if(e.mod){modRun(JSON.stringify(e.mod));return;}
+ modShow(true,[],T("libDownloading")+": "+e.title);
+ try{
+  const url=new URL(e.file,new URL(LIB_URL,location.href)).href;
+  const r=await fetch(url,{cache:"no-cache"});if(!r.ok)throw new Error("http "+r.status);
+  modRun(await r.text());
+ }catch(err){modShow(false,[T("libFetchFail")+": "+e.title]);}
+}
+/* ----- author tools (only with #admin in the address) ----- */
+function zipStore(files){   // files:[{name,data:string}] -> Uint8Array of a .zip (stored, not compressed)
+ const T_=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;T_[n]=c>>>0;}
+ const crc=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=T_[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0;};
+ const enc=new TextEncoder(),d=new Date(),dt=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate(),tm=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+ const parts=[],cen=[];let off=0;
+ for(const f of files){
+  const nm=enc.encode(f.name),da=enc.encode(f.data),cr=crc(da);
+  const lh=new DataView(new ArrayBuffer(30));lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(10,tm,true);lh.setUint16(12,dt,true);lh.setUint32(14,cr,true);lh.setUint32(18,da.length,true);lh.setUint32(22,da.length,true);lh.setUint16(26,nm.length,true);
+  parts.push(new Uint8Array(lh.buffer),nm,da);
+  const ch=new DataView(new ArrayBuffer(46));ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(12,tm,true);ch.setUint16(14,dt,true);ch.setUint32(16,cr,true);ch.setUint32(20,da.length,true);ch.setUint32(24,da.length,true);ch.setUint16(28,nm.length,true);ch.setUint32(42,off,true);
+  cen.push(new Uint8Array(ch.buffer),nm);off+=30+nm.length+da.length;
+ }
+ const cs=cen.reduce((a,x)=>a+x.length,0),ed=new DataView(new ArrayBuffer(22));
+ ed.setUint32(0,0x06054b50,true);ed.setUint16(8,files.length,true);ed.setUint16(10,files.length,true);ed.setUint32(12,cs,true);ed.setUint32(16,off,true);
+ const all=parts.concat(cen,[new Uint8Array(ed.buffer)]),out=new Uint8Array(all.reduce((a,x)=>a+x.length,0));let p=0;for(const x of all){out.set(x,p);p+=x.length;}
+ return out;
+}
+function libExportFiles(){   // everything the author uploads to GitHub: library.json + the mod files that are new or changed
+ const entries=libList.map(e=>({id:e.id,file:e.file||("mods/"+e.id+".json"),title:e.title,author:e.author,version:e.version,description:e.description,added:e.added,tags:libTags(e),note:e.note||""}));
+ const files=[{name:"library.json",data:JSON.stringify({library:1,updated:libToday(),mods:entries},null,2)+"\n"}];
+ for(const e of libList){const text=libFiles[e.id]||(e.mod?JSON.stringify(e.mod,null,2)+"\n":null);if(text)files.push({name:e.file||("mods/"+e.id+".json"),data:text});}
+ return files;
+}
+function modSaveBlob(name,blob){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
+function libAdd(m){   // an installed mod -> library entry (author tool)
+ const p=parseMod(m.text);if(!p.mod)return;
+ const mm=JSON.parse(m.text),old=libList.findIndex(x=>x.id===p.mod.id);
+ const e=libFromMod(mm,{added:old>=0?libList[old].added:libToday(),tags:old>=0?libTags(libList[old]):[],note:old>=0?libList[old].note:""});
+ delete e.mod;e.id=p.mod.id;e.file="mods/"+e.id+".json";
+ if(old>=0)libList[old]=e;else libList.push(e);
+ libFiles[e.id]=m.text;libDirty++;renderLibrary();
+ modShow(true,[],"Added to the library: "+e.title);
+}
+function renderAdminBar(){
+ const bar=document.getElementById("modAdmin");
+ if(!ADMIN){bar.hidden=true;return;}
+ bar.hidden=false;bar.className="modMsg ok";bar.textContent="";
+ const b=document.createElement("b");b.textContent="Admin mode";bar.appendChild(b);
+ const p=document.createElement("div");p.textContent="List source: "+(libSource==="online"?LIB_URL+" (online)":libSource==="loading"?"loading...":"built-in list (library.json not found)")+". Changes stay in this browser until you download them and upload them to GitHub."+(libDirty?" Unsaved changes: yes.":"");bar.appendChild(p);
+ const row=document.createElement("div");row.className="grp";row.style.marginTop="6px";
+ const dl_=document.createElement("button");dl_.textContent="Download library update (.zip)";
+ dl_.onclick=()=>modSaveBlob("library-update.zip",new Blob([zipStore(libExportFiles())],{type:"application/zip"}));
+ const rs=document.createElement("button");rs.textContent="Discard changes";rs.onclick=()=>libLoad();
+ row.appendChild(dl_);row.appendChild(rs);bar.appendChild(row);
+}
+function renderLibrary(){
+ const fb=document.getElementById("modFilters"),ls=document.getElementById("modLibList");
+ fb.textContent="";ls.textContent="";renderAdminBar();
+ if(libSource==="loading"){const p=document.createElement("p");p.className="msub";p.textContent=T("libLoading");ls.appendChild(p);return;}
+ const used=MOD_TAGS.filter(t=>libList.some(e=>libTags(e).includes(t)));
+ if(libFilter!=="all"&&!used.includes(libFilter))libFilter="all";
+ [["all","modAll"]].concat(used.map(t=>[t,MOD_TAGKEY[t]])).forEach(([k,key])=>{
+  const b=document.createElement("button");b.textContent=T(key);b.setAttribute("aria-pressed",libFilter===k?"true":"false");
+  b.onclick=()=>{libFilter=k;renderLibrary();};fb.appendChild(b);
+ });
+ const items=libList.filter(e=>libFilter==="all"||libTags(e).includes(libFilter)).sort((a,b)=>libRank(b)-libRank(a)||String(b.added).localeCompare(String(a.added)));
+ if(!items.length){const p=document.createElement("p");p.className="msub";p.textContent=T("modLibEmpty");ls.appendChild(p);return;}
+ for(const e of items){
+  const tags=libTags(e),inst=MODS.find(x=>x.id===e.id);
+  const it=document.createElement("div");it.className="modItem"+(tags.includes("warning")?" warn":"")+(tags.includes("outdated")?" off":"");
+  const t=document.createElement("div");t.className="mt";
+  const nb=document.createElement("b");nb.textContent=e.title;t.appendChild(nb);
+  const meta=[e.version&&("v"+e.version),e.author].filter(Boolean).join(" · ");
+  if(meta){const sm=document.createElement("small");sm.textContent=meta;t.appendChild(sm);}
+  tags.forEach(tg=>{const c=document.createElement("span");c.className="chip "+tg;c.textContent=T(MOD_TAGKEY[tg]);t.appendChild(c);});
+  it.appendChild(t);
+  const d=document.createElement("div");d.className="md";
+  d.textContent=[e.description,e.added?T("modAdded")+" "+libDate(e.added):""].filter(Boolean).join(" - ");
+  it.appendChild(d);
+  const note=e.note||(tags.includes("outdated")?T("modOldText"):tags.includes("warning")?T("modWarnText"):"");
+  if(note){const n=document.createElement("div");n.className="modNote "+(tags.includes("outdated")?"outdated":tags.includes("warning")?"warning":"");n.textContent=note;it.appendChild(n);}
+  const row=document.createElement("div");row.className="grp";
+  const bt=document.createElement("button");
+  const same=inst&&inst.version===(e.version||"");
+  const label=!inst?T("modGet"):same?T("modGot"):T("modUpd");
+  bt.textContent=label;
+  if(same){bt.disabled=true;}
+  else bt.onclick=()=>{
+   const risky=tags.includes("warning")||tags.includes("outdated");
+   if(risky&&!bt.dataset.sure){bt.dataset.sure="1";bt.textContent=T("modAnyway");setTimeout(()=>{bt.dataset.sure="";bt.textContent=label;},4000);return;}
+   libInstall(e);
+  };
+  row.appendChild(bt);it.appendChild(row);
+  if(ADMIN){
+   const ar=document.createElement("div");ar.className="grp";ar.style.cssText="border-top:1px dashed var(--line);padding-top:6px;margin-top:2px";
+   MOD_TAGS.forEach(tg=>{const tb=document.createElement("button");tb.textContent=tg;tb.setAttribute("aria-pressed",tags.includes(tg)?"true":"false");
+    tb.onclick=()=>{e.tags=tags.includes(tg)?tags.filter(x=>x!==tg):tags.concat(tg);libDirty++;renderLibrary();};ar.appendChild(tb);});
+   const ni=document.createElement("input");ni.type="text";ni.maxLength=200;ni.placeholder="note";ni.value=e.note||"";
+   ni.onchange=()=>{e.note=ni.value.trim();libDirty++;renderLibrary();};ar.appendChild(ni);
+   const rb=document.createElement("button");rb.textContent="Remove from library";
+   rb.onclick=()=>{if(rb.dataset.sure){libList=libList.filter(x=>x!==e);libDirty++;renderLibrary();}else{rb.dataset.sure="1";rb.textContent="Click again";setTimeout(()=>{rb.dataset.sure="";rb.textContent="Remove from library";},3000);}};
+   ar.appendChild(rb);it.appendChild(ar);
+  }
+  ls.appendChild(it);
+ }
+}
+document.getElementById("modTabLib").onclick=()=>modView("lib");
+document.getElementById("modTabMine").onclick=()=>modView("mine");
+document.getElementById("modSubmit").onclick=()=>openFeedback();
+libLoad();
+modsLoad();
+
 ready=true;buildUI();
 
 /* ===== Controls ===== */
 function bump(dir){if(sizeLocked)return;const stp=Math.max(1,Math.round(size/10));size=Math.max(1,Math.min(153,size+dir*stp));sizeEl.value=size;}
 addEventListener("keydown",e=>{
  if(e.key==="Shift")shiftDown=true;
- if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"&&e.target.tagName!=="INPUT"){e.preventDefault();undo();return;}
- if((e.ctrlKey||e.metaKey)&&e.target.tagName!=="INPUT"){const kk=e.key.toLowerCase();if(kk==="c"&&doCopy()){e.preventDefault();return;}if(kk==="x"&&doCut()){e.preventDefault();return;}if(kk==="v"&&clip){e.preventDefault();sel(-13);return;}}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"&&e.target.tagName!=="INPUT"&&e.target.tagName!=="TEXTAREA"){e.preventDefault();undo();return;}
+ if((e.ctrlKey||e.metaKey)&&e.target.tagName!=="INPUT"&&e.target.tagName!=="TEXTAREA"){const kk=e.key.toLowerCase();if(kk==="c"&&doCopy()){e.preventDefault();return;}if(kk==="x"&&doCut()){e.preventDefault();return;}if(kk==="v"&&clip){e.preventDefault();sel(-13);return;}}
  if(e.ctrlKey||e.metaKey||e.altKey)return;
- if(e.target.tagName==="INPUT"&&(e.target.type==="number"||e.target.type==="search"))return;
+ if(e.target.tagName==="SELECT"||e.target.tagName==="TEXTAREA"||(e.target.tagName==="INPUT"&&(e.target.type==="number"||e.target.type==="search")))return;
  const k=e.key.toLowerCase();
  if(!confirmEl.hidden){if(k==="enter"||k==="y")doClear();else if(k==="escape"||k==="n")closeConfirm();e.preventDefault();return;}
  if(e.repeat&&(k===" "||k==="p"||k==="r"||k==="s"||k==="z"||k==="c"||k==="f2"))return;
@@ -938,6 +1478,7 @@ addEventListener("keydown",e=>{
  else if(k==="s")gear.click();
  else if(k==="z")undo();
  else if(k==="c"||k==="f2"){e.preventDefault();takeScreenshot();}
+ else if(k==="escape"&&!modsPanel.hidden)modsPanel.hidden=true;
  else if(k==="escape"&&!clog.hidden)clog.hidden=true;
  else if(k==="escape"&&!panel.hidden)gear.click();
  else if(k==="escape"&&selRect)selRect=null;
@@ -982,6 +1523,8 @@ shapeBtns.forEach(b=>b.onclick=()=>{shape=b.dataset.shape;shapeBtns.forEach(x=>x
 room.oninput=()=>{const n=parseFloat(room.value);if(isNaN(n))return;amb=Math.max(-273,Math.min(9999,fromU(n)));};room.onchange=showRoom;
 // Changelog: newest first. Add a new entry at the top whenever something changes.
 const CHANGELOG=[
+  {v:"v1.2.0",items:["Mod library: a list of mods picked by the author (read from library.json), tagged New, Popular, Warning (may break the game) or Outdated, with one-click install", "Mods: the new Add mods button lets you install .json mods that add your own elements and reactions. Pick a file, drop it onto the game or paste it, then turn mods on and off, export them or remove them. A mod template is included", "Copper, Oxidized Copper and Rose Gold, plus Molten Copper, Molten Oxidized Copper and Molten Rose Gold", "Copper slowly oxidizes when it touches Oxygen, Carbon Dioxide or water (Chlorine makes a blue-green Oxidized Copper)", "Molten Copper oxidizes too, much faster than solid Copper", "Copper resists acid, but Oxidized Copper does not", "Molten Gold mixed with Molten Copper makes Molten Rose Gold", "Undo now also restores electric charge", "Molten Purple Gold now glows orange like real molten metal instead of purple"]},
+ {v:"v1.1.0",d:"November 2, 2026",items:["Search box above the category tabs: type to find any element, or click it to see recently used elements", "Pin elements and tools: right-click one to give it a gold border and move it to the front of its category", "Press C or F2 to take a screenshot of the play area", "New category: Life (Sapling, Root, Leaf)", "Saplings grow into trees", "Roots drink water from mud, wet sand and water; leaves turn carbon dioxide into oxygen", "Cloud: steam that rises very high turns into clouds, and clouds slowly turn into rain", "Obsidian and Basalt: magma cooled quickly becomes obsidian, magma cooled slowly becomes basalt, and both melt back into magma", "Carbonated Ice, Dirty Ice and Pool Ice", "Salt Ice, Sugar Ice and the other special ices moved to the Phase tab (Ice stays in Solids)", "Iron and steel now rust in salt water, sugar water, pool water, carbonated water and dirty water", "Acid now eats Slag", "Cooked meat can rot too", "Cloner is now yellow", "Feedback button: report bugs or share ideas with the developer through a Google Form", "Molten Aluminum, Molten Iron and Molten Steel now oxidize into Slag when they touch Oxygen (using up the oxygen)", "Molten Purple Gold touching Oxygen turns into Slag (21%) or Gold (79%)", "Molten Steel no longer rusts", "Fixed: the Line, Rectangle and Circle preview did not match what was placed (it now shows exactly the cells that will be painted)", "Fixed: Cooler could cool below absolute zero (now limited to -273°, Heater limited to 9999°)", "Fixed: Lightning drawn on the bottom row never disappeared", "Fixed: shortcut keys (P, R, S, C...) also triggered while a drop-down list was selected", "Fixed: a Cloner's remembered element could change after loading an older world", "Fixed: v0.1.0 changelog was missing the Eraser"]},
  {v:"v1.0.1",items:["Fixed: gases could block other gases from rising", "Carbon Dioxide is now darker", "Heavy gases no longer fall to the floor, they spread out instead"]},
  {v:"v1.0.0",items:["Undo button, Picker, Replace, Save and Load", "Electrum is slowly eaten by acid, or turns into gold", "4 new languages: English (UK), English (US), Chinese and Spanish", "Aluminum, Molten Aluminum, Purple Gold, Thermite, Salt Ice, Sugar Ice, Molten Dirt, Molten Ash, Slag, Molten Slag, Acid Gas, Molten Rust, Molten Salt, Molten Thermite, Chlorine, Pool Water, Bleach, Poison, Poison Gas, Liquid Chlorine, Chlorine Ice, Carbonated Water, Rotten Meat", "Cloner, Select, Copy, Paste, Cut, Electric, Lightning, Shock, Battery, Wire", "Rust turns water into dirty water", "Salt water, sugar water, pool water and oil can turn sand into wet sand", "FPS counter and FPS limit settings", "New official name: Elementarium"]},
  {v:"v0.12.0",items:["Category tabs are now evenly spaced, and the element row sits directly under them", "Fire that touches Oxygen gains 10°C and uses up the oxygen", "Fixed: Rectangle and Circle showed the wrong fill preview when Shift was pressed or released during the drag", "Nitrogen, Liquid Nitrogen, Nitrogen Ice, Carbon Dioxide, Dry Ice, Gold, Ammonia, Liquid Ammonia, Ammonia Ice, Molten Gold, Molten Electrum, Electrum, Steel, Molten Steel", "Oil, Wood and Coal now produce Carbon Dioxide when they burn out", "Iron can now rust when it touches water"]},
@@ -996,16 +1539,23 @@ const CHANGELOG=[
  {v:"v0.4.0",items:["Dirt, Wet Sand, Mud", "Reactions: Sand + Water = Wet Sand, Wet Sand + heat = Sand and Steam, Dirt + Water = Mud, Mud + heat = Dirt and Steam, Sand + heat = Molten Glass, Molten Glass + cooling = Glass", "Maximum brush size 10 -> 51", "Pixels are about 25% larger"]},
  {v:"v0.3.0",items:["Burning effect", "Categories (Powders, Solids, Liquids, Gases, Tools)", "Longer screen", "Fixed: the first element of a category was selected automatically when opening that category"]},
  {v:"v0.2.0",items:["Right-click to erase, mouse wheel to change brush size", "Temperature", "Brush outline", "Minimum temperature is -273°C", "Heat and Cool tools", "Hot and cold colors", "Info box (element name and temperature)"]},
- {v:"v0.1.0",items:["Sand, Water, Stone, Wood, Fire and Eraser", "Brush size, Pause button, Clear all button", "Keys 1-6 to change element"]}
+ {v:"v0.1.0",d:"October 10, 2026",items:["Sand, Water, Stone, Wood, Fire and Eraser", "Brush size, Pause button, Clear all button", "Keys 1-6 to change element"]}
 ];
 const clog=document.getElementById("changelog"),clogBody=document.getElementById("clogBody");
 for(const c of CHANGELOG){
  const h=document.createElement("h3"),ul=document.createElement("ul");
- h.textContent=c.v;
+ h.textContent=c.v;if(c.d){const sp=document.createElement("span");sp.className="ver";sp.textContent="("+c.d+")";h.appendChild(sp);}
  for(const it of c.items){const li=document.createElement("li");li.textContent=it;ul.appendChild(li);}
  clogBody.appendChild(h);clogBody.appendChild(ul);
 }
-document.getElementById("clogBtn").onclick=()=>{clog.hidden=!clog.hidden;};
+document.getElementById("clogBtn").onclick=()=>{clog.hidden=!clog.hidden;if(!clog.hidden)modsPanel.hidden=true;};
+// Feedback: opens the Google Form in a new tab. If the browser blocks the new tab, the link is copied instead.
+const FEEDBACK_URL="https://docs.google.com/forms/d/e/1FAIpQLSdxAOds3rTSUvJ9ZsyRz-qZiQRmkvq-BylPobQrzNeGcocOqQ/viewform?fbzx=5468140997634157406";
+function openFeedback(){
+ let win=null;try{win=window.open(FEEDBACK_URL,"_blank");if(win)win.opener=null;}catch(e){}
+ if(!win){try{navigator.clipboard.writeText(FEEDBACK_URL);}catch(e){}say("feedbackBlocked");}
+}
+document.getElementById("feedbackBtn").onclick=openFeedback;
 document.getElementById("clogClose").onclick=()=>{clog.hidden=true;};
 let confirmClear=true;
 const ctog=document.getElementById("confirmToggle");
@@ -1027,17 +1577,20 @@ function worldData(){
  const pal=[0].concat([...new Set(g)].filter(Boolean)),idx=new Map(pal.map((id,k)=>[id,k]));
  const cells=new Uint8Array(N),dv=new DataView(new ArrayBuffer(N*2));
  for(let i=0;i<N;i++){cells[i]=idx.get(g[i])||0;dv.setInt16(i*2,Math.round(temp[i]),true);}
- return{game:"elementarium",v:1,w:W,h:H,amb,keys:pal.map(id=>E[id].key),cells:b64(cells),sub:b64(v),life:b64(life),temp:b64(new Uint8Array(dv.buffer))};
+ const cl=[];for(let i=0;i<N;i++)if(g[i]&&E[g[i]].clone&&life[i]&&E[life[i]])cl.push([i,E[life[i]].key]);
+ return{game:"elementarium",v:1,w:W,h:H,amb,cl,keys:pal.map(id=>E[id].key),cells:b64(cells),sub:b64(v),life:b64(life),temp:b64(new Uint8Array(dv.buffer))};
 }
 function loadWorld(d){
  if(!d||d.w!==W||d.h!==H||!Array.isArray(d.keys))return false;
- const ids=d.keys.map(k=>ID[k]??0),cells=unb64(d.cells),sub=unb64(d.sub),lf=unb64(d.life),tb=unb64(d.temp);
+ let miss=0;const ids=d.keys.map(k=>{const q=ID[k];if(q!==undefined&&E[q].category)return q;miss++;return 0;}),cells=unb64(d.cells),sub=unb64(d.sub),lf=unb64(d.life),tb=unb64(d.temp);
  if(cells.length!==N||sub.length!==N||lf.length!==N||tb.length!==N*2)return false;
  snapshot();
  const dv=new DataView(tb.buffer);
  for(let i=0;i<N;i++){g[i]=ids[cells[i]]||0;v[i]=sub[i];life[i]=lf[i];temp[i]=dv.getInt16(i*2,true);}
+ if(Array.isArray(d.cl))for(const c of d.cl){const i=c[0],k=c[1];if(i>=0&&i<N&&g[i]&&E[g[i]].clone)life[i]=ID[k]??0;}
  if(typeof d.amb==="number"){amb=d.amb;showRoom();}
  CH.fill(0);selRect=null;held=[];shp=null;dragging=false;
+ if(miss)setTimeout(()=>say("modsMissing"),2400);
  return true;
 }
 let dl=null;try{if(window.claude&&window.claude.use)window.claude.use("downloads").then(d=>{dl=d;}).catch(()=>{});}catch(e){}
@@ -1088,7 +1641,7 @@ function applyLang(){
  ctog.textContent=confirmClear?T("on"):T("off");
  syncFps();fpsSel.value=String(fpsLimit);
  searchInput.placeholder=T("searchPh");
- lastTxt="";renderLangs();buildUI();
+ lastTxt="";renderLangs();buildUI();renderModsUI();
 }
 function addLanguage(code,def){LANGS[code]=Object.assign({label:code,ui:{},names:{}},def);if(ready)renderLangs();}
 applyLang();
@@ -1097,7 +1650,7 @@ function loop(){
  const t0=fpsOn?performance.now():0;if(down&&!picking)stamp(lx,ly);if(!paused){if(dragging)for(const h of held)mv[h.i]=tick+1;step();heat();radiate();electrify();convect();}draw();updateInfo();if(fpsOn){const t1=performance.now();fpsTick(t1,t1-t0);}requestAnimationFrame(loop);}
 loop();
 
-window.Sand={define,E,ID,g,v,temp,life,W,H,rnd,fr,setCell,swap,become,rm,nbrs,burn,ignite,emit,ELEMENTS,LANGS,addLanguage,setLang,CH,ECA,explode};
+window.Sand={define,E,ID,g,v,temp,life,W,H,rnd,fr,setCell,swap,become,rm,nbrs,burn,ignite,emit,ELEMENTS,LANGS,addLanguage,setLang,CH,ECA,explode,installMod,parseMod,mods:()=>MODS,library:MOD_LIBRARY,libList:()=>libList,libExportFiles,zipStore,libLoad,libAdd,ADMIN};
 })();
 </script>
 </body>
