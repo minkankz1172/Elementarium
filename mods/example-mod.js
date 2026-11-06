@@ -33,6 +33,12 @@
           "above": 98,
           "chance": 0.1,
           "to": "fire"
+        },
+        {
+          "with": "chlorine",
+          "chance": 0.7,
+          "to": "salt",
+          "other: "air",
         }
       ]
     },
