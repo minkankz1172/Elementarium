@@ -1,0 +1,76 @@
+{
+  "mod": "Hungry Goo",
+  "version": "1.0",
+  "author": "Elementarium",
+  "description": "A goo that eats what it touches and keeps growing.",
+  "elements": [
+    {
+      "key": "hungry_goo",
+      "name": "Hungry Goo",
+      "lang": {
+        "es": "Baba hambrienta",
+        "zh": "饥饿黏液"
+      },
+      "category": "liquids",
+      "movement": "liquid",
+      "color": {
+        "from": [
+          60,
+          170,
+          60
+        ],
+        "to": [
+          140,
+          230,
+          90
+        ],
+        "animated": true
+      },
+      "density": 1300,
+      "viscosity": 30,
+      "reactions": [
+        {
+          "with": "fire",
+          "chance": 0.3,
+          "to": "smoke"
+        },
+        {
+          "with": "salt",
+          "chance": 0.4,
+          "to": "smoke",
+          "other": "air"
+        },
+        {
+          "with": "sand",
+          "chance": 0.2,
+          "to": "hungry_goo",
+          "other": "hungry_goo"
+        },
+        {
+          "with": "dirt",
+          "chance": 0.2,
+          "to": "hungry_goo",
+          "other": "hungry_goo"
+        },
+        {
+          "with": "water",
+          "chance": 0.2,
+          "to": "hungry_goo",
+          "other": "hungry_goo"
+        },
+        {
+          "with": "wood",
+          "chance": 0.1,
+          "to": "hungry_goo",
+          "other": "hungry_goo"
+        },
+        {
+          "with": "stone",
+          "chance": 0.04,
+          "to": "hungry_goo",
+          "other": "hungry_goo"
+        }
+      ]
+    }
+  ]
+}
