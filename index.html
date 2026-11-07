@@ -1286,33 +1286,10 @@ document.getElementById("modTemplate").onclick=()=>modSaveFile("example-mod.json
 addEventListener("dragover",e=>{if(e.dataTransfer&&Array.from(e.dataTransfer.types||[]).includes("Files"))e.preventDefault();});
 addEventListener("drop",e=>{const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(!f)return;e.preventDefault();modInstallFile(f);});
 /* ----- Mod library: mods picked by the author of the game -----
-   The list is read from library.json (next to this page, e.g. in a GitHub repo). Only people who can change that
-   file can change the list. If the file cannot be read, the small built-in list below is shown instead.
+   The list is read from library.json (next to this page, e.g. in a GitHub repo); each entry points to a mod file in mods/.
+   The game itself contains no mods: only people who can change those files can change the library.
    Entry tags: "new", "warning" (may break the game), "outdated". */
 const LIB_URL="library.json";
-const MOD_LIBRARY=[
- {added:"2026-11-04",tags:[],note:"",mod:{mod:"Kitchen Chemistry",version:"1.0",author:"Elementarium",description:"Baking soda and vinegar make a fizzy volcano.",
-  elements:[
-   {key:"baking_soda",name:"Baking Soda",lang:{es:"Bicarbonato",zh:"小苏打"},category:"powders",movement:"powder",color:[240,240,236],density:1100,
-    reactions:[{with:"vinegar",chance:.35,to:"carbon_dioxide",other:"water",emit:"carbon_dioxide"}]},
-   {key:"vinegar",name:"Vinegar",lang:{es:"Vinagre",zh:"醋"},category:"liquids",movement:"liquid",color:[238,226,160],density:1010,
-    reactions:[{above:100,chance:.1,to:"steam"}]}
-  ]}},
- {added:"2026-11-04",tags:["new"],note:"",mod:Object.assign({},MOD_TEMPLATE,{author:"Elementarium"})},
- {added:"2026-11-04",tags:["warning"],note:"Spreads and eats almost everything. Fire and salt kill it. Press Undo if it gets out of hand.",mod:{mod:"Hungry Goo",version:"1.0",author:"Elementarium",description:"A goo that eats what it touches and keeps growing.",
-  elements:[
-   {key:"hungry_goo",name:"Hungry Goo",lang:{es:"Baba hambrienta",zh:"饥饿黏液"},category:"liquids",movement:"liquid",color:{from:[60,170,60],to:[140,230,90],animated:true},density:1300,viscosity:30,
-    reactions:[
-     {with:"fire",chance:.3,to:"smoke"},
-     {with:"salt",chance:.4,to:"smoke",other:"air"},
-     {with:"sand",chance:.2,to:"hungry_goo",other:"hungry_goo"},
-     {with:"dirt",chance:.2,to:"hungry_goo",other:"hungry_goo"},
-     {with:"water",chance:.2,to:"hungry_goo",other:"hungry_goo"},
-     {with:"wood",chance:.1,to:"hungry_goo",other:"hungry_goo"},
-     {with:"stone",chance:.04,to:"hungry_goo",other:"hungry_goo"}
-    ]}
-  ]}}
-];
 const MOD_TAGS=["new","warning","outdated"],MOD_TAGKEY={new:"modNew",warning:"modWarn",outdated:"modOld",normal:"modNormal"};
 const ADMIN=/(^|[?&#])admin(\b|=|$)/.test(location.search+location.hash);   // shows the author's tools; the real lock is who can change library.json
 const libToday=()=>new Date().toISOString().slice(0,10);
@@ -1321,7 +1298,7 @@ function libFromMod(m,x){   // m: a mod object (file contents)
  const id=modSlug(m.mod);
  return{id,file:"mods/"+id+".json",title:libCut(m.mod,40),author:libCut(m.author,40),version:libCut(m.version,20),description:libCut(m.description,200),added:x.added||"",tags:(x.tags||[]).slice(),note:x.note||"",mod:m};
 }
-let libList=MOD_LIBRARY.map(x=>libFromMod(x.mod,x)),libSource="loading",libFilter="all",libFiles={},libDirty=0;
+let libList=[],libSource="loading",libFilter="all",libFiles={},libDirty=0;
 // Reads library.json. Returns a clean list or null if it is not a valid library.
 function libClean(d){
  if(!modObj(d)||!Array.isArray(d.mods))return null;
@@ -1334,16 +1311,32 @@ function libClean(d){
  }
  return out;
 }
+// Where the list comes from:
+//  online  = library.json was read          error   = the site answered but library.json is missing or broken (empty list, details for the author)
+//  offline = the page cannot make requests at all (claude.ai preview, opened from a file): the library is empty
+let libNotes=[];
 async function libLoad(){
- libSource="loading";renderLibrary();
+ libSource="loading";libNotes=[];renderLibrary();
  try{
   const ac=typeof AbortController!=="undefined"?new AbortController():null,tm=setTimeout(()=>ac&&ac.abort(),8000);
   const r=await fetch(LIB_URL,{cache:"no-cache",signal:ac?ac.signal:undefined});clearTimeout(tm);
-  if(!r.ok)throw new Error("http "+r.status);
-  const list=libClean(await r.json());
-  if(!list)throw new Error("bad library");
-  libList=list;libSource="online";
- }catch(e){libList=MOD_LIBRARY.map(x=>libFromMod(x.mod,x));libSource="builtin";}
+  if(!r.ok){libList=[];libSource="error";libNotes.push(LIB_URL+" was not found (http "+r.status+"). It must be in the same folder as index.html.");}
+  else{
+   const text=await r.text();let j=null,fixed=false;
+   try{j=JSON.parse(text);}
+   catch(e1){
+    try{j=JSON.parse(text.replace(/,(\s*[}\]])/g,"$1"));fixed=true;}
+    catch(e2){libNotes.push(LIB_URL+" is not valid JSON ("+e1.message+"). Check the commas and brackets, for example by pasting it into jsonlint.com.");}
+   }
+   const list=j?libClean(j):null;
+   if(list){
+    libList=list;libSource="online";
+    if(fixed)libNotes.push(LIB_URL+" has a comma just before a closing bracket. The game ignored it, but please remove it from the file.");
+    const skipped=j.mods.length-list.length;
+    if(skipped>0)libNotes.push(skipped+" entr"+(skipped===1?"y was":"ies were")+" skipped: each one needs a title and a file like mods/name.json.");
+   }else{libList=[];libSource="error";if(j)libNotes.push(LIB_URL+' must look like {"library":1,"mods":[ ... ]}.');}
+  }
+ }catch(e){libList=[];libSource="offline";}
  libFiles={};libDirty=0;renderLibrary();
 }
 const libTags=e=>(e.tags||[]).filter(t=>MOD_TAGS.includes(t));
@@ -1360,7 +1353,6 @@ function modView(view){
 // A library entry whose mod file cannot be fetched: say which address failed and why, so the author can fix the repository.
 function libFetchError(e,url,err){modShow(false,[T("libFetchFail")+": "+e.title,(url||e.file)+"  ("+(err&&err.message?err.message:String(err))+")"]);}
 async function libInstall(e){
- if(e.mod){modRun(JSON.stringify(e.mod));return;}
  modShow(true,[],T("libDownloading")+": "+e.title);
  let url="";
  try{
@@ -1372,10 +1364,9 @@ async function libInstall(e){
 async function libDownload(e){   // save the mod's .json so it can be installed later or shared
  let url="";
  try{
-  let text;
-  if(e.mod)text=JSON.stringify(e.mod,null,2)+"\n";
-  else{url=new URL(e.file,new URL(LIB_URL,location.href)).href;const r=await fetch(url,{cache:"no-cache"});if(!r.ok)throw new Error("http "+r.status);text=await r.text();}
-  await modSaveFile(e.id+".json",text);
+  url=new URL(e.file,new URL(LIB_URL,location.href)).href;
+  const r=await fetch(url,{cache:"no-cache"});if(!r.ok)throw new Error("http "+r.status);
+  await modSaveFile(e.id+".json",await r.text());
  }catch(err){libFetchError(e,url,err);}
 }
 /* ----- author tools (only with #admin in the address) ----- */
@@ -1399,7 +1390,7 @@ function zipStore(files){   // files:[{name,data:string}] -> Uint8Array of a .zi
 function libExportFiles(){   // everything the author uploads to GitHub: library.json + the mod files that are new or changed
  const entries=libList.map(e=>({id:e.id,file:e.file||("mods/"+e.id+".json"),title:e.title,author:e.author,version:e.version,description:e.description,added:e.added,tags:libTags(e),note:e.note||""}));
  const files=[{name:"library.json",data:JSON.stringify({library:1,updated:libToday(),mods:entries},null,2)+"\n"}];
- for(const e of libList){const text=libFiles[e.id]||(e.mod?JSON.stringify(e.mod,null,2)+"\n":null);if(text)files.push({name:e.file||("mods/"+e.id+".json"),data:text});}
+ for(const e of libList){if(libFiles[e.id])files.push({name:e.file||("mods/"+e.id+".json"),data:libFiles[e.id]});}
  return files;
 }
 function modSaveBlob(name,blob){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);}
@@ -1415,9 +1406,10 @@ function libAdd(m){   // an installed mod -> library entry (author tool)
 function renderAdminBar(){
  const bar=document.getElementById("modAdmin");
  if(!ADMIN){bar.hidden=true;return;}
- bar.hidden=false;bar.className="modMsg ok";bar.textContent="";
+ bar.hidden=false;bar.className="modMsg "+(libNotes.length||libSource==="error"?"err":"ok");bar.textContent="";
  const b=document.createElement("b");b.textContent="Admin mode";bar.appendChild(b);
- const p=document.createElement("div");p.textContent="List source: "+(libSource==="online"?LIB_URL+" (online)":libSource==="loading"?"loading...":"built-in list (library.json not found)")+". Changes stay in this browser until you download them and upload them to GitHub."+(libDirty?" Unsaved changes: yes.":"");bar.appendChild(p);
+ const p=document.createElement("div");p.textContent="List source: "+(libSource==="online"?LIB_URL+" (online)":libSource==="loading"?"loading...":libSource==="error"?"none, see the problem below":"none (this page cannot reach library.json: normal in the claude.ai preview or when opened from a file)")+". Changes stay in this browser until you download them and upload them to GitHub."+(libDirty?" Unsaved changes: yes.":"");bar.appendChild(p);
+ libNotes.forEach(n=>{const d=document.createElement("div");d.style.marginTop="4px";d.textContent="Problem: "+n;bar.appendChild(d);});
  const row=document.createElement("div");row.className="grp";row.style.marginTop="6px";
  const dl_=document.createElement("button");dl_.textContent="Download library update (.zip)";
  dl_.onclick=()=>modSaveBlob("library-update.zip",new Blob([zipStore(libExportFiles())],{type:"application/zip"}));
@@ -1453,9 +1445,9 @@ function renderLibrary(){
   const row=document.createElement("div");row.className="grp";
   const bt=document.createElement("button");
   const same=inst&&inst.version===(e.version||"");
-  const label=!inst?T("modGet"):same?T("modGot"):T("modUpd");
+  const label=!inst?T("modGet"):same?(ADMIN?"Reinstall":T("modGot")):T("modUpd");
   bt.textContent=label;
-  if(same){bt.disabled=true;}
+  if(same&&!ADMIN){bt.disabled=true;}
   else bt.onclick=()=>{
    const risky=tags.includes("warning")||tags.includes("outdated");
    if(risky&&!bt.dataset.sure){bt.dataset.sure="1";bt.textContent=T("modAnyway");setTimeout(()=>{bt.dataset.sure="";bt.textContent=label;},4000);return;}
@@ -1545,7 +1537,7 @@ shapeBtns.forEach(b=>b.onclick=()=>{shape=b.dataset.shape;shapeBtns.forEach(x=>x
 room.oninput=()=>{const n=parseFloat(room.value);if(isNaN(n))return;amb=Math.max(-273,Math.min(9999,fromU(n)));};room.onchange=showRoom;
 // Changelog: newest first. Add a new entry at the top whenever something changes.
 const CHANGELOG=[
-  {v:"v1.2.0",items:["Mods: a Send to author button in My mods copies your mod and opens the Mod Submission form", "Mod library: a Normal filter for mods without a tag, and a Download button to save any mod as a .json file", "Mod library: a list of mods picked by the author (read from library.json), tagged New, Warning (may break the game) or Outdated, with one-click install", "Mods: the new Add mods button lets you install .json mods that add your own elements and reactions. Pick a file, drop it onto the game or paste it, then turn mods on and off, export them or remove them. A mod template is included", "Copper, Oxidized Copper and Rose Gold, plus Molten Copper, Molten Oxidized Copper and Molten Rose Gold", "Copper slowly oxidizes when it touches Oxygen, Carbon Dioxide or water (Chlorine makes a blue-green Oxidized Copper)", "Molten Copper oxidizes too, much faster than solid Copper", "Copper resists acid, but Oxidized Copper does not", "Molten Gold mixed with Molten Copper makes Molten Rose Gold", "Undo now also restores electric charge", "Molten Purple Gold now glows orange like real molten metal instead of purple"]},
+  {v:"v1.2.0",items:["Mod library: the game contains no mods of its own, it only shows what is in library.json, and the author is told what is wrong with it (open the game with #admin)", "Mods: a Send to author button in My mods copies your mod and opens the Mod Submission form", "Mod library: a Normal filter for mods without a tag, and a Download button to save any mod as a .json file", "Mod library: a list of mods picked by the author (read from library.json), tagged New, Warning (may break the game) or Outdated, with one-click install", "Mods: the new Add mods button lets you install .json mods that add your own elements and reactions. Pick a file, drop it onto the game or paste it, then turn mods on and off, export them or remove them. A mod template is included", "Copper, Oxidized Copper and Rose Gold, plus Molten Copper, Molten Oxidized Copper and Molten Rose Gold", "Copper slowly oxidizes when it touches Oxygen, Carbon Dioxide or water (Chlorine makes a blue-green Oxidized Copper)", "Molten Copper oxidizes too, much faster than solid Copper", "Copper resists acid, but Oxidized Copper does not", "Molten Gold mixed with Molten Copper makes Molten Rose Gold", "Undo now also restores electric charge", "Molten Purple Gold now glows orange like real molten metal instead of purple"]},
  {v:"v1.1.0",d:"November 2, 2026",items:["Search box above the category tabs: type to find any element, or click it to see recently used elements", "Pin elements and tools: right-click one to give it a gold border and move it to the front of its category", "Press C or F2 to take a screenshot of the play area", "New category: Life (Sapling, Root, Leaf)", "Saplings grow into trees", "Roots drink water from mud, wet sand and water; leaves turn carbon dioxide into oxygen", "Cloud: steam that rises very high turns into clouds, and clouds slowly turn into rain", "Obsidian and Basalt: magma cooled quickly becomes obsidian, magma cooled slowly becomes basalt, and both melt back into magma", "Carbonated Ice, Dirty Ice and Pool Ice", "Salt Ice, Sugar Ice and the other special ices moved to the Phase tab (Ice stays in Solids)", "Iron and steel now rust in salt water, sugar water, pool water, carbonated water and dirty water", "Acid now eats Slag", "Cooked meat can rot too", "Cloner is now yellow", "Feedback button: report bugs or share ideas with the developer through a Google Form", "Molten Aluminum, Molten Iron and Molten Steel now oxidize into Slag when they touch Oxygen (using up the oxygen)", "Molten Purple Gold touching Oxygen turns into Slag (21%) or Gold (79%)", "Molten Steel no longer rusts", "Fixed: the Line, Rectangle and Circle preview did not match what was placed (it now shows exactly the cells that will be painted)", "Fixed: Cooler could cool below absolute zero (now limited to -273°, Heater limited to 9999°)", "Fixed: Lightning drawn on the bottom row never disappeared", "Fixed: shortcut keys (P, R, S, C...) also triggered while a drop-down list was selected", "Fixed: a Cloner's remembered element could change after loading an older world", "Fixed: v0.1.0 changelog was missing the Eraser"]},
  {v:"v1.0.1",items:["Fixed: gases could block other gases from rising", "Carbon Dioxide is now darker", "Heavy gases no longer fall to the floor, they spread out instead"]},
  {v:"v1.0.0",items:["Undo button, Picker, Replace, Save and Load", "Electrum is slowly eaten by acid, or turns into gold", "4 new languages: English (UK), English (US), Chinese and Spanish", "Aluminum, Molten Aluminum, Purple Gold, Thermite, Salt Ice, Sugar Ice, Molten Dirt, Molten Ash, Slag, Molten Slag, Acid Gas, Molten Rust, Molten Salt, Molten Thermite, Chlorine, Pool Water, Bleach, Poison, Poison Gas, Liquid Chlorine, Chlorine Ice, Carbonated Water, Rotten Meat", "Cloner, Select, Copy, Paste, Cut, Electric, Lightning, Shock, Battery, Wire", "Rust turns water into dirty water", "Salt water, sugar water, pool water and oil can turn sand into wet sand", "FPS counter and FPS limit settings", "New official name: Elementarium"]},
@@ -1675,7 +1667,7 @@ function loop(){
  const t0=fpsOn?performance.now():0;if(down&&!picking)stamp(lx,ly);if(!paused){if(dragging)for(const h of held)mv[h.i]=tick+1;step();heat();radiate();electrify();convect();}draw();updateInfo();if(fpsOn){const t1=performance.now();fpsTick(t1,t1-t0);}requestAnimationFrame(loop);}
 loop();
 
-window.Sand={define,E,ID,g,v,temp,life,W,H,rnd,fr,setCell,swap,become,rm,nbrs,burn,ignite,emit,ELEMENTS,LANGS,addLanguage,setLang,CH,ECA,explode,installMod,parseMod,mods:()=>MODS,library:MOD_LIBRARY,libList:()=>libList,libExportFiles,zipStore,libLoad,libAdd,ADMIN};
+window.Sand={define,E,ID,g,v,temp,life,W,H,rnd,fr,setCell,swap,become,rm,nbrs,burn,ignite,emit,ELEMENTS,LANGS,addLanguage,setLang,CH,ECA,explode,installMod,parseMod,mods:()=>MODS,libList:()=>libList,libExportFiles,zipStore,libLoad,libAdd,ADMIN};
 })();
 </script>
 </body>
