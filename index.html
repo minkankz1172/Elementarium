@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script data-goatcounter="https://minkankz.goatcounter.com/count"
-async src="//gc.zgo.at/count.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Elementarium</title>
@@ -93,6 +91,15 @@ button.pinned{box-shadow:0 0 0 2px #e8b923}
 label{font-size:.85rem;display:flex;align-items:center;gap:8px}
 input[type=range]{accent-color:var(--accent);width:110px}
 </style>
+<script>
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = '//gc.zgo.at/count.js';
+        script.setAttribute('data-goatcounter', 'https://minkankz.goatcounter.com');
+        document.head.appendChild(script);
+    }
+</script>
 </head>
 <body>
 <main>
@@ -1302,21 +1309,20 @@ function libFromMod(m,x){   // m: a mod object (file contents)
 }
 let libList=[],libSource="loading",libFilter="all",libFiles={},libDirty=0;
 // Reads library.json. Returns a clean list or null if it is not a valid library.
-function libClean(d){
+function libClean(d,notes){   // notes (optional): receives one sentence for every entry that cannot be used
  if(!modObj(d)||!Array.isArray(d.mods))return null;
- const out=[];
- for(const x of d.mods.slice(0,200)){
-  if(!modObj(x)||!modStr(x.title,40)||typeof x.file!=="string"||!/^mods\/[a-z0-9._-]{1,60}\.json$/.test(x.file))continue;
+ const out=[],say_=m=>{if(notes)notes.push(m);};
+ d.mods.slice(0,200).forEach((x,i)=>{
+  const who="Entry "+(i+1)+(modObj(x)&&typeof x.title==="string"?' ("'+x.title.slice(0,30)+'")':"");
+  if(!modObj(x)){say_(who+" is skipped: it must be an object { ... }.");return;}
+  if(!modStr(x.title,40)){say_(who+' is skipped: it needs a "title" (text, 1 to 40 characters).');return;}
+  if(typeof x.file!=="string"||!/^mods\/[a-z0-9._-]{1,60}\.json$/.test(x.file)){say_(who+' is skipped: "file" must look like mods/name.json, all lowercase, '+(typeof x.file==="string"?'but it is "'+x.file.slice(0,60)+'"':"but it is missing")+".");return;}
   out.push({id:modSlug(typeof x.id==="string"&&x.id?x.id:x.title),file:x.file,title:x.title.trim(),author:libCut(x.author,40),version:libCut(x.version,20),description:libCut(x.description,200),
    added:/^\d{4}-\d\d-\d\d$/.test(x.added||"")?x.added:"",
    tags:(Array.isArray(x.tags)?x.tags:[]).filter(t=>MOD_TAGS.includes(t)),note:libCut(x.note,200)});
- }
+ });
  return out;
 }
-// Where the list comes from:
-//  online  = library.json was read          error   = the site answered but library.json is missing or broken (empty list, details for the author)
-//  offline = the page cannot make requests at all (claude.ai preview, opened from a file): the library is empty
-let libNotes=[];
 async function libLoad(){
  libSource="loading";libNotes=[];renderLibrary();
  try{
@@ -1330,12 +1336,10 @@ async function libLoad(){
     try{j=JSON.parse(text.replace(/,(\s*[}\]])/g,"$1"));fixed=true;}
     catch(e2){libNotes.push(LIB_URL+" is not valid JSON ("+e1.message+"). Check the commas and brackets, for example by pasting it into jsonlint.com.");}
    }
-   const list=j?libClean(j):null;
+   const list=j?libClean(j,libNotes):null;
    if(list){
-    libList=list;libSource="online";
+    libList=list;libSource=list.length===0&&j.mods.length>0?"error":"online";
     if(fixed)libNotes.push(LIB_URL+" has a comma just before a closing bracket. The game ignored it, but please remove it from the file.");
-    const skipped=j.mods.length-list.length;
-    if(skipped>0)libNotes.push(skipped+" entr"+(skipped===1?"y was":"ies were")+" skipped: each one needs a title and a file like mods/name.json.");
    }else{libList=[];libSource="error";if(j)libNotes.push(LIB_URL+' must look like {"library":1,"mods":[ ... ]}.');}
   }
  }catch(e){libList=[];libSource="offline";}
@@ -1422,6 +1426,11 @@ function renderLibrary(){
  const fb=document.getElementById("modFilters"),ls=document.getElementById("modLibList");
  fb.textContent="";ls.textContent="";renderAdminBar();
  if(libSource==="loading"){const p=document.createElement("p");p.className="msub";p.textContent=T("libLoading");ls.appendChild(p);return;}
+ if(libSource==="error"){
+  const p=document.createElement("p");p.className="msub";p.textContent=T("modLibEmpty");ls.appendChild(p);
+  libNotes.forEach(n=>{const d=document.createElement("div");d.className="modNote warning";d.style.margin="6px 0";d.textContent="Problem: "+n;ls.appendChild(d);});
+  return;
+ }
  const used=LIB_FILTERS.filter(t=>libList.some(e=>libMatch(e,t)));
  if(libFilter!=="all"&&!used.includes(libFilter))libFilter="all";
  [["all","modAll"]].concat(used.map(t=>[t,MOD_TAGKEY[t]])).forEach(([k,key])=>{
