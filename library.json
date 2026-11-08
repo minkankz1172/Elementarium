@@ -1,3 +1,18 @@
+{
+  "library": 1,
+  "updated": "2026-11-04",
+  "mods": [
+    {
+      "id": "kitchen-chemistry",
+      "file": "mods/kitchen-chemistry.json",
+      "title": "Kitchen Chemistry",
+      "author": "Elementarium",
+      "version": "1.0",
+      "description": "Baking soda and vinegar make a fizzy volcano.",
+      "added": "2026-11-04",
+      "tags": [],
+      "note": ""
+    },
     {
       "id": "example-pack",
       "file": "mods/example-pack.json",
