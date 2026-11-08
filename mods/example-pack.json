@@ -38,7 +38,7 @@
           "with": "chlorine",
           "chance": 0.7,
           "to": "salt",
-          "other: "air",
+          "other": "air",
         }
       ]
     },
