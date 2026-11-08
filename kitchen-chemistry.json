@@ -1,0 +1,56 @@
+{
+  "mod": "Kitchen Chemistry",
+  "version": "1.0",
+  "author": "Elementarium",
+  "description": "Baking soda and vinegar make a fizzy volcano.",
+  "elements": [
+    {
+      "key": "baking_soda",
+      "name": "Baking Soda",
+      "lang": {
+        "es": "Bicarbonato",
+        "zh": "小苏打"
+      },
+      "category": "powders",
+      "movement": "powder",
+      "color": [
+        240,
+        240,
+        236
+      ],
+      "density": 1100,
+      "reactions": [
+        {
+          "with": "vinegar",
+          "chance": 0.35,
+          "to": "carbon_dioxide",
+          "other": "water",
+          "emit": "carbon_dioxide"
+        }
+      ]
+    },
+    {
+      "key": "vinegar",
+      "name": "Vinegar",
+      "lang": {
+        "es": "Vinagre",
+        "zh": "醋"
+      },
+      "category": "liquids",
+      "movement": "liquid",
+      "color": [
+        238,
+        226,
+        160
+      ],
+      "density": 1010,
+      "reactions": [
+        {
+          "above": 100,
+          "chance": 0.1,
+          "to": "steam"
+        }
+      ]
+    }
+  ]
+}
