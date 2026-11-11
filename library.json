@@ -7,7 +7,7 @@
       "file": "mods/kitchen-chemistry.json",
       "title": "Kitchen Chemistry",
       "author": "Minkankz",
-      "version": "1.1",
+      "version": "1.0",
       "description": "Baking soda and vinegar make a fizzy volcano.",
       "added": "2026-11-04",
       "tags": [],
@@ -18,11 +18,11 @@
       "file": "mods/example-pack.json",
       "title": "Example Pack",
       "author": "Minkankz",
-      "version": "1.0",
+      "version": "1.2",
       "description": "Sodium that blows up in water, a glowing slime and a neon gas.",
       "added": "2026-11-04",
       "tags": [
-        "new"
+        ""
       ],
       "note": ""
     },
