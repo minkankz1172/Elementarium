@@ -1,7 +1,7 @@
 {
   "mod": "Example Pack",
   "version": "1.0",
-  "author": "Your name",
+  "author": "Minkankz",
   "description": "Sodium that blows up in water, a glowing slime and a neon gas.",
   "elements": [
     {
@@ -71,6 +71,10 @@
           "with": "fire",
           "chance": 0.2,
           "to": "smoke"
+        }
+        {
+          "above": 150,
+          "to": "steam"
         }
       ]
     },
