@@ -71,6 +71,10 @@
           "with": "fire",
           "chance": 0.2,
           "to": "smoke"
+        },
+       {
+          "above": 150,
+          "to": "steam"
         }
       ]
     },
