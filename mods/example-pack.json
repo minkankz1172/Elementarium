@@ -72,8 +72,9 @@
           "chance": 0.2,
           "to": "smoke"
         },
-       {
+        {
           "above": 150,
+          "chance": 0.7,
           "to": "steam"
         }
       ]
