@@ -39,5 +39,16 @@
       ],
       "note": ""
     }
+    {
+      "id": "black-hole",
+      "file": "mods/black-hole.json",
+      "title": "Black hole",
+      "author": "Minkankz",
+      "version": "1.0",
+      "description": "Black Hole.",
+      "added": "2026-11-12",
+      "tags": [ "" ],
+      "note": ""
+    }
   ]
 }
