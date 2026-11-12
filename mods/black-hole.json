@@ -1,0 +1,111 @@
+{
+  "mod": "Black Hole Pack",
+  "version": "1.0",
+  "author": "Minkankz",
+  "description": "Adds a Black Hole that generates a gravitational pull field and consumes everything.",
+  "elements": [
+    {
+      "key": "black_hole",
+      "name": "Black Hole",
+      "lang": {
+        "es": "Agujero negro",
+        "zh": "黑洞"
+      },
+      "category": "specials",
+      "movement": "solid",
+      "color": {
+        "from":,
+        "to":,
+        "animated": true
+      },
+      "swatch": "#1a0033",
+      "density": 30000,
+      "unbreakable": true,
+      "insulator": true,
+      "reactions": [
+        {
+          "with": "air",
+          "chance": 0.15,
+          "to": "black_hole",
+          "other": "gravity_pull"
+        },
+        {
+          "with": "water",
+          "chance": 0.9,
+          "to": "black_hole",
+          "other": "air"
+        },
+        {
+          "with": "sand",
+          "chance": 0.9,
+          "to": "black_hole",
+          "other": "air"
+        },
+        {
+          "with": "lava",
+          "chance": 0.9,
+          "to": "black_hole",
+          "other": "air"
+        },
+        {
+          "with": "fire",
+          "chance": 0.9,
+          "to": "black_hole",
+          "other": "air"
+        },
+        {
+          "with": "smoke",
+          "chance": 0.9,
+          "to": "black_hole",
+          "other": "air"
+        },
+        {
+          "with": "tnt",
+          "chance": 0.95,
+          "to": "black_hole",
+          "other": "air"
+        },
+        {
+          "with": "gravity_pull",
+          "chance": 0.5,
+          "to": "black_hole",
+          "other": "air"
+        }
+      ]
+    },
+    {
+      "key": "gravity_pull",
+      "name": "Gravity Field",
+      "lang": {
+        "vi": "Trường hấp dẫn"
+      },
+      "category": "specials",
+      "movement": "gas",
+      "color": {
+        "from":,
+        "to":,
+        "animated": true
+      },
+      "density": 0.5,
+      "rise": 0.3,
+      "side": 0.3,
+      "sink": 0.3,
+      "lifetime":,
+      "decay": true,
+      "reactions": [
+        {
+          "with": "water",
+          "chance": 0.4,
+          "to": "water",
+          "other": "air"
+        },
+        {
+          "with": "sand",
+          "chance": 0.4,
+          "to": "sand",
+          "other": "air"
+        }
+      ]
+    }
+  ]
+}
