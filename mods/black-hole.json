@@ -13,7 +13,11 @@
       },
       "category": "specials",
       "movement": "solid",
-      "color": #000,
+      "color": [
+        205,
+        208,
+        214
+      ],
       "swatch": "#1a0033",
       "density": 30000,
       "unbreakable": true,
