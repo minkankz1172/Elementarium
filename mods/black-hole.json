@@ -18,7 +18,6 @@
         208,
         214
       ],
-      "swatch": "#1a0033",
       "density": 30000,
       "unbreakable": true,
       "insulator": true,
@@ -82,10 +81,10 @@
       "category": "specials",
       "movement": "gas",
       "color": {
-        "from":,
-        "to":,
-        "animated": true
-      },
+        0,
+        0,
+        0
+      }
       "density": 0.5,
       "rise": 0.3,
       "side": 0.3,
