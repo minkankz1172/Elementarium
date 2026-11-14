@@ -1,0 +1,26 @@
+{
+  "mod": "Sky Toys",
+  "version": "1.0",
+  "author": "Elementarium",
+  "description": "A new Toys tab, and buttons in Settings: rain, freeze the room, melt all ice, big brush.",
+  "categories": [
+    { "key": "toys", "name": "Toys", "lang": { "es": "Juguetes", "zh": "玩具" }, "after": "gases" }
+  ],
+  "elements": [
+    { "key": "balloon_gas", "name": "Balloon Gas", "lang": { "es": "Gas globo", "zh": "气球气体" },
+      "category": "toys", "movement": "gas", "color": { "from": [255, 120, 160], "to": [255, 200, 120], "animated": true },
+      "density": 0.2, "rise": 0.7, "side": 0.3 },
+    { "key": "bouncy_goo", "name": "Bouncy Goo", "category": "toys", "movement": "liquid",
+      "color": [255, 90, 200], "density": 1100, "viscosity": 20 }
+  ],
+  "buttons": [
+    { "label": "Rain", "lang": { "es": "Lluvia", "zh": "下雨" },
+      "do": [ { "action": "scatter", "element": "water", "count": 300, "area": "top" } ] },
+    { "label": "Freeze room", "lang": { "es": "Congelar sala", "zh": "冻结房间" },
+      "do": [ { "action": "setAmbient", "value": -20 } ] },
+    { "label": "Melt ice", "lang": { "es": "Derretir hielo", "zh": "融化冰" },
+      "do": [ { "action": "convert", "from": ["ice"], "to": "water" } ] },
+    { "label": "Big brush", "lang": { "es": "Pincel grande", "zh": "大画笔" },
+      "do": [ { "action": "setBrush", "size": 20, "shape": "round" } ] }
+  ]
+}
