@@ -49,9 +49,9 @@ button.pinned{box-shadow:0 0 0 2px #e8b923}
 .clogHead{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--panel);padding:12px 0 8px;border-bottom:1px solid var(--line)}
 .modTabs{margin:10px 0 2px}#modFilters{margin:8px 0 2px;gap:6px}#modFilters button{padding:3px 10px;font-size:.78rem}
 .chip{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.02em;padding:1px 8px;border-radius:999px;border:1px solid;margin-left:8px;vertical-align:1px}
-.chip.new{color:#2f9e5a}.chip.warning{color:#d4574c}.chip.outdated{color:#8a8f98}
+.chip.new{color:#2f9e5a}.chip.broken{color:#d4574c}.chip.tag{color:var(--ink);opacity:.7;font-weight:600}.chip.outdated{color:#8a8f98}
 .modItem.warn{border-color:#d4574c}
-.modNote{font-size:.78rem;padding:4px 8px;border-left:3px solid var(--line)}.modNote.warning{border-left-color:#d4574c}.modNote.outdated{border-left-color:#8a8f98}
+.modNote{font-size:.78rem;padding:4px 8px;border-left:3px solid var(--line)}.modNote.warning,.modNote.broken{border-left-color:#d4574c}.modNote.outdated{border-left-color:#8a8f98}
 .modItem input[type=text]{flex:1;min-width:130px;font:inherit;font-size:.78rem;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
 .modItem{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;display:flex;flex-direction:column;gap:6px}
 .modItem .mt{font-size:.88rem}.modItem .mt small{opacity:.65;font-weight:400;margin-left:6px}.modItem .md{font-size:.78rem;opacity:.75}.modItem .grp{gap:6px}.modItem.off .mt{opacity:.55}
@@ -107,7 +107,7 @@ input[type=range]{accent-color:var(--accent);width:110px}
     <h1>Elementarium</h1>
     <p class="sub">Hold to draw. Right-click to erase, scroll to change brush size. Hover any pixel to read its temperature. Try burning wood, boiling water with Heat, or freezing it with Cool.</p>
   </header>
-  <div class="wrap"><canvas id="c" width="204" height="102" aria-label="Elementarium play area"></canvas><div class="info" id="info" hidden></div><div class="modal" id="confirm" hidden><div class="mbox"><p data-i="sure">Are you sure you want to clear everything?</p><p class="msub" data-i="sureSub">You can undo this afterwards. Press Enter to confirm or Esc to cancel.</p><div class="grp"><button id="cYes" data-i="clearAll">Clear all</button><button id="cNo" data-i="cancel">Cancel</button></div></div></div><div class="fps" id="fps" hidden></div><div class="toast" id="toast" hidden></div><div class="clog" id="changelog" hidden><div class="clogHead"><b data-i="changelog">Changelog</b><button id="clogClose" data-i="close">Close</button></div><div id="clogBody"></div></div><div class="clog" id="modsPanel" hidden><div class="clogHead"><b data-i="modsTitle">Mods</b><button id="modsClose" data-i="close">Close</button></div><div class="grp modTabs"><button id="modTabLib" data-i="modLib" aria-pressed="true">Library</button><button id="modTabMine" data-i="modMine" aria-pressed="false">My mods</button></div><div id="modMsg" class="modMsg" hidden></div><div id="modsLib"><p class="msub" data-i="modLibIntro">Mods picked by the author of the game.</p><div id="modAdmin" class="modMsg" hidden></div><div class="grp" id="modFilters"></div><div id="modLibList"></div><div class="grp" style="margin-top:10px"><button id="modSubmit" data-i="modSubmit">Send your mod to the author</button></div><p class="msub" data-i="modSubmitHint">Made a mod? Install it, then press Send to author in My mods.</p></div><div id="modsMine" hidden><p class="msub" data-i="modsIntro">Mods add new elements and reactions.</p><h3 data-i="modsAdd">Add a mod</h3><div class="grp"><button id="modFileBtn" data-i="modChoose">Choose file...</button><input type="file" id="modFile" accept=".json,application/json" hidden><button id="modTemplate" data-i="modTemplate">Download template</button></div><textarea id="modText" spellcheck="false" aria-label="Mod JSON"></textarea><div class="grp"><button id="modInstall" data-i="modInstall">Install pasted mod</button></div><h3 data-i="modsInstalled">Installed mods</h3><div id="modList"></div><details class="modDocs"><summary data-i="modFormat">Mod format (for creators)</summary><pre id="modDocs"></pre></details></div></div><div class="panel" id="settings" hidden><div class="row"><span data-i="tempUnit">Temperature unit</span><span class="grp"><button id="uC" aria-pressed="true">°C</button><button id="uF" aria-pressed="false">°F</button><button id="uK" aria-pressed="false">K</button></span></div><div class="row"><label for="room" data-i="room">Room temperature</label><span class="grp"><input id="room" type="number" step="1" value="20"><b id="roomv">°C</b></span></div><div class="row"><span data-i="brushShape">Brush shape</span></div><div class="grp" id="shapes"><button data-shape="square" aria-pressed="true">Square</button><button data-shape="round" aria-pressed="false">Round</button><button data-shape="squareGrid" aria-pressed="false">Square grid</button><button data-shape="roundGrid" aria-pressed="false">Round grid</button></div><div class="row"><span data-i="confirmClear">Confirm before Clear all</span><button id="confirmToggle" aria-pressed="true">On</button></div><div class="row"><span data-i="showFps">Show FPS</span><button id="fpsToggle" aria-pressed="false">Off</button></div><div class="row"><span data-i="fpsLimit">FPS limit</span><select id="fpsLimit"><option value="30">30</option><option value="60">60</option><option value="120">120</option><option value="0" data-i="unlimited">Unlimited</option></select></div><input type="file" id="importFile" accept=".json,application/json" hidden><div class="row"><span data-i="language">Language</span></div><select id="langs" aria-label="Language"></select><p class="msub" data-i="shortcuts">Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, C screenshot, + / - brush size. Right-click an element to pin it.</p></div></div>
+  <div class="wrap"><canvas id="c" width="204" height="102" aria-label="Elementarium play area"></canvas><div class="info" id="info" hidden></div><div class="modal" id="confirm" hidden><div class="mbox"><p data-i="sure">Are you sure you want to clear everything?</p><p class="msub" data-i="sureSub">You can undo this afterwards. Press Enter to confirm or Esc to cancel.</p><div class="grp"><button id="cYes" data-i="clearAll">Clear all</button><button id="cNo" data-i="cancel">Cancel</button></div></div></div><div class="fps" id="fps" hidden></div><div class="toast" id="toast" hidden></div><div class="clog" id="changelog" hidden><div class="clogHead"><b data-i="changelog">Changelog</b><button id="clogClose" data-i="close">Close</button></div><div id="clogBody"></div></div><div class="clog" id="modsPanel" hidden><div class="clogHead"><b data-i="modsTitle">Mods</b><button id="modsClose" data-i="close">Close</button></div><div class="grp modTabs"><button id="modTabLib" data-i="modLib" aria-pressed="true">Library</button><button id="modTabMine" data-i="modMine" aria-pressed="false">My mods</button></div><div id="modMsg" class="modMsg" hidden></div><div id="modsLib"><p class="msub" data-i="modLibIntro">Mods picked by the author of the game.</p><div id="modAdmin" class="modMsg" hidden></div><div class="grp" id="modFilters"></div><div id="modLibList"></div><div class="grp" style="margin-top:10px"><button id="modSubmit" data-i="modSubmit">Send your mod to the author</button></div><p class="msub" data-i="modSubmitHint">Made a mod? Install it, then press Send to author in My mods.</p></div><div id="modsMine" hidden><p class="msub" data-i="modsIntro">Mods add new elements and reactions.</p><h3 data-i="modsAdd">Add a mod</h3><div class="grp"><button id="modFileBtn" data-i="modChoose">Choose file...</button><input type="file" id="modFile" accept=".json,application/json" hidden><button id="modTemplate" data-i="modTemplate">Download template</button></div><textarea id="modText" spellcheck="false" aria-label="Mod JSON"></textarea><div class="grp"><button id="modInstall" data-i="modInstall">Install pasted mod</button></div><h3 data-i="modsInstalled">Installed mods</h3><div id="modList"></div><details class="modDocs"><summary data-i="modFormat">Mod format (for creators)</summary><pre id="modDocs"></pre></details></div><p class="msub" id="modBuild" style="margin:14px 0 0;font-size:.72rem;opacity:.6"></p></div><div class="panel" id="settings" hidden><div class="row"><span data-i="tempUnit">Temperature unit</span><span class="grp"><button id="uC" aria-pressed="true">°C</button><button id="uF" aria-pressed="false">°F</button><button id="uK" aria-pressed="false">K</button></span></div><div class="row"><label for="room" data-i="room">Room temperature</label><span class="grp"><input id="room" type="number" step="1" value="20"><b id="roomv">°C</b></span></div><div class="row"><span data-i="brushShape">Brush shape</span></div><div class="grp" id="shapes"><button data-shape="square" aria-pressed="true">Square</button><button data-shape="round" aria-pressed="false">Round</button><button data-shape="squareGrid" aria-pressed="false">Square grid</button><button data-shape="roundGrid" aria-pressed="false">Round grid</button><button data-shape="squareRing" aria-pressed="false">Square outline</button><button data-shape="roundRing" aria-pressed="false">Circle outline</button></div><div class="row"><span data-i="confirmClear">Confirm before Clear all</span><button id="confirmToggle" aria-pressed="true">On</button></div><div class="row"><span data-i="showFps">Show FPS</span><button id="fpsToggle" aria-pressed="false">Off</button></div><div class="row"><span data-i="fpsLimit">FPS limit</span><select id="fpsLimit"><option value="30">30</option><option value="60">60</option><option value="120">120</option><option value="0" data-i="unlimited">Unlimited</option></select></div><div id="modButtonsBox" hidden><div class="row"><span data-i="modButtonsTitle">Mod buttons</span></div><div class="grp" id="modButtons"></div></div><input type="file" id="importFile" accept=".json,application/json" hidden><div class="row"><span data-i="language">Language</span></div><select id="langs" aria-label="Language"></select><p class="msub" data-i="shortcuts">Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, C screenshot, + / - brush size. Right-click an element to pin it.</p></div></div>
   <div class="bar ctrl">
     <label><span data-i="brushSize">Brush size</span> <input id="size" type="range" min="1" max="153" value="6"></label>
     <span class="sp"></span>
@@ -128,10 +128,15 @@ const E=[],ID={},KA=new Float32Array(256),INS=new Uint8Array(256),PIN=new Float3
 const CATKIND={powders:"powder",liquids:"liquid",gases:"gas"};
 
 /* ===== Registry: ids are assigned automatically, elements refer to each other by key ===== */
-function finalize(){E.forEach((e,id)=>{KA[id]=e.k;INS[id]=e.insulator?1:0;PIN[id]=e.pinTemp!==undefined?e.pinTemp:NaN;RAD[id]=e.radiate||0;ROOMP[id]=e.pinRoom?1:0;ECA[id]=e.electroConduct||0;});}
+// Electrical conductivity is written per element as  conductivity  in %IACS (copper = 100, silver = 106, iron = 17), 0 to 1000.
+// Elements without it do not conduct. The charge rules use a 0..1 number: log10(1 + conductivity) / log10(101), so 100 or more counts as 1.
+// (a log scale keeps iron (17) a fair conductor and still lets even salt water (9) carry a little electricity)
+const LOG101=Math.log10(101);
+function condToEc(c){return c>0?Math.min(1,Math.log10(1+c)/LOG101):0;}
+function finalize(){E.forEach((e,id)=>{KA[id]=e.k;INS[id]=e.insulator?1:0;PIN[id]=e.pinTemp!==undefined?e.pinTemp:NaN;RAD[id]=e.radiate||0;ROOMP[id]=e.pinRoom?1:0;ECA[id]=condToEc(e.conductivity);});}
 function define(key,d,slot){
  d.key=key;const mvt=d.movement||d.kind||CATKIND[d.category]||"solid";d.movement=mvt;d.kind=mvt==="clump"?"powder":mvt;if(mvt==="clump")d.slide=false;
- d.heatConduct=d.heatConduct??d.conduct??.33;d.k=Math.min(.95,d.heatConduct*.3);d.electroConduct=d.electroConduct??0;
+ d.heatConduct=d.heatConduct??d.conduct??.33;d.k=Math.min(.95,d.heatConduct*.3);d.conductivity=d.conductivity??0;
  d.density=d.density??1000;d.acidp=(d.acidr||0)*.1;
  d.reactions=d.reactions||[];
  if(d.burn||d.flammable)d.burn=Object.assign({at:300,chance:.02,heat:450,spread:.012,water:.1,flames:.04,speed:.5},d.burn);d.rise=d.rise??.5;d.side=d.side??.5;d.color=d.color||[200,200,200];
@@ -170,6 +175,16 @@ const side=(j,e)=>{const o=g[j];if(!o)return true;const b=E[o];return b.kind==="
 function supported(i){if(i>=N-W)return true;const b=g[i+W];if(!b)return false;const k=E[b].kind;return k==="solid"||k==="powder";}
 const warned={};
 function bad(x){const k=JSON.stringify(x);if(!warned[k]){warned[k]=1;console.warn("Sand: unknown element key in",x);}}
+// What a reaction's "with" can be: an element key, "*" (any other element), "category:liquids" (every element of that category), or a list of those.
+// "*" and categories never match air, the cell itself, things without a category (switched-off mods) or unbreakable things such as Wall (name those by key).
+function withMatcher(w){
+ const fns=(Array.isArray(w)?w:[w]).map(p=>{
+  if(p==="*")return(gid,self)=>gid!==0&&gid!==self&&!E[gid].unbreakable&&!!E[gid].category;
+  if(typeof p==="string"&&p.startsWith("category:")){const c=p.slice(9);return(gid,self)=>gid!==0&&gid!==self&&!E[gid].unbreakable&&E[gid].category===c;}
+  return gid=>gid!==0&&gid===ID[p];
+ });
+ return(gid,self)=>fns.some(f=>f(gid,self));
+}
 function react(e,i,tp){
  for(const r of e.reactions){
   if((r.to&&ID[r.to]===undefined)||(r.other&&r.other!=="air"&&ID[r.other]===undefined)||(r.emit&&ID[r.emit]===undefined)){bad(r);continue;}
@@ -180,7 +195,7 @@ function react(e,i,tp){
   if(r.below!==undefined&&!(tp<r.below))continue;
   if(r.chance!==undefined&&rnd()>=r.chance)continue;
   let n;
-  if(r.with){const id=ID[r.with];n=nbrs(i).find(m=>g[m]===id);if(n===undefined)continue;}
+  if(r.with){const mt=r._mt||(r._mt=withMatcher(r.with)),self=g[i];n=nbrs(i).find(m=>mt(g[m],self));if(n===undefined)continue;}
   if(r.other!==undefined&&n!==undefined){if(r.other==="air")rm(n);else setCell(n,ID[r.other]);}
   if(r.heat)temp[i]+=r.heat;
   if(r.warm)for(const n of nbrs(i))if(!INS[g[n]]&&!ROOMP[g[n]])temp[n]=Math.max(temp[n],r.warm);
@@ -221,7 +236,7 @@ function corrode(e,i){
  lang        {es:"Sal", zh:"盐"} translated names (any language code, also ones added with Sand.addLanguage)
  color       [r,g,b] or i=>[r,g,b]            swatch     css colour of the button (needed with a color function)
  density     kg/m3, heavier sinks through lighter liquids/gases (water=1000, default 1000)
- heatConduct heat conduction 0..1 (default .33)      electroConduct  electricity conduction 0..1 (default 0; metals ~1, salt water .5)
+ heatConduct heat conduction 0..1 (default .33)      conductivity  electrical conductivity in %IACS, 0..1000 (copper 100, silver 106, iron 17); missing = does not conduct
  viscosity   Pa.s, liquids only; leave out to flow like water (mud 15, molten glass 60, magma 120)
  acidr       how fast acid eats it: 0 = immune (default), 1 = fast      corrosive  key acid becomes when used up (makes it an acid)
  spray       chance per pixel when painting
@@ -235,7 +250,7 @@ function corrode(e,i){
 const ELEMENTS={};
 ELEMENTS.sand={name:"Sand",category:"powders",movement:"powder",color:[222,184,104],density:1600,heatConduct:.27,acidr:.8,spray:.45,
  reactions:[{above:1000,chance:.1,to:"molten"},{with:"water",chance:.3,to:"wetsand",other:"air"},{with:"saltwater",chance:.3,to:"wetsand",other:"air"},{with:"sugarwater",chance:.3,to:"wetsand",other:"air"},{with:"dirty_water",chance:.3,to:"wetsand",other:"air"},{with:"pool_water",chance:.3,to:"wetsand",other:"air"},{with:"oil",chance:.3,to:"wetsand",other:"air"},{with:"carbonated_water",chance:.3,to:"wetsand",other:"air"}]};
-ELEMENTS.wetsand={name:"Wet Sand",electroConduct:0.05,category:"powders",movement:"clump",color:[168,138,76],density:1900,acidr:.8,spray:.45,
+ELEMENTS.wetsand={name:"Wet Sand",conductivity:0.25,category:"powders",movement:"clump",color:[168,138,76],density:1900,acidr:.8,spray:.45,
  reactions:[{above:100,chance:.04,to:"sand",emit:"steam"}]};
 ELEMENTS.dirt={name:"Dirt",category:"powders",movement:"powder",color:[96,70,46],density:1500,heatConduct:.27,acidr:1,spray:.45,
  reactions:[{above:1200,chance:.1,to:"molten_dirt"},{with:"water",chance:.3,to:"mud",other:"air"}]};
@@ -247,24 +262,24 @@ ELEMENTS.ice={name:"Ice",category:"solids",movement:"solid",color:[165,218,242],
  reactions:[{above:1,chance:.1,to:"water",capT:3}]};
 ELEMENTS.glass={name:"Glass",category:"solids",movement:"solid",color:[170,215,225],density:2500,heatConduct:.27,
  reactions:[{above:1000,chance:.1,to:"molten"}]};
-ELEMENTS.water={name:"Water",rusts:.0015,electroConduct:0.15,category:"liquids",movement:"liquid",color:[58,130,214],density:1000,heatConduct:.4,spray:.45,
+ELEMENTS.water={name:"Water",rusts:.0015,conductivity:1,category:"liquids",movement:"liquid",color:[58,130,214],density:1000,heatConduct:.4,spray:.45,
  reactions:[{above:99.99,to:"steam",setT:100},{below:-1,to:"ice"}]};
 ELEMENTS.oil={name:"Oil",category:"liquids",movement:"liquid",color:[122,86,26],density:800,heatConduct:.27,spray:.45,
  burn:{at:250,chance:.2,heat:500,spread:.03,water:0,flames:.08,speed:.3,into:"carbon_dioxide"}};
-ELEMENTS.acid={name:"Acid",electroConduct:0.4,category:"liquids",movement:"liquid",color:[140,232,60],density:1098,spray:.45,corrosive:"smoke",
+ELEMENTS.acid={name:"Acid",conductivity:5,category:"liquids",movement:"liquid",color:[140,232,60],density:1098,spray:.45,corrosive:"smoke",
  reactions:[{above:200,chance:.1,to:"acid_gas"}]};
-ELEMENTS.mud={name:"Mud",electroConduct:0.1,category:"liquids",movement:"liquid",color:[74,56,40],density:1700,acidr:1,viscosity:15,
+ELEMENTS.mud={name:"Mud",conductivity:0.6,category:"liquids",movement:"liquid",color:[74,56,40],density:1700,acidr:1,viscosity:15,
  reactions:[{above:100,chance:.04,to:"dirt",emit:"steam"}]};
 ELEMENTS.molten={name:"Molten Glass",category:"phase",movement:"liquid",swatch:"#ff9628",density:2400,heatConduct:.2,viscosity:60,startMin:1100,
  color:i=>[255,130+fr(i)*70,20+fr(i+7)*30],reactions:[{below:800,chance:.1,to:"glass"}]};
 ELEMENTS.magma={name:"Magma",category:"liquids",movement:"liquid",swatch:"#e8431a",density:2700,heatConduct:.2,viscosity:120,startMin:1200,
  color:i=>[235+fr(i)*20,50+fr(i+7)*60,10],reactions:[{below:700,lifeBelow:32,rest:true,to:"obsidian"},{below:700,rest:true,to:"basalt"}],
  update:c=>{const i=c.i;if(temp[i]<1000){if(life[i]<255)life[i]++;}else life[i]=0;return false;}};
-ELEMENTS.fire={name:"Fire",electroConduct:0.05,bubble:false,category:"gases",movement:"gas",swatch:"#ff7a1a",density:.3,heatConduct:.5,startMin:600,keepTemp:550,lifetime:[40,90],
+ELEMENTS.fire={name:"Fire",conductivity:0.25,bubble:false,category:"gases",movement:"gas",swatch:"#ff7a1a",density:.3,heatConduct:.5,startMin:600,keepTemp:550,lifetime:[40,90],
  rise:.35,side:.15,spray:.4,tint:false,ignites:.03,decay:{below:1000,into:"smoke",chance:.5},
  color:i=>[255,Math.min(255,70+fr(i)*90+Math.min(1,life[i]/50)*40),10+fr(i+7)*30],
  reactions:[{above:7500,to:"plasma"},{with:"water",chance:.3,to:"steam",setT:105,other:"air"},{with:"oxygen",chance:1,other:"air",heat:30}]};
-ELEMENTS.plasma={name:"Plasma",electroConduct:0.8,bubble:false,category:"gases",movement:"gas",swatch:"#b46bff",density:.1,heatConduct:1,startMin:7500,rise:.6,side:.4,spray:.4,tint:false,
+ELEMENTS.plasma={name:"Plasma",conductivity:39,bubble:false,category:"gases",movement:"gas",swatch:"#b46bff",density:.1,heatConduct:1,startMin:7500,rise:.6,side:.4,spray:.4,tint:false,
  color:i=>[170+fr(i)*70,90+fr(i+7)*90,255],reactions:[{below:5000,to:"fire"}]};
 ELEMENTS.smoke={name:"Smoke",category:"gases",movement:"gas",heatConduct:1.5,swatch:"#5a5c62",density:1.1,lifetime:[30,60],rise:.6,side:.4,decay:true,
  color:i=>{const f=life[i]/60,a=v[i]-12;return[(90+a)*f+18,(92+a)*f+22,(98+a)*f+26];}};
@@ -272,9 +287,9 @@ ELEMENTS.steam={name:"Steam",category:"gases",movement:"gas",heatConduct:1.5,col
  reactions:[{top:10,chance:.03,to:"cloud"},{below:90,chance:.03,to:"water"}]};
 ELEMENTS.ash={name:"Ash",category:"powders",movement:"powder",color:[112,110,108],density:700,heatConduct:.2,acidr:1,spray:.45,
  reactions:[{above:1100,chance:.1,to:"molten_ash"}]};
-ELEMENTS.saltwater={name:"Salt Water",rusts:.005,electroConduct:0.5,category:"liquids",movement:"liquid",color:[96,158,214],density:1025,heatConduct:.4,spray:.45,
+ELEMENTS.saltwater={name:"Salt Water",rusts:.005,conductivity:9,category:"liquids",movement:"liquid",color:[96,158,214],density:1025,heatConduct:.4,spray:.45,
  reactions:[{above:100,chance:.05,to:"salt",emit:"steam"},{below:-2,chance:.1,to:"salt_ice"}]};
-ELEMENTS.sugarwater={name:"Sugar Water",rusts:.002,electroConduct:0.1,category:"liquids",movement:"liquid",color:[134,178,204],density:1012,heatConduct:.4,spray:.45,
+ELEMENTS.sugarwater={name:"Sugar Water",rusts:.002,conductivity:0.6,category:"liquids",movement:"liquid",color:[134,178,204],density:1012,heatConduct:.4,spray:.45,
  reactions:[{above:100,chance:.05,to:"sugar",emit:"steam"},{below:-3,chance:.1,to:"sugar_ice"}]};
 ELEMENTS.meat={name:"Meat",category:"food",movement:"solid",color:[196,84,92],density:1050,heatConduct:.3,acidr:.8,flammable:true,
  reactions:[{with:"dirty_water",chance:.05,to:"rotten_meat"},{with:"poison",chance:.1,to:"rotten_meat"},{above:70,chance:.02,to:"cookedmeat"}],
@@ -291,21 +306,21 @@ ELEMENTS.caramel={name:"Caramel",category:"food",movement:"liquid",color:[196,12
  reactions:[{below:110,chance:.05,to:"candy"}]};
 ELEMENTS.candy={name:"Candy",category:"food",movement:"solid",color:[240,96,150],density:1400,heatConduct:.3,acidr:.5,
  reactions:[{above:170,chance:.05,to:"caramel"}]};
-ELEMENTS.coal={name:"Coal",electroConduct:0.3,category:"powders",movement:"powder",color:[44,44,50],heatConduct:.3,density:800,acidr:1,spray:.45,flammable:true,
+ELEMENTS.coal={name:"Coal",conductivity:3,category:"powders",movement:"powder",color:[44,44,50],heatConduct:.3,density:800,acidr:1,spray:.45,flammable:true,
  burn:{into:"ash",emit:"carbon_dioxide",heat:600,speed:.15},
  reactions:[{with:"water",chance:.05,other:"dirty_water"},{with:"carbonated_water",chance:.05,other:"dirty_water"}]};
-ELEMENTS.dirty_water={name:"Dirty Water",rusts:.002,electroConduct:0.2,category:"liquids",movement:"liquid",color:[56,90,58],density:1010,heatConduct:.4,spray:.45,
+ELEMENTS.dirty_water={name:"Dirty Water",rusts:.002,conductivity:1.5,category:"liquids",movement:"liquid",color:[56,90,58],density:1010,heatConduct:.4,spray:.45,
  reactions:[{above:99.99,to:"steam",setT:100},{below:-1,to:"dirty_ice"}]};
 ELEMENTS.wall={name:"Wall",category:"solids",movement:"solid",color:[70,76,92],density:9999,insulator:true,unbreakable:true,tint:false};
-ELEMENTS.iron={name:"Iron",electroConduct:0.6,category:"solids",movement:"solid",color:[154,158,166],density:7870,heatConduct:1,acidr:.4,
+ELEMENTS.iron={name:"Iron",conductivity:17,category:"solids",movement:"solid",color:[154,158,166],density:7870,heatConduct:1,acidr:.4,
  reactions:[{with:"coal",above:1100,chance:.1,to:"steel",other:"air"},{above:1538,chance:.1,to:"molten_iron"}],rustRate:1};
-ELEMENTS.silver={name:"Silver",electroConduct:1,category:"solids",movement:"solid",color:[208,212,220],density:10490,heatConduct:2,acidr:.1,
+ELEMENTS.silver={name:"Silver",conductivity:106,category:"solids",movement:"solid",color:[208,212,220],density:10490,heatConduct:2,acidr:.1,
  reactions:[{above:962,chance:.1,to:"molten_silver"}]};
-ELEMENTS.molten_iron={name:"Molten Iron",electroConduct:0.6,category:"phase",movement:"liquid",swatch:"#ff8a2a",density:6980,heatConduct:1,viscosity:5,startMin:1600,
+ELEMENTS.molten_iron={name:"Molten Iron",conductivity:1.2,category:"phase",movement:"liquid",swatch:"#ff8a2a",density:6980,heatConduct:1,viscosity:5,startMin:1600,
  color:i=>[255,110+fr(i)*70,30+fr(i+7)*40],reactions:[{with:"oxygen",chance:.4,to:"slag",other:"air"},{with:"coal",chance:.3,to:"molten_steel",other:"air"},{below:1400,chance:.1,rest:true,to:"iron"}]};
-ELEMENTS.molten_silver={name:"Molten Silver",electroConduct:1,category:"phase",movement:"liquid",swatch:"#ffd88c",density:9320,heatConduct:2,viscosity:5,startMin:1000,
+ELEMENTS.molten_silver={name:"Molten Silver",conductivity:10,category:"phase",movement:"liquid",swatch:"#ffd88c",density:9320,heatConduct:2,viscosity:5,startMin:1000,
  color:i=>[255,214+fr(i)*26,140+fr(i+7)*40],reactions:[{below:900,chance:.1,rest:true,to:"silver"}]};
-ELEMENTS.rust={name:"Rust",electroConduct:0.05,category:"powders",movement:"powder",color:[150,70,36],density:5240,heatConduct:.2,acidr:.8,spray:.45,
+ELEMENTS.rust={name:"Rust",conductivity:0.25,category:"powders",movement:"powder",color:[150,70,36],density:5240,heatConduct:.2,acidr:.8,spray:.45,
  reactions:[{above:1565,chance:.1,to:"molten_rust"},{with:"water",chance:.01,other:"dirty_water"},{with:"saltwater",chance:.01,other:"dirty_water"},{with:"sugarwater",chance:.01,other:"dirty_water"},{with:"carbonated_water",chance:.01,other:"dirty_water"}]};
 ELEMENTS.hydrogen={name:"Hydrogen",category:"gases",movement:"gas",color:[180,218,252],density:.09,heatConduct:2,rise:.9,side:.1,spray:.4,
  reactions:[{with:"oxygen",above:500,chance:.3,to:"water",other:"air",setT:90},
@@ -313,47 +328,47 @@ ELEMENTS.hydrogen={name:"Hydrogen",category:"gases",movement:"gas",color:[180,21
   {above:550,chance:.3,to:"fire",life:[2,6]},
   {below:-253,chance:.1,to:"liquid_hydrogen"}]};
 ELEMENTS.oxygen={name:"Oxygen",rusts:.002,rustUses:true,category:"gases",movement:"gas",color:[150,205,250],density:1.43,heatConduct:1.5,rise:.1,side:.8,sink:.1,spray:.4,reactions:[{below:-183,chance:.1,to:"liquid_oxygen"}]};
-ELEMENTS.gold={name:"Gold",electroConduct:0.9,category:"solids",movement:"solid",color:[236,196,60],density:19300,heatConduct:1.7,
+ELEMENTS.gold={name:"Gold",conductivity:73,category:"solids",movement:"solid",color:[236,196,60],density:19300,heatConduct:1.7,
  reactions:[{above:1064,chance:.1,to:"molten_gold"}]};
-ELEMENTS.electrum={name:"Electrum",electroConduct:0.85,category:"solids",movement:"solid",color:[222,206,140],density:13500,heatConduct:1.4,acidr:.05,acidLeaves:{to:"gold",p:.5},
+ELEMENTS.electrum={name:"Electrum",conductivity:25,category:"solids",movement:"solid",color:[222,206,140],density:13500,heatConduct:1.4,acidr:.05,acidLeaves:{to:"gold",p:.5},
  reactions:[{above:1000,chance:.1,to:"molten_electrum"}]};
-ELEMENTS.molten_gold={name:"Molten Gold",electroConduct:0.9,category:"phase",movement:"liquid",swatch:"#ffc83c",density:17300,heatConduct:1.7,viscosity:5,startMin:1150,
+ELEMENTS.molten_gold={name:"Molten Gold",conductivity:5,category:"phase",movement:"liquid",swatch:"#ffc83c",density:17300,heatConduct:1.7,viscosity:5,startMin:1150,
  color:i=>[255,195+fr(i)*35,60+fr(i+7)*40],
  reactions:[{with:"molten_silver",chance:.5,to:"molten_electrum",other:"molten_electrum"},{below:1000,chance:.1,rest:true,to:"gold"}]};
-ELEMENTS.molten_electrum={name:"Molten Electrum",electroConduct:0.85,category:"phase",movement:"liquid",swatch:"#ffe28a",density:12500,heatConduct:1.4,viscosity:5,startMin:1050,
+ELEMENTS.molten_electrum={name:"Molten Electrum",conductivity:2.5,category:"phase",movement:"liquid",swatch:"#ffe28a",density:12500,heatConduct:1.4,viscosity:5,startMin:1050,
  color:i=>[255,215+fr(i)*25,110+fr(i+7)*45],reactions:[{below:950,chance:.1,rest:true,to:"electrum"}]};
-ELEMENTS.copper={name:"Copper",electroConduct:0.96,category:"solids",movement:"solid",color:[196,110,66],density:8960,heatConduct:1.9,
+ELEMENTS.copper={name:"Copper",conductivity:100,category:"solids",movement:"solid",color:[196,110,66],density:8960,heatConduct:1.9,
  rustRate:.6,rustInto:"oxidized_copper",   // slowly oxidizes next to Oxygen and any kind of water; no acidr, so acid cannot touch it
  reactions:[{with:"chlorine",chance:.08,to:"oxidized_copper",other:"air",life:[1,1]},{with:"liquid_chlorine",chance:.08,to:"oxidized_copper",other:"air",life:[1,1]},{with:"carbon_dioxide",chance:.002,to:"oxidized_copper",other:"air"},{above:1085,chance:.1,to:"molten_copper"}]};
 // Oxidized copper: green patina. life=1 marks copper that was oxidized by Chlorine, which is blue-green instead.
-ELEMENTS.oxidized_copper={name:"Oxidized Copper",electroConduct:0.05,category:"solids",movement:"solid",swatch:"#58a878",density:5000,heatConduct:.3,acidr:.6,
+ELEMENTS.oxidized_copper={name:"Oxidized Copper",conductivity:0.25,category:"solids",movement:"solid",swatch:"#58a878",density:5000,heatConduct:.3,acidr:.6,
  color:i=>{const f=v[i]/24;return life[i]===1?[58+f*22,164+f*24,160+f*18]:[70+f*22,148+f*26,108+f*22];},
  reactions:[{above:1230,chance:.1,to:"molten_oxidized_copper",keepLife:true}]};
-ELEMENTS.rose_gold={name:"Rose Gold",electroConduct:0.8,category:"solids",movement:"solid",color:[230,152,134],density:15200,heatConduct:1.5,
+ELEMENTS.rose_gold={name:"Rose Gold",conductivity:20,category:"solids",movement:"solid",color:[230,152,134],density:15200,heatConduct:1.5,
  reactions:[{above:960,chance:.1,to:"molten_rose_gold"}]};
-ELEMENTS.molten_copper={name:"Molten Copper",electroConduct:0.96,category:"phase",movement:"liquid",swatch:"#ff8c3c",density:8000,heatConduct:1.9,viscosity:5,startMin:1150,
+ELEMENTS.molten_copper={name:"Molten Copper",conductivity:8,category:"phase",movement:"liquid",swatch:"#ff8c3c",density:8000,heatConduct:1.9,viscosity:5,startMin:1150,
  color:i=>[255,125+fr(i)*45,50+fr(i+7)*40],
  rustRate:3,rustInto:"molten_oxidized_copper",   // 5x the rate of solid copper
  reactions:[{with:"molten_gold",chance:.5,to:"molten_rose_gold",other:"molten_rose_gold"},{with:"oxygen",chance:.15,to:"molten_oxidized_copper",other:"air"},{with:"chlorine",chance:.4,to:"molten_oxidized_copper",other:"air",life:[1,1]},{with:"liquid_chlorine",chance:.4,to:"molten_oxidized_copper",other:"air",life:[1,1]},{with:"carbon_dioxide",chance:.01,to:"molten_oxidized_copper",other:"air"},{below:1000,chance:.1,rest:true,to:"copper"}]};
-ELEMENTS.molten_oxidized_copper={name:"Molten Oxidized Copper",electroConduct:0.05,category:"phase",movement:"liquid",swatch:"#0b4e2c",density:4600,heatConduct:.3,viscosity:5,startMin:1300,
+ELEMENTS.molten_oxidized_copper={name:"Molten Oxidized Copper",conductivity:0.25,category:"phase",movement:"liquid",swatch:"#0b4e2c",density:4600,heatConduct:.3,viscosity:5,startMin:1300,
  color:i=>[6+fr(i)*14,62+fr(i+7)*34,34+fr(i+3)*22],reactions:[{below:1100,chance:.1,rest:true,to:"oxidized_copper",keepLife:true}]};
-ELEMENTS.molten_rose_gold={name:"Molten Rose Gold",electroConduct:0.8,category:"phase",movement:"liquid",swatch:"#ff9a44",density:14000,heatConduct:1.5,viscosity:5,startMin:1050,
+ELEMENTS.molten_rose_gold={name:"Molten Rose Gold",conductivity:2,category:"phase",movement:"liquid",swatch:"#ff9a44",density:14000,heatConduct:1.5,viscosity:5,startMin:1050,
  color:i=>[255,140+fr(i)*38,60+fr(i+7)*35],reactions:[{below:900,chance:.1,rest:true,to:"rose_gold"}]};
-ELEMENTS.steel={name:"Steel",electroConduct:0.6,category:"solids",movement:"solid",color:[118,130,148],density:7850,heatConduct:.9,acidr:.25,
+ELEMENTS.steel={name:"Steel",conductivity:12,category:"solids",movement:"solid",color:[118,130,148],density:7850,heatConduct:.9,acidr:.25,
  reactions:[{above:1450,chance:.1,to:"molten_steel"}],rustRate:.6};
-ELEMENTS.molten_steel={name:"Molten Steel",electroConduct:0.6,category:"phase",movement:"liquid",swatch:"#ffb060",density:7000,heatConduct:.9,viscosity:5,startMin:1550,
+ELEMENTS.molten_steel={name:"Molten Steel",conductivity:1,category:"phase",movement:"liquid",swatch:"#ffb060",density:7000,heatConduct:.9,viscosity:5,startMin:1550,
  color:i=>[255,170+fr(i)*40,90+fr(i+7)*50],
  reactions:[{with:"oxygen",chance:.4,to:"slag",other:"air"},{below:1400,chance:.1,rest:true,to:"steel"}]};
-ELEMENTS.aluminium={name:"Aluminum",category:"solids",movement:"solid",color:[184,192,204],density:2700,heatConduct:1.6,electroConduct:.75,acidr:.3,
+ELEMENTS.aluminium={name:"Aluminum",category:"solids",movement:"solid",color:[184,192,204],density:2700,heatConduct:1.6,conductivity:61,acidr:.3,
  reactions:[{above:660,chance:.1,to:"molten_aluminium"}]};
-ELEMENTS.purple_gold={name:"Purple Gold",category:"solids",movement:"solid",color:[184,132,188],density:7900,heatConduct:1.2,electroConduct:.5,
+ELEMENTS.purple_gold={name:"Purple Gold",category:"solids",movement:"solid",color:[184,132,188],density:7900,heatConduct:1.2,conductivity:15,
  reactions:[{above:1060,chance:.1,to:"molten_purple_gold"}]};
 ELEMENTS.slag={name:"Slag",category:"solids",movement:"solid",color:[84,76,80],density:2700,heatConduct:.12,acidr:.1,
  reactions:[{above:1250,chance:.1,to:"molten_slag"}]};
-ELEMENTS.molten_aluminium={name:"Molten Aluminum",category:"phase",movement:"liquid",swatch:"#ffd6a0",density:2375,heatConduct:1.6,electroConduct:.75,viscosity:5,startMin:760,
+ELEMENTS.molten_aluminium={name:"Molten Aluminum",category:"phase",movement:"liquid",swatch:"#ffd6a0",density:2375,heatConduct:1.6,conductivity:7,viscosity:5,startMin:760,
  color:i=>[255,200+fr(i)*30,150+fr(i+7)*40],
  reactions:[{with:"oxygen",chance:.6,to:"slag",other:"air"},{with:"molten_gold",chance:.5,to:"molten_purple_gold",other:"molten_purple_gold"},{with:"molten_rust",chance:.5,to:"molten_thermite",other:"molten_thermite"},{below:620,chance:.1,rest:true,to:"aluminium"}]};
-ELEMENTS.molten_purple_gold={name:"Molten Purple Gold",category:"phase",movement:"liquid",swatch:"#ffb24c",density:7000,heatConduct:1.2,electroConduct:.5,viscosity:5,startMin:1160,
+ELEMENTS.molten_purple_gold={name:"Molten Purple Gold",category:"phase",movement:"liquid",swatch:"#ffb24c",density:7000,heatConduct:1.2,conductivity:1.5,viscosity:5,startMin:1160,
  color:i=>[255,160+fr(i)*40,75+fr(i+7)*40],reactions:[{with:"oxygen",chance:.063,to:"slag",other:"air"},{with:"oxygen",chance:.2529,to:"gold",other:"air"},{below:1000,chance:.1,rest:true,to:"purple_gold"}]};
 ELEMENTS.molten_slag={name:"Molten Slag",category:"phase",movement:"liquid",swatch:"#ff7a3a",density:2500,heatConduct:.12,viscosity:30,startMin:1350,
  color:i=>[255,90+fr(i)*50,30+fr(i+7)*30],reactions:[{below:1150,chance:.1,rest:true,to:"slag"}]};
@@ -363,7 +378,7 @@ ELEMENTS.molten_dirt={name:"Molten Dirt",category:"phase",movement:"liquid",swat
  color:i=>[225,95+fr(i)*45,30+fr(i+7)*25],reactions:[{below:1000,chance:.1,rest:true,to:"dirt"}]};
 ELEMENTS.molten_rust={name:"Molten Rust",category:"phase",movement:"liquid",swatch:"#e65a28",density:4600,heatConduct:.2,viscosity:15,startMin:1650,
  color:i=>[230,80+fr(i)*40,35+fr(i+7)*25],reactions:[{below:1450,chance:.1,rest:true,to:"rust"}]};
-ELEMENTS.molten_salt={name:"Molten Salt",category:"phase",movement:"liquid",swatch:"#fae6be",density:1550,heatConduct:.9,electroConduct:.6,viscosity:3,startMin:880,
+ELEMENTS.molten_salt={name:"Molten Salt",category:"phase",movement:"liquid",swatch:"#fae6be",density:1550,heatConduct:.9,conductivity:15,viscosity:3,startMin:880,
  color:i=>[250,225+fr(i)*20,175+fr(i+7)*30],reactions:[{below:750,chance:.1,rest:true,to:"salt"}]};
 ELEMENTS.molten_thermite={name:"Molten Thermite",category:"phase",movement:"liquid",swatch:"#fff2b0",density:3200,heatConduct:.5,viscosity:5,startMin:2300,
  color:i=>[255,235+fr(i)*20,170+fr(i+7)*60],
@@ -392,7 +407,7 @@ ELEMENTS.carbon_dioxide={name:"Carbon Dioxide",category:"gases",movement:"gas",c
  reactions:[{with:"water",chance:.3,to:"air",other:"carbonated_water"},{below:-78,chance:.1,to:"dry_ice"}]};
 ELEMENTS.dry_ice={name:"Dry Ice",category:"phase",movement:"solid",color:[236,242,246],density:1560,heatConduct:.03,startMax:-85,
  reactions:[{above:-78,chance:.1,to:"carbon_dioxide"}]};
-ELEMENTS.acid_gas={name:"Acid Gas",category:"gases",movement:"gas",electroConduct:.1,color:[168,230,110],density:3,heatConduct:1.5,rise:.35,side:.55,sink:.1,spray:.4,corrosive:"smoke",
+ELEMENTS.acid_gas={name:"Acid Gas",category:"gases",movement:"gas",conductivity:0.6,color:[168,230,110],density:3,heatConduct:1.5,rise:.35,side:.55,sink:.1,spray:.4,corrosive:"smoke",
  reactions:[{below:150,chance:.1,to:"acid"}]};
 ELEMENTS.thermite={name:"Thermite",category:"powders",movement:"powder",color:[128,78,66],density:2400,heatConduct:.3,acidr:.5,spray:.45,
  reactions:[{above:2200,chance:.1,to:"molten_thermite"}],
@@ -401,17 +416,17 @@ ELEMENTS.chlorine={name:"Chlorine",category:"gases",movement:"gas",color:[212,22
  reactions:[{with:"water",chance:.3,to:"air",other:"pool_water"},{with:"dirty_water",chance:.3,to:"air",other:"water"},{with:"hydrogen",chance:.3,to:"acid",other:"air"},{with:"ammonia",chance:.3,to:"bleach",other:"air"},{below:-34,chance:.1,to:"liquid_chlorine"}]};
 ELEMENTS.poison_gas={name:"Poison Gas",category:"gases",movement:"gas",color:[150,70,170],density:2,heatConduct:1.5,rise:.12,side:.76,sink:.12,spray:.4,
  reactions:[{below:5,chance:.1,to:"poison"}]};
-ELEMENTS.pool_water={name:"Pool Water",rusts:.002,category:"liquids",movement:"liquid",color:[110,205,232],density:1005,electroConduct:.2,heatConduct:.4,spray:.45,
+ELEMENTS.pool_water={name:"Pool Water",rusts:.002,category:"liquids",movement:"liquid",color:[110,205,232],density:1005,conductivity:1.5,heatConduct:.4,spray:.45,
  reactions:[{above:99.99,to:"steam",setT:100,emit:"chlorine"},{below:-1,to:"pool_ice"}]};
-ELEMENTS.bleach={name:"Bleach",category:"liquids",movement:"liquid",color:[236,240,196],density:1100,electroConduct:.3,heatConduct:.4,spray:.45,
+ELEMENTS.bleach={name:"Bleach",category:"liquids",movement:"liquid",color:[236,240,196],density:1100,conductivity:3,heatConduct:.4,spray:.45,
  reactions:[{with:"dirty_water",chance:.3,to:"air",other:"water"},{with:"ammonia",chance:.3,to:"poison_gas",other:"air"},{with:"liquid_ammonia",chance:.3,to:"poison_gas",other:"air"}]};
-ELEMENTS.poison={name:"Poison",category:"liquids",movement:"liquid",color:[118,50,150],density:1300,electroConduct:.1,heatConduct:.3,spray:.45,startMax:0,
+ELEMENTS.poison={name:"Poison",category:"liquids",movement:"liquid",color:[118,50,150],density:1300,conductivity:0.6,heatConduct:.3,spray:.45,startMax:0,
  reactions:[{above:10,chance:.1,to:"poison_gas"}]};
 ELEMENTS.liquid_chlorine={name:"Liquid Chlorine",category:"phase",movement:"liquid",color:[170,200,70],density:1560,heatConduct:.02,spray:.45,startMax:-40,
  reactions:[{below:-101,chance:.1,to:"chlorine_ice"},{above:-34,chance:.03,to:"chlorine"}]};
 ELEMENTS.chlorine_ice={name:"Chlorine Ice",category:"phase",movement:"solid",color:[215,230,150],density:1900,heatConduct:.05,startMax:-110,
  reactions:[{above:-101,chance:.1,to:"liquid_chlorine"}]};
-ELEMENTS.carbonated_water={name:"Carbonated Water",rusts:.003,category:"liquids",movement:"liquid",color:[124,190,242],density:1002,electroConduct:.2,heatConduct:.4,spray:.45,
+ELEMENTS.carbonated_water={name:"Carbonated Water",rusts:.003,category:"liquids",movement:"liquid",color:[124,190,242],density:1002,conductivity:1.5,heatConduct:.4,spray:.45,
  reactions:[{above:99.99,to:"steam",setT:100,emit:"carbon_dioxide"},{below:-1,to:"carbonated_ice"}]};
 ELEMENTS.salt_ice={name:"Salt Ice",category:"phase",movement:"solid",color:[196,226,242],density:930,startMax:-10,
  reactions:[{above:-1.5,chance:.1,to:"saltwater",capT:0}]};
@@ -440,12 +455,12 @@ ELEMENTS.leaf={name:"Leaf",category:"life",movement:"solid",color:[62,152,58],de
 ELEMENTS.heater={name:"Heater",category:"specials",movement:"solid",color:[214,74,48],density:9999,insulator:true,pinRoom:true,radiate:2.33,unbreakable:true,tint:false};
 ELEMENTS.cooler={name:"Cooler",category:"specials",movement:"solid",color:[64,160,214],density:9999,insulator:true,pinRoom:true,radiate:-2.33,unbreakable:true,tint:false};
 ELEMENTS.void={name:"Void",category:"specials",movement:"solid",color:[12,2,24],density:9999,devour:true,unbreakable:true,tint:false};
-ELEMENTS.tnt={name:"TNT",electroConduct:.3,category:"specials",movement:"solid",color:[176,32,44],density:1600,heatConduct:.2,acidr:.6,
+ELEMENTS.tnt={name:"TNT",conductivity:3,category:"specials",movement:"solid",color:[176,32,44],density:1600,heatConduct:.2,acidr:.6,
  explosive:{at:200,radius:9,heat:1200}};
 ELEMENTS.cloner={name:"Cloner",category:"specials",movement:"solid",color:[246,214,50],density:9999,clone:true,unbreakable:true,tint:false};
 ELEMENTS.electric={name:"Electric",category:"specials",movement:"gas",swatch:"#ffec5a",color:i=>[255,225+fr(i)*30,80+fr(i+7)*90],density:.2,rise:0,side:.4,sink:.12,spray:.5,lifetime:[50,130],decay:true,spark:true,tint:false};
 ELEMENTS.lightning={name:"Lightning",category:"specials",movement:"solid",swatch:"#fff6a8",color:i=>[255,255,200+fr(i)*55],density:9999,strike:{radius:4,heat:2500},unbreakable:true,tint:false};
-ELEMENTS.wire={name:"Wire",category:"specials",movement:"solid",color:[196,112,60],density:8960,heatConduct:1.8,electroConduct:1,electroDecay:1,acidr:.3};
+ELEMENTS.wire={name:"Wire",category:"specials",movement:"solid",color:[196,112,60],density:8960,heatConduct:1.8,conductivity:100,electroDecay:1,acidr:.3};
 ELEMENTS.battery={name:"Battery",category:"specials",movement:"solid",color:[176,134,44],density:5000,heatConduct:.3,supply:255,acidr:.2,tint:false};
 for(const k in ELEMENTS)define(k,ELEMENTS[k]);
 cur=ID.sand;
@@ -477,7 +492,7 @@ function explode(i,o){
  }
 }
 const CH=new Uint8Array(N),tmpC=new Uint8Array(N);
-// Electricity: CH[i] is the charge of a cell. It flows into neighbours that conduct (electroConduct) and fades with distance and time.
+// Electricity: CH[i] is the charge of a cell. It flows into neighbours that conduct (ECA, from conductivity) and fades with distance and time.
 function spreadC(j,c){const t=g[j];if(!t)return;const ec=ECA[t];if(!ec)return;const val=c-1-(1-ec)*12;if(val>tmpC[j])tmpC[j]=val|0;}
 // a supply (battery) does not hold charge itself, it charges every conductor touching it
 function supplyAround(i,v){
@@ -487,6 +502,10 @@ function supplyAround(i,v){
   const j=yy*W+xx;if(ECA[g[j]]&&!E[g[j]].supply&&CH[j]<v)CH[j]=v;
  }
 }
+// Electricity warms the metals it flows through, very slowly. A fully charged cell gains (1.2 - ECA) * ELECTRIC_HEAT degrees per tick,
+// and the heat that leaks away makes the temperature level off. It used to be 4, which melted iron in a closed box within 30 seconds.
+// With 0.1 iron levels off around 110 C in a closed box and only a few degrees in the open. Raise it for hotter wires.
+const ELECTRIC_HEAT=0.1;
 function electrify(){
  for(let i=0;i<N;i++){const t=g[i];if(!t)continue;const e0=E[t];if(e0.charge)CH[i]=e0.charge;if(e0.supply)supplyAround(i,e0.supply);}
  tmpC.set(CH);
@@ -502,7 +521,7 @@ function electrify(){
   if(!e.charge){const dk=e.electroDecay??4;c=c>dk?c-dk:0;}
   CH[i]=c;
   if(c>20){
-   if(!e.charge)temp[i]=Math.min(9999,temp[i]+(c/255)*(1.2-ECA[t])*4);
+   if(!e.charge)temp[i]=Math.min(9999,temp[i]+(c/255)*(1.2-ECA[t])*ELECTRIC_HEAT);
    if(e.flammable&&c>100&&!life[i]&&rnd()<.05)ignite(i);
    if(e.explosive&&c>60)temp[i]=Math.max(temp[i],e.explosive.at+50);
   }
@@ -690,18 +709,32 @@ function draw(){
   ctx.save();ctx.fillStyle="rgba(255,255,255,.55)";
   for(const i of shpList)if(!g[i]||(replaceOn&&g[i]!==pid))ctx.fillRect(i%W,(i/W)|0,1,1);
   ctx.restore();}
- if(hx>=0&&hx<W&&hy>=0&&hy<H&&(cur>-10||cur===-14)){ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=.4;{const o=-((size-1)>>1),x0=hx+o,y0=hy+o;
-  if(shape.endsWith("Grid"))ctx.setLineDash([1,1]);
-  if(shape[0]==="r"){const rr=Math.max(.3,size/2-.2);ctx.beginPath();ctx.ellipse(x0+size/2,y0+size/2,rr,rr,0,0,6.2832);ctx.stroke();}
-  else ctx.strokeRect(x0+.2,y0+.2,size-.4,size-.4);
-  ctx.setLineDash([]);}}
+ if(hx>=0&&hx<W&&hy>=0&&hy<H&&(cur>-10||cur===-14)){
+  // the brush cursor: only the outermost cells of the brush, solid white (for Grid brushes only the cells that will really be painted)
+  const lo=-((size-1)>>1),hi=lo+size-1,grid=shape.endsWith("Grid");
+  ctx.fillStyle="rgba(255,255,255,.85)";
+  for(let dy=lo;dy<=hi;dy++)for(let dx=lo;dx<=hi;dx++){
+   if(!brushEdge(dx,dy))continue;
+   const x=hx+dx,y=hy+dy;if(x<0||x>=W||y<0||y>=H||(grid&&((x+y)&1)))continue;
+   ctx.fillRect(x,y,1,1);
+  }
+ }
 }
 
 /* ===== Painting ===== */
-// brush shape test: square | round | squareGrid | roundGrid (grid = checkerboard of pixels)
+// base footprint of the brush (square or round), offsets dx,dy from the cursor cell
+function brushBase(dx,dy){
+ const n=size,lo=-((n-1)>>1),hi=lo+n-1;
+ if(dx<lo||dx>hi||dy<lo||dy>hi)return false;
+ if(shape[0]==="r"){const c=lo+(n-1)/2;return (dx-c)*(dx-c)+(dy-c)*(dy-c)<=n*n/4;}
+ return true;
+}
+// is this cell an outermost cell of the base footprint (it has a side that touches the outside)?
+const brushEdge=(dx,dy)=>brushBase(dx,dy)&&!(brushBase(dx-1,dy)&&brushBase(dx+1,dy)&&brushBase(dx,dy-1)&&brushBase(dx,dy+1));
+// shapes: square | round | squareGrid | roundGrid (checkerboard) | squareRing | roundRing (only the outermost cells)
 function inBrush(cx,cy,dx,dy){
- const n=size,lo=-((n-1)>>1),c=lo+(n-1)/2;
- if(shape[0]==="r"&&(dx-c)*(dx-c)+(dy-c)*(dy-c)>n*n/4)return false;
+ if(!brushBase(dx,dy))return false;
+ if(shape.endsWith("Ring")&&!brushEdge(dx,dy))return false;
  if(shape.endsWith("Grid")&&((cx+dx+cy+dy)&1))return false;
  return true;
 }
@@ -833,9 +866,9 @@ cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);cv.a
  Mods can add a language (or an easter egg): Sand.addLanguage("lol",{label:"LOLcat",ui:{pause:"WAIT"},names:{sand:"DESERT DUST"}}) */
 const LANGS={
  "en-US":{label:"English (US)",names:{},ui:{
-  brushSize:"Brush size",pause:"Pause",resume:"Resume",undo:"Undo",clearAll:"Clear all",settings:"Settings",changelog:"Changelog",feedback:"Feedback",feedbackBlocked:"Could not open the form - link copied",modsMissing:"Some elements in this world are missing (from mods that are not installed or are turned off)",mods:"Add mods",modsTitle:"Mods",modsIntro:"Mods add new elements and reactions. Choose a .json file, drop it onto the game, or paste it below. A mod is just data, it cannot run any code.",modsAdd:"Add a mod",modChoose:"Choose file...",modTemplate:"Download template",modPaste:"Or paste the mod JSON here",modInstall:"Install pasted mod",modsInstalled:"Installed mods",modsNone:"No mods installed yet",modOn:"On",modOff:"Off",modExport:"Export",modRemove:"Remove",modSure:"Click again to remove",modOk:"Installed",modErrors:"Could not install this mod:",modFormat:"Mod format (for creators)",modElements:"elements",modReactions:"added reactions",modFull:"Too many elements: the game supports 255 in total",modEmpty:"Choose a file or paste a mod first",modTooBig:"This file is too big (300 KB max)",modBadJson:"This is not valid JSON",modNotMod:"This is not a mod: it needs a \"mod\" name",modLoadFail:"Could not load this mod",modUpdated:"Updated",modWorld:"This is a saved world, use the Load button for it",modLib:"Library",modMine:"My mods",modAll:"All",modNew:"New",modWarn:"Warning",modOld:"Outdated",modWarnText:"May break the game or cause problems.",modOldText:"Made for an older version, it may not work.",modGet:"Install",modGot:"Installed",modUpd:"Update",modAnyway:"Install anyway?",modLibEmpty:"No mods here yet",modLibIntro:"Mods picked by the author of the game. Press Install to add one. You can turn it off or remove it any time in My mods.",modSubmit:"Send your mod to the author",modAdded:"Added",libLoading:"Loading...",modSendMine:"Send to author",modCopied:"Mod copied. In the form that just opened, paste it into the \"Mod source code\" box and fill in the other fields, then submit.",modCopiedNoForm:"Mod copied, but the form could not be opened. Open this link and paste the mod into the \"Mod source code\" box:",modCopyFail:"Could not copy automatically: the mod is in the box below, copy it and paste it into the form.",modSubmitHint:"Made a mod? Install it, then press Send to author in My mods.",modNormal:"Normal",modDownload:"Download",libDownloading:"Downloading",libFetchFail:"Could not download this mod",close:"Close",cancel:"Cancel",
+  brushSize:"Brush size",pause:"Pause",resume:"Resume",undo:"Undo",clearAll:"Clear all",settings:"Settings",changelog:"Changelog",feedback:"Feedback",feedbackBlocked:"Could not open the form - link copied",modsMissing:"Some elements in this world are missing (from mods that are not installed or are turned off)",mods:"Add mods",modsTitle:"Mods",modsIntro:"Mods add new elements and reactions. Choose a .json file, drop it onto the game, or paste it below. A mod is just data, it cannot run any code.",modsAdd:"Add a mod",modChoose:"Choose file...",modTemplate:"Download template",modPaste:"Or paste the mod JSON here",modInstall:"Install pasted mod",modsInstalled:"Installed mods",modsNone:"No mods installed yet",modOn:"On",modOff:"Off",modExport:"Export",modRemove:"Remove",modSure:"Click again to remove",modOk:"Installed",modErrors:"Could not install this mod:",modFormat:"Mod format (for creators)",modElements:"elements",modReactions:"added reactions",modFull:"Too many elements: the game supports 255 in total",modEmpty:"Choose a file or paste a mod first",modTooBig:"This file is too big (300 KB max)",modBadJson:"This is not valid JSON",modNotMod:"This is not a mod: it needs a \"mod\" name",modLoadFail:"Could not load this mod",modUpdated:"Updated",modWorld:"This is a saved world, use the Load button for it",modLib:"Library",modMine:"My mods",modAll:"All",modNew:"New",modBroken:"Broken or Deprecated",modOld:"Outdated",modBrokenText:"This mod is broken or no longer supported. It may not work or may cause problems.",modOldText:"Made for an older version, it may not work.",modGet:"Install",modGot:"Installed",modUpd:"Update",modAnyway:"Install anyway?",modLibEmpty:"No mods here yet",modLibIntro:"Mods picked by the author of the game. Press Install to add one. You can turn it off or remove it any time in My mods.",modSubmit:"Send your mod to the author",modAdded:"Added",libLoading:"Loading...",modButtonsTitle:"Mod buttons",modConfirm:"Click again to confirm",modSendMine:"Send to author",modCopied:"Mod copied. In the form that just opened, paste it into the \"Mod source code\" box and fill in the other fields, then submit.",modCopiedNoForm:"Mod copied, but the form could not be opened. Open this link and paste the mod into the \"Mod source code\" box:",modCopyFail:"Could not copy automatically: the mod is in the box below, copy it and paste it into the form.",modSubmitHint:"Made a mod? Install it, then press Send to author in My mods.",modNormal:"Normal",modDownload:"Download",libDownloading:"Downloading",libFetchFail:"Could not download this mod",close:"Close",cancel:"Cancel",
   tempUnit:"Temperature unit",room:"Room temperature",brushShape:"Brush shape",
-  "shape.square":"Square","shape.round":"Round","shape.squareGrid":"Square grid","shape.roundGrid":"Round grid",
+  "shape.square":"Square","shape.round":"Round","shape.squareGrid":"Square grid","shape.roundGrid":"Round grid","shape.squareRing":"Square outline","shape.roundRing":"Circle outline",
   confirmClear:"Confirm before Clear all",on:"On",off:"Off",language:"Language",
   shortcuts:"Shortcuts: P pause, R clear, S settings, Z or Ctrl+Z undo, C screenshot, + / - brush size. Right-click an element to pin it.",
   sure:"Are you sure you want to clear everything?",sureSub:"You can undo this afterwards. Press Enter to confirm or Esc to cancel.",
@@ -844,9 +877,9 @@ const LANGS={
   "tool.heat":"Heat","tool.cool":"Cool","tool.mix":"Mix","tool.drag":"Drag","tool.line":"Line","tool.rectangle":"Rectangle","tool.circle":"Circle","tool.picker":"Picker","tool.eraser":"Eraser","tool.select":"Select","tool.copy":"Copy","tool.cut":"Cut","tool.paste":"Paste","tool.shock":"Shock",replace:"Replace",save:"Save",load:"Load",showFps:"Show FPS",worldFile:"World file",exportWorld:"Export",importWorld:"Import",saved:"World saved",loaded:"World loaded",noSave:"No saved world yet",loadFail:"Could not load that world",saveFail:"Could not save",noDownload:"Saving files is not available here",exported:"World file saved",fpsLimit:"FPS limit",unlimited:"Unlimited","cat.search":"Search","cat.life":"Life",shot:"Screenshot saved",pinned:"Pinned",unpinned:"Unpinned",pinHint:"Right-click to pin",searchPh:"Search elements…",recent:"Recent",noRecent:"Elements you use will show up here",noResults:"No elements found"}},
  "en-GB":{label:"English (UK)",ui:{},names:{dirt:"Soil",candy:"Boiled Sweet",aluminium:"Aluminium",molten_aluminium:"Molten Aluminium"}},
  es:{label:"Español",ui:{
-  brushSize:"Tamaño del pincel",pause:"Pausa",resume:"Reanudar",undo:"Deshacer",clearAll:"Borrar todo",settings:"Ajustes",changelog:"Cambios",feedback:"Comentarios",feedbackBlocked:"No se pudo abrir - enlace copiado",modsMissing:"Faltan algunos elementos de este mundo (de mods no instalados o desactivados)",mods:"Añadir mods",modsTitle:"Mods",modsIntro:"Los mods añaden elementos y reacciones nuevos. Elige un archivo .json, suéltalo sobre el juego o pégalo abajo. Un mod son solo datos, no puede ejecutar código.",modsAdd:"Añadir un mod",modChoose:"Elegir archivo...",modTemplate:"Descargar plantilla",modPaste:"O pega aquí el JSON del mod",modInstall:"Instalar mod pegado",modsInstalled:"Mods instalados",modsNone:"Aún no hay mods instalados",modOn:"Activado",modOff:"Desactivado",modExport:"Exportar",modRemove:"Quitar",modSure:"Pulsa otra vez para quitar",modOk:"Instalado",modErrors:"No se pudo instalar este mod:",modFormat:"Formato de mod (para creadores)",modElements:"elementos",modReactions:"reacciones añadidas",modFull:"Demasiados elementos: el juego admite 255 en total",modEmpty:"Elige un archivo o pega un mod primero",modTooBig:"Este archivo es demasiado grande (máx. 300 KB)",modBadJson:"Esto no es JSON válido",modNotMod:"Esto no es un mod: necesita un nombre \"mod\"",modLoadFail:"No se pudo cargar este mod",modUpdated:"Actualizado",modWorld:"Esto es un mundo guardado, usa el botón Cargar",modLib:"Biblioteca",modMine:"Mis mods",modAll:"Todos",modNew:"Nuevo",modWarn:"Aviso",modOld:"Obsoleto",modWarnText:"Puede romper el juego o dar problemas.",modOldText:"Hecho para una versión antigua, puede no funcionar.",modGet:"Instalar",modGot:"Instalado",modUpd:"Actualizar",modAnyway:"¿Instalar igualmente?",modLibEmpty:"Aún no hay mods aquí",modLibIntro:"Mods elegidos por el autor del juego. Pulsa Instalar para añadir uno. Puedes desactivarlo o quitarlo cuando quieras en Mis mods.",modSubmit:"Envía tu mod al autor",modAdded:"Añadido",libLoading:"Cargando...",modSendMine:"Enviar al autor",modCopied:"Mod copiado. En el formulario que se acaba de abrir, pégalo en la casilla \"Mod source code\", rellena los demás campos y envíalo.",modCopiedNoForm:"Mod copiado, pero no se pudo abrir el formulario. Abre este enlace y pega el mod en la casilla \"Mod source code\":",modCopyFail:"No se pudo copiar automáticamente: el mod está en el cuadro de abajo, cópialo y pégalo en el formulario.",modSubmitHint:"¿Has hecho un mod? Instálalo y pulsa Enviar al autor en Mis mods.",modNormal:"Normales",modDownload:"Descargar",libDownloading:"Descargando",libFetchFail:"No se pudo descargar este mod",close:"Cerrar",cancel:"Cancelar",
+  brushSize:"Tamaño del pincel",pause:"Pausa",resume:"Reanudar",undo:"Deshacer",clearAll:"Borrar todo",settings:"Ajustes",changelog:"Cambios",feedback:"Comentarios",feedbackBlocked:"No se pudo abrir - enlace copiado",modsMissing:"Faltan algunos elementos de este mundo (de mods no instalados o desactivados)",mods:"Añadir mods",modsTitle:"Mods",modsIntro:"Los mods añaden elementos y reacciones nuevos. Elige un archivo .json, suéltalo sobre el juego o pégalo abajo. Un mod son solo datos, no puede ejecutar código.",modsAdd:"Añadir un mod",modChoose:"Elegir archivo...",modTemplate:"Descargar plantilla",modPaste:"O pega aquí el JSON del mod",modInstall:"Instalar mod pegado",modsInstalled:"Mods instalados",modsNone:"Aún no hay mods instalados",modOn:"Activado",modOff:"Desactivado",modExport:"Exportar",modRemove:"Quitar",modSure:"Pulsa otra vez para quitar",modOk:"Instalado",modErrors:"No se pudo instalar este mod:",modFormat:"Formato de mod (para creadores)",modElements:"elementos",modReactions:"reacciones añadidas",modFull:"Demasiados elementos: el juego admite 255 en total",modEmpty:"Elige un archivo o pega un mod primero",modTooBig:"Este archivo es demasiado grande (máx. 300 KB)",modBadJson:"Esto no es JSON válido",modNotMod:"Esto no es un mod: necesita un nombre \"mod\"",modLoadFail:"No se pudo cargar este mod",modUpdated:"Actualizado",modWorld:"Esto es un mundo guardado, usa el botón Cargar",modLib:"Biblioteca",modMine:"Mis mods",modAll:"Todos",modNew:"Nuevo",modBroken:"Roto o en desuso",modOld:"Obsoleto",modBrokenText:"Este mod está roto o ya no recibe soporte. Puede que no funcione o dé problemas.",modOldText:"Hecho para una versión antigua, puede no funcionar.",modGet:"Instalar",modGot:"Instalado",modUpd:"Actualizar",modAnyway:"¿Instalar igualmente?",modLibEmpty:"Aún no hay mods aquí",modLibIntro:"Mods elegidos por el autor del juego. Pulsa Instalar para añadir uno. Puedes desactivarlo o quitarlo cuando quieras en Mis mods.",modSubmit:"Envía tu mod al autor",modAdded:"Añadido",libLoading:"Cargando...",modButtonsTitle:"Botones de mods",modConfirm:"Pulsa otra vez para confirmar",modSendMine:"Enviar al autor",modCopied:"Mod copiado. En el formulario que se acaba de abrir, pégalo en la casilla \"Mod source code\", rellena los demás campos y envíalo.",modCopiedNoForm:"Mod copiado, pero no se pudo abrir el formulario. Abre este enlace y pega el mod en la casilla \"Mod source code\":",modCopyFail:"No se pudo copiar automáticamente: el mod está en el cuadro de abajo, cópialo y pégalo en el formulario.",modSubmitHint:"¿Has hecho un mod? Instálalo y pulsa Enviar al autor en Mis mods.",modNormal:"Normales",modDownload:"Descargar",libDownloading:"Descargando",libFetchFail:"No se pudo descargar este mod",close:"Cerrar",cancel:"Cancelar",
   tempUnit:"Unidad de temperatura",room:"Temperatura ambiente",brushShape:"Forma del pincel",
-  "shape.square":"Cuadrado","shape.round":"Redondo","shape.squareGrid":"Cuadrado con rejilla","shape.roundGrid":"Redondo con rejilla",
+  "shape.square":"Cuadrado","shape.round":"Redondo","shape.squareGrid":"Cuadrado con rejilla","shape.roundGrid":"Redondo con rejilla","shape.squareRing":"Contorno cuadrado","shape.roundRing":"Contorno circular",
   confirmClear:"Confirmar antes de borrar todo",on:"Sí",off:"No",language:"Idioma",
   shortcuts:"Atajos: P pausa, R borrar, S ajustes, Z o Ctrl+Z deshacer, C captura, + / - tamaño del pincel. Clic derecho en un elemento para fijarlo.",
   sure:"¿Seguro que quieres borrar todo?",sureSub:"Después podrás deshacerlo. Pulsa Intro para confirmar o Esc para cancelar.",
@@ -862,9 +895,9 @@ const LANGS={
    molten_gold:"Oro fundido",molten_electrum:"Electro fundido",copper:"Cobre",oxidized_copper:"Cobre oxidado",rose_gold:"Oro rosa",molten_copper:"Cobre fundido",molten_oxidized_copper:"Cobre oxidado fundido",molten_rose_gold:"Oro rosa fundido",steel:"Acero",molten_steel:"Acero fundido",carbon_dioxide:"Dióxido de carbono",dry_ice:"Hielo seco",
    heater:"Calentador",cooler:"Enfriador",void:"Vacío",tnt:"TNT",wire:"Cable",battery:"Batería",aluminium:"Aluminio",molten_aluminium:"Aluminio fundido",purple_gold:"Oro púrpura",molten_purple_gold:"Oro púrpura fundido",thermite:"Termita",cloner:"Clonador",electric:"Electricidad",lightning:"Rayo",salt_ice:"Hielo salado",sugar_ice:"Hielo azucarado",molten_dirt:"Tierra fundida",molten_ash:"Ceniza fundida",slag:"Escoria",molten_slag:"Escoria fundida",acid_gas:"Gas ácido",molten_rust:"Óxido fundido",molten_salt:"Sal fundida",molten_thermite:"Termita fundida",chlorine:"Cloro",liquid_chlorine:"Cloro líquido",chlorine_ice:"Hielo de cloro",pool_water:"Agua de piscina",bleach:"Lejía",poison_gas:"Gas venenoso",poison:"Veneno",carbonated_water:"Agua con gas",rotten_meat:"Carne podrida",dirty_ice:"Hielo sucio",carbonated_ice:"Hielo con gas",pool_ice:"Hielo de piscina",cloud:"Nube",obsidian:"Obsidiana",basalt:"Basalto",sapling:"Brote",root:"Raíz",leaf:"Hoja"}},
  zh:{label:"中文",ui:{
-  brushSize:"笔刷大小",pause:"暂停",resume:"继续",undo:"撤销",clearAll:"清空全部",settings:"设置",changelog:"更新日志",feedback:"反馈",feedbackBlocked:"无法打开表单，链接已复制",modsMissing:"这个世界里有些元素缺失（来自未安装或已关闭的模组）",mods:"添加模组",modsTitle:"模组",modsIntro:"模组可以添加新元素和新反应。选择 .json 文件、把它拖到游戏上，或粘贴到下方。模组只是数据，不能运行任何代码。",modsAdd:"添加模组",modChoose:"选择文件...",modTemplate:"下载模板",modPaste:"或在此粘贴模组 JSON",modInstall:"安装粘贴的模组",modsInstalled:"已安装的模组",modsNone:"尚未安装模组",modOn:"开",modOff:"关",modExport:"导出",modRemove:"移除",modSure:"再点一次确认移除",modOk:"已安装",modErrors:"无法安装此模组：",modFormat:"模组格式（给创作者）",modElements:"个元素",modReactions:"条新增反应",modFull:"元素太多：游戏最多支持 255 个",modEmpty:"请先选择文件或粘贴模组",modTooBig:"文件太大（最大 300 KB）",modBadJson:"这不是有效的 JSON",modNotMod:"这不是模组：需要一个 \"mod\" 名称",modLoadFail:"无法加载此模组",modUpdated:"已更新",modWorld:"这是存档世界，请使用“加载”按钮",modLib:"模组库",modMine:"我的模组",modAll:"全部",modNew:"新",modWarn:"警告",modOld:"已过时",modWarnText:"可能会破坏游戏或造成问题。",modOldText:"为旧版本制作，可能无法使用。",modGet:"安装",modGot:"已安装",modUpd:"更新",modAnyway:"仍要安装？",modLibEmpty:"这里还没有模组",modLibIntro:"由游戏作者挑选的模组。点击“安装”添加，随时可以在“我的模组”里关闭或移除。",modSubmit:"把你的模组发给作者",modAdded:"添加于",libLoading:"加载中...",modSendMine:"发给作者",modCopied:"模组已复制。请在刚打开的表单中把它粘贴到“Mod source code”框里，填好其他项后提交。",modCopiedNoForm:"模组已复制，但无法打开表单。请打开此链接，并把模组粘贴到“Mod source code”框里：",modCopyFail:"无法自动复制：模组在下方的框里，请复制后粘贴到表单中。",modSubmitHint:"做了模组？先安装它，再在“我的模组”里点“发给作者”。",modNormal:"普通",modDownload:"下载",libDownloading:"下载中",libFetchFail:"无法下载此模组",close:"关闭",cancel:"取消",
+  brushSize:"笔刷大小",pause:"暂停",resume:"继续",undo:"撤销",clearAll:"清空全部",settings:"设置",changelog:"更新日志",feedback:"反馈",feedbackBlocked:"无法打开表单，链接已复制",modsMissing:"这个世界里有些元素缺失（来自未安装或已关闭的模组）",mods:"添加模组",modsTitle:"模组",modsIntro:"模组可以添加新元素和新反应。选择 .json 文件、把它拖到游戏上，或粘贴到下方。模组只是数据，不能运行任何代码。",modsAdd:"添加模组",modChoose:"选择文件...",modTemplate:"下载模板",modPaste:"或在此粘贴模组 JSON",modInstall:"安装粘贴的模组",modsInstalled:"已安装的模组",modsNone:"尚未安装模组",modOn:"开",modOff:"关",modExport:"导出",modRemove:"移除",modSure:"再点一次确认移除",modOk:"已安装",modErrors:"无法安装此模组：",modFormat:"模组格式（给创作者）",modElements:"个元素",modReactions:"条新增反应",modFull:"元素太多：游戏最多支持 255 个",modEmpty:"请先选择文件或粘贴模组",modTooBig:"文件太大（最大 300 KB）",modBadJson:"这不是有效的 JSON",modNotMod:"这不是模组：需要一个 \"mod\" 名称",modLoadFail:"无法加载此模组",modUpdated:"已更新",modWorld:"这是存档世界，请使用“加载”按钮",modLib:"模组库",modMine:"我的模组",modAll:"全部",modNew:"新",modBroken:"损坏或已弃用",modOld:"已过时",modBrokenText:"此模组已损坏或不再维护，可能无法使用或造成问题。",modOldText:"为旧版本制作，可能无法使用。",modGet:"安装",modGot:"已安装",modUpd:"更新",modAnyway:"仍要安装？",modLibEmpty:"这里还没有模组",modLibIntro:"由游戏作者挑选的模组。点击“安装”添加，随时可以在“我的模组”里关闭或移除。",modSubmit:"把你的模组发给作者",modAdded:"添加于",libLoading:"加载中...",modButtonsTitle:"模组按钮",modConfirm:"再点一次确认",modSendMine:"发给作者",modCopied:"模组已复制。请在刚打开的表单中把它粘贴到“Mod source code”框里，填好其他项后提交。",modCopiedNoForm:"模组已复制，但无法打开表单。请打开此链接，并把模组粘贴到“Mod source code”框里：",modCopyFail:"无法自动复制：模组在下方的框里，请复制后粘贴到表单中。",modSubmitHint:"做了模组？先安装它，再在“我的模组”里点“发给作者”。",modNormal:"普通",modDownload:"下载",libDownloading:"下载中",libFetchFail:"无法下载此模组",close:"关闭",cancel:"取消",
   tempUnit:"温度单位",room:"室温",brushShape:"笔刷形状",
-  "shape.square":"方形","shape.round":"圆形","shape.squareGrid":"方形网格","shape.roundGrid":"圆形网格",
+  "shape.square":"方形","shape.round":"圆形","shape.squareGrid":"方形网格","shape.roundGrid":"圆形网格","shape.squareRing":"方形轮廓","shape.roundRing":"圆形轮廓",
   confirmClear:"清空前确认",on:"开",off:"关",language:"语言",
   shortcuts:"快捷键：P 暂停，R 清空，S 设置，Z 或 Ctrl+Z 撤销，C 截图，+ / - 笔刷大小。右键点击元素可置顶。",
   sure:"确定要清空所有内容吗？",sureSub:"之后可以撤销。按 Enter 确认，按 Esc 取消。",
@@ -886,7 +919,8 @@ try{const sv=localStorage.getItem("sand-lang");
  else{const nl=navigator.language||"en-US";lang=nl.startsWith("zh")?"zh":nl.startsWith("es")?"es":/^en-(GB|AU|NZ|IE|ZA|IN)$/.test(nl)?"en-GB":"en-US";}}catch(e){}
 const T=k=>{const L=LANGS[lang];return(L&&L.ui&&L.ui[k])||LANGS["en-US"].ui[k]||k;};
 const nameOf=e=>(e.lang&&e.lang[lang])||(LANGS[lang]&&LANGS[lang].names&&LANGS[lang].names[e.key])||e.name;
-const catLabel=k=>{const s=T("cat."+k);return s!=="cat."+k?s:k[0].toUpperCase()+k.slice(1);};
+const MODCATS={};   // categories added by mods: key -> {name,lang,after,mod}
+const catLabel=k=>{const mc=MODCATS[k];if(mc)return(mc.lang&&mc.lang[lang])||mc.name;const s=T("cat."+k);return s!=="cat."+k?s:k[0].toUpperCase()+k.slice(1);};
 
 /* ===== Toolbar (built from the registry) ===== */
 const TOOLS=[{id:-2,key:"heat",name:"Heat",sw:"#e8412c"},{id:-3,key:"cool",name:"Cool",sw:"#7fd3ff"},{id:-4,key:"mix",name:"Mix",sw:"#b07cff"},{id:-5,key:"drag",name:"Drag",sw:"#f2b84b"},{id:-14,key:"shock",name:"Shock",sw:"#ffe14a"},{id:-9,key:"picker",name:"Picker",sw:"#f4f4f0"},{id:-6,key:"line",name:"Line",sw:"#9ad17a"},{id:-7,key:"rectangle",name:"Rectangle",sw:"#7ab8d1"},{id:-8,key:"circle",name:"Circle",sw:"#d17ab8"},{id:-10,key:"select",name:"Select",sw:"#8ab4f8"},{id:-11,key:"copy",name:"Copy",sw:"#a5d6a7"},{id:-12,key:"cut",name:"Cut",sw:"#ef9a9a"},{id:-13,key:"paste",name:"Paste",sw:"#ce93d8"},{id:-1,key:"eraser",name:"Eraser",sw:"#12161c"}];
@@ -963,16 +997,20 @@ function sel(id){
  cur=id;if(id>0){lastEl=id;pushRecent(id);}[...bar.children].forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.id)===String(id)));}
 // pick an element: jump to its tab, select it and restore the brush size
 function selectEl(id){const ci=catList.findIndex(c=>c.items.some(it=>it.id===id));if(ci>=0)catIdx=ci;searchMode=false;searchInput.value="";renderCats();renderTools();sel(id);}
-function buildUI(){catList=getCats();if(catIdx>=catList.length)catIdx=0;renderCats();renderTools();}
+function buildUI(){catList=getCats();if(catIdx>=catList.length)catIdx=0;renderCats();renderTools();renderModButtons();}
 /* ===== Mods =====
    A mod is a plain .json file. It is data only (it can never run code) and can
    - add new elements, and
    - add reactions to elements that already exist ("patches").
    Everything is checked against a whitelist before it touches the game. */
-const MOD_KEY="elementarium.mods.v1",MOD_MAX={text:300000,elements:100,reactions:24,patches:40,errors:12};
+const MOD_KEY="elementarium.mods.v1",MOD_MAX={text:300000,elements:100,reactions:24,patches:40,errors:12,categories:5,buttons:12,actions:8,count:2000};
 const MOD_MOVES=["solid","powder","liquid","gas","clump"];
-const MOD_NUM={density:[.001,30000],heatConduct:[0,3],electroConduct:[0,1],acidr:[0,3],viscosity:[0,300],rise:[0,1],side:[0,1],sink:[0,1],spray:[0,1],startMin:[-273,9999],startMax:[-273,9999],radiate:[-5,5],rustRate:[0,5],rusts:[0,1]};
+const MOD_NUM={density:[.001,30000],heatConduct:[0,3],conductivity:[0,1000],acidr:[0,3],viscosity:[0,300],rise:[0,1],side:[0,1],sink:[0,1],spray:[0,1],startMin:[-273,9999],startMax:[-273,9999],radiate:[-5,5],rustRate:[0,5],rusts:[0,1]};
 const MOD_BOOL=["flammable","insulator","unbreakable","rustUses"];
+const MOD_BASE_CATS=CATORDER.slice();   // the built-in tabs, before any mod adds one
+let MOD_CATS_PARSE=null;const modCats=()=>MOD_CATS_PARSE||CATORDER;   // categories an element may use while a mod is being checked
+const MOD_AREAS=["all","top","bottom","left","right","center"],MOD_SHAPES=["square","round","squareGrid","roundGrid","squareRing","roundRing"];
+const MOD_ACTION_FIELDS={scatter:["element","count","area"],fill:["element","area"],convert:["from","to","area"],setAmbient:["value"],setBrush:["size","shape"]};
 let MODS=[];   // {id,name,version,author,description,enabled,text,keys,patches,error}
 const modNum=(x,lo,hi)=>typeof x==="number"&&isFinite(x)&&x>=lo&&x<=hi;
 const modInt=(x,lo,hi)=>Number.isInteger(x)&&x>=lo&&x<=hi;
@@ -991,13 +1029,26 @@ function modColor(c){
  }
  return null;
 }
+// "with" of a mod reaction: an element key, "*", "category:name" or a list (up to 12) of those. Returns "" if fine, else a message.
+function modWithError(x,ok){
+ const parts=Array.isArray(x)?x:[x];
+ if(!parts.length||parts.length>12)return'a list needs 1 to 12 items';
+ for(const p of parts){
+  if(typeof p!=="string")return'each item must be text: an element key, "*" or "category:name"';
+  if(p==="*"||ok(p))continue;
+  if(p.startsWith("category:")){if(modCats().includes(p.slice(9)))continue;return'unknown category "'+p.slice(9)+'" (use one of '+modCats().join(", ")+")";}
+  return'unknown element "'+p+'" (an element key, "*" or "category:name")';
+ }
+ return"";
+}
 function modReaction(r,p,ok,err){
  if(!modObj(r)){err.push(p+": must be an object");return null;}
  const o={},bad=(f,m)=>err.push(p+"."+f+": "+m);
  for(const f of Object.keys(r)){
   const x=r[f];if(f[0]==="_")continue;
   switch(f){
-   case"with":case"to":case"emit":if(ok(x))o[f]=x;else bad(f,'unknown element "'+x+'"');break;
+   case"with":{const m=modWithError(x,ok);if(!m)o.with=Array.isArray(x)?x.slice():x;else bad(f,m);break;}
+   case"to":case"emit":if(ok(x))o[f]=x;else bad(f,'unknown element "'+x+'"');break;
    case"other":if(x==="air"||ok(x))o.other=x;else bad(f,'unknown element "'+x+'"');break;
    case"chance":if(modNum(x,0,1))o.chance=x;else bad(f,"number from 0 to 1");break;
    case"above":case"below":case"setT":case"capT":case"warm":if(modNum(x,-273,9999))o[f]=x;else bad(f,"temperature from -273 to 9999");break;
@@ -1022,13 +1073,14 @@ function modElement(r,p,ok,err){
  const o={},bad=(f,m)=>err.push(p+"."+f+": "+m);
  for(const f of Object.keys(r)){
   const x=r[f];if(f[0]==="_")continue;
+  if(f==="electroConduct"){if(modNum(x,0,1))o.conductivity=Math.round((Math.pow(101,x)-1)*100)/100;else bad(f,"old name, number from 0 to 1 (use conductivity instead)");continue;}
   if(MOD_NUM[f]){const[lo,hi]=MOD_NUM[f];if(modNum(x,lo,hi))o[f]=x;else bad(f,"number from "+lo+" to "+hi);continue;}
   if(MOD_BOOL.includes(f)){if(typeof x==="boolean")o[f]=x;else bad(f,"true or false");continue;}
   switch(f){
    case"key":if(typeof x==="string"&&/^[a-z][a-z0-9_]{1,31}$/.test(x))o.key=x;else bad(f,"2-32 lowercase letters, digits or _ (start with a letter)");break;
    case"name":if(modStr(x,32))o.name=x.trim();else bad(f,"text, 1-32 characters");break;
    case"lang":if(modObj(x)&&Object.keys(x).every(k=>/^[A-Za-z-]{2,8}$/.test(k)&&modStr(x[k],32)))o.lang=Object.assign({},x);else bad(f,'object like {"es":"Nombre"}');break;
-   case"category":if(CATORDER.includes(x))o.category=x;else bad(f,"one of "+CATORDER.join(", "));break;
+   case"category":if(modCats().includes(x))o.category=x;else bad(f,"one of "+modCats().join(", "));break;
    case"movement":if(MOD_MOVES.includes(x))o.movement=x;else bad(f,"one of "+MOD_MOVES.join(", "));break;
    case"color":{const c=modColor(x);if(c){o.color=c.color;if(c.swatch)o.swatch=c.swatch;}else bad(f,'[r,g,b] (0-255) or {"from":[r,g,b],"to":[r,g,b],"animated":true}');break;}
    case"swatch":if(typeof x==="string"&&/^#[0-9a-fA-F]{6}$/.test(x))o.swatchForce=x;else bad(f,'"#rrggbb"');break;
@@ -1079,17 +1131,132 @@ function modElement(r,p,ok,err){
  return o;
 }
 // Reads and checks a mod. Returns {errors:[...]} or {errors:[],mod:{...}}.
-function parseMod(text){
+// Finds the first syntax mistake of a JSON text and says where it is. Returns null when the text is valid.
+function jsonCheck(text){
+ let i=0;const n=text.length;
+ const err=(msg,at)=>{at=at===undefined?i:at;const before=text.slice(0,at),line=before.split("\n").length,col=at-before.lastIndexOf("\n"),lt=(text.split("\n")[line-1]||"").trim().slice(0,60);return{line,col,msg,lineText:lt};};
+ const ws=()=>{while(i<n&&" \t\r\n".indexOf(text[i])>=0)i++;};
+ const str=()=>{const st=i;i++;while(i<n){const c=text[i];if(c==='"'){i++;return;}if(c==="\\"){i+=2;continue;}if(c==="\n")break;i++;}throw err('a text is not closed: its closing " is missing',st);};
+ function seq(open,close,item){   // objects and lists
+  i++;ws();if(text[i]===close){i++;return;}
+  for(;;){
+   ws();item();ws();
+   if(text[i]===","){const cp=i;i++;ws();if(text[i]===close)throw err("extra comma before "+close+" (remove this comma)",cp);continue;}
+   if(text[i]===close){i++;return;}
+   if(i>=n)throw err("the text ends too early: a "+close+" is missing");
+   throw err('a "," is missing before this (check the end of the line above), or a '+close+' is missing');
+  }
+ }
+ function val(){
+  ws();if(i>=n)throw err("the text ends too early: a } or ] is missing");
+  const c=text[i];
+  if(c==="{"){seq("{","}",()=>{if(text[i]!=='"')throw err('a property name in "double quotes" is expected here');str();ws();if(text[i]!==":")throw err('a ":" is expected after the property name');i++;val();});return;}
+  if(c==="["){seq("[","]",val);return;}
+  if(c==='"'){str();return;}
+  const m=/^-?(0|[1-9]\d*)(\.\d+)?([eE][+-]?\d+)?/.exec(text.slice(i,i+40));
+  if(m&&c!=="+"){i+=m[0].length;return;}
+  for(const w of["true","false","null"])if(text.startsWith(w,i)){i+=w.length;return;}
+  throw err("unexpected "+JSON.stringify(c)+" here (text values need \"double quotes\")");
+ }
+ try{val();ws();if(i<n)throw err("there is extra text after the end of the data");return null;}catch(e){if(e&&e.line)return e;throw e;}
+}
+const jsonWhere=w=>"line "+w.line+", column "+w.col+": "+w.msg+(w.lineText?"   ["+w.lineText+"]":"");
+function modCategories(cs,id,err){
+ const out=[];if(!Array.isArray(cs)){err.push('"categories" must be a list');return out;}
+ if(cs.length>MOD_MAX.categories)err.push("too many categories (max "+MOD_MAX.categories+")");
+ const seen=new Set();
+ cs.slice(0,MOD_MAX.categories).forEach((r,i)=>{
+  const p="categories["+i+"]";
+  if(!modObj(r)){err.push(p+": must be an object");return;}
+  const o={};
+  for(const f of Object.keys(r)){
+   if(f[0]==="_")continue;const x=r[f];
+   if(f==="key"){if(typeof x==="string"&&/^[a-z][a-z0-9_]{1,19}$/.test(x))o.key=x;else err.push(p+".key: 2-20 lowercase letters, digits or _ (start with a letter)");}
+   else if(f==="name"){if(modStr(x,24))o.name=x.trim();else err.push(p+".name: text, 1-24 characters");}
+   else if(f==="lang"){if(modObj(x)&&Object.keys(x).every(k=>/^[A-Za-z-]{2,8}$/.test(k)&&modStr(x[k],24)))o.lang=Object.assign({},x);else err.push(p+'.lang: object like {"es":"Nombre"}, names up to 24 characters');}
+   else if(f==="after"){if(typeof x==="string"&&x.length<=20)o.after=x;else err.push(p+".after: the key of the category to put this one after");}
+   else err.push(p+"."+f+": unknown field");
+  }
+  if(!o.key)err.push(p+': missing "key"');
+  if(!o.name)err.push(p+': missing "name"');
+  if(o.key){
+   if(seen.has(o.key))err.push(p+'.key: "'+o.key+'" is used twice');
+   seen.add(o.key);
+   if(MOD_BASE_CATS.includes(o.key)||o.key==="tools"||o.key==="search")err.push(p+'.key: "'+o.key+'" is a built-in category');
+   else if(MODCATS[o.key]&&MODCATS[o.key].mod!==id)err.push(p+'.key: "'+o.key+'" is already used by the mod '+modName(MODCATS[o.key].mod));
+  }
+  if(o.after&&!CATORDER.includes(o.after)&&!cs.some(c=>modObj(c)&&c.key===o.after))err.push(p+'.after: unknown category "'+o.after+'"');
+  out.push(o);
+ });
+ return out;
+}
+function modAction(a,p,ok,err){
+ if(!modObj(a)){err.push(p+": must be an object");return null;}
+ const name=a.action,bad=(f,m)=>err.push(p+"."+f+": "+m);
+ if(typeof name!=="string"||!MOD_ACTION_FIELDS[name]){bad("action","one of "+Object.keys(MOD_ACTION_FIELDS).join(", "));return null;}
+ const o={action:name};
+ for(const f of Object.keys(a)){
+  if(f==="action"||f[0]==="_")continue;
+  if(!MOD_ACTION_FIELDS[name].includes(f)){bad(f,'not used by "'+name+'"');continue;}
+  const x=a[f];
+  switch(f){
+   case"element":if(ok(x)&&x!=="air")o.element=x;else bad(f,'unknown element "'+x+'"');break;
+   case"count":if(modInt(x,1,MOD_MAX.count))o.count=x;else bad(f,"whole number from 1 to "+MOD_MAX.count);break;
+   case"area":if(MOD_AREAS.includes(x))o.area=x;else bad(f,"one of "+MOD_AREAS.join(", "));break;
+   case"from":{const m=modWithError(x,ok);if(!m)o.from=Array.isArray(x)?x.slice():x;else bad(f,m);break;}
+   case"to":if(x==="air"||ok(x))o.to=x;else bad(f,'unknown element "'+x+'" (or "air")');break;
+   case"value":if(modNum(x,-273,9999))o.value=x;else bad(f,"temperature from -273 to 9999 (degrees Celsius)");break;
+   case"size":if(modInt(x,1,153))o.size=x;else bad(f,"whole number from 1 to 153");break;
+   case"shape":if(MOD_SHAPES.includes(x))o.shape=x;else bad(f,"one of "+MOD_SHAPES.join(", "));break;
+  }
+ }
+ const need={scatter:["element","count"],fill:["element"],convert:["from","to"],setAmbient:["value"]}[name]||[];
+ for(const f of need)if(a[f]===undefined)err.push(p+': "'+name+'" needs "'+f+'"');
+ if(name==="setBrush"&&a.size===undefined&&a.shape===undefined)err.push(p+': "setBrush" needs "size" or "shape"');
+ return o;
+}
+function modButtons(bs,ok,err){
+ const out=[];if(!Array.isArray(bs)){err.push('"buttons" must be a list');return out;}
+ if(bs.length>MOD_MAX.buttons)err.push("too many buttons (max "+MOD_MAX.buttons+")");
+ bs.slice(0,MOD_MAX.buttons).forEach((r,i)=>{
+  const p="buttons["+i+"]";
+  if(!modObj(r)){err.push(p+": must be an object");return;}
+  const o={where:"settings",confirm:false,do:[]};
+  for(const f of Object.keys(r)){
+   if(f[0]==="_")continue;const x=r[f];
+   if(f==="label"){if(modStr(x,24))o.label=x.trim();else err.push(p+".label: text, 1-24 characters");}
+   else if(f==="lang"){if(modObj(x)&&Object.keys(x).every(k=>/^[A-Za-z-]{2,8}$/.test(k)&&modStr(x[k],24)))o.lang=Object.assign({},x);else err.push(p+'.lang: object like {"es":"Lluvia"}, names up to 24 characters');}
+   else if(f==="where"){if(x==="settings")o.where=x;else err.push(p+'.where: only "settings" is available for now');}
+   else if(f==="confirm"){if(typeof x==="boolean")o.confirm=x;else err.push(p+".confirm: true or false");}
+   else if(f==="do"){if(!Array.isArray(x)||!x.length||x.length>MOD_MAX.actions)err.push(p+".do: a list of 1 to "+MOD_MAX.actions+" actions");else o.do=x.map((a,k)=>modAction(a,p+".do["+k+"]",ok,err)).filter(Boolean);}
+   else err.push(p+"."+f+": unknown field");
+  }
+  if(!o.label)err.push(p+': missing "label"');
+  if(r.do===undefined)err.push(p+': missing "do"');
+  out.push(o);
+ });
+ return out;
+}
+// parseMod() sets the categories a mod brings so that its elements can use them, and always resets them
+function parseMod(text){try{return parseModCore(text);}finally{MOD_CATS_PARSE=null;}}
+function parseModCore(text){
  const err=[];let d;
  if(typeof text!=="string"||!text.trim())return{errors:[T("modEmpty")]};
  if(text.length>MOD_MAX.text)return{errors:[T("modTooBig")]};
- try{d=JSON.parse(text);}catch(e){return{errors:[T("modBadJson")+": "+e.message]};}
+ const notes=[];
+ try{d=JSON.parse(text);}
+ catch(e1){
+  try{d=JSON.parse(text.replace(/,(\s*[}\]])/g,"$1"));const m=/,(\s*[}\]])/.exec(text),ln=text.slice(0,m.index).split("\n").length;notes.push("Line "+ln+" has an extra comma before a } or ]. The game ignored it, but please remove it from the file.");}
+  catch(e2){const w=jsonCheck(text);return{errors:[T("modBadJson")+": "+(w?jsonWhere(w):e1.message)]};}
+ }
  if(modObj(d)&&d.game==="elementarium")return{errors:[T("modWorld")]};
  if(!modObj(d)||!modStr(d.mod,40))return{errors:[T("modNotMod")]};
  const id=modSlug(d.mod),els=d.elements===undefined?[]:d.elements,pts=d.patches===undefined?[]:d.patches;
  if(!Array.isArray(els))err.push('"elements" must be a list');
  if(!Array.isArray(pts))err.push('"patches" must be a list');
  if(err.length)return{errors:err};
+ const cats=modCategories(d.categories===undefined?[]:d.categories,id,err);
+ MOD_CATS_PARSE=CATORDER.concat(cats.map(c=>c.key).filter(k=>!CATORDER.includes(k)));
  const own=new Set();
  els.forEach(r=>{if(modObj(r)&&typeof r.key==="string")own.add(r.key);});
  const ok=k=>typeof k==="string"&&(own.has(k)||ID[k]!==undefined);
@@ -1116,15 +1283,24 @@ function parseMod(text){
   if(!ok(r.element)){err.push(p+'.element: unknown element "'+r.element+'"');return;}
   patches.push({element:r.element,first:r.first===true,reactions:modReactions(r.reactions,p+".reactions",ok,err)});
  });
- if(!elements.length&&!patches.length&&!err.length)err.push("the mod has no elements and no patches");
+ const buttons=modButtons(d.buttons===undefined?[]:d.buttons,ok,err);
+ if(!elements.length&&!patches.length&&!cats.length&&!buttons.length&&!err.length)err.push("the mod has no elements, no patches, no categories and no buttons");
  if(err.length)return{errors:err};
  const cut=(x,n)=>typeof x==="string"?x.slice(0,n):"";
- return{errors:[],mod:{id,name:d.mod.trim(),version:cut(d.version,20),author:cut(d.author,40),description:cut(d.description,200),elements,patches}};
+ return{errors:[],notes,mod:{id,name:d.mod.trim(),version:cut(d.version,20),author:cut(d.author,40),description:cut(d.description,200),elements,patches,categories:cats,buttons}};
 }
 const modFresh=m=>m.elements.filter(e=>!(ID[e.key]!==undefined&&E[ID[e.key]]._mod===m.id)).length;
 // Puts a checked mod into the game: defines (or revives) its elements, then adds its patches.
 function applyMod(m){
  const wasReady=ready;ready=false;
+ for(const c of m.categories||[]){   // new tabs: after the category it names, otherwise just before the "mods" tab
+  MODCATS[c.key]={name:c.name,lang:c.lang,after:c.after,mod:m.id};
+  if(CATORDER.includes(c.key))continue;
+  const ai=c.after?CATORDER.indexOf(c.after):-1;let pos;
+  if(ai>=0){pos=ai+1;while(pos<CATORDER.length&&MODCATS[CATORDER[pos]]&&MODCATS[CATORDER[pos]].after===c.after)pos++;}
+  else{const mi=CATORDER.indexOf("mods");pos=mi>=0?mi:CATORDER.length;}
+  CATORDER.splice(pos,0,c.key);
+ }
  for(const e of m.elements){
   const slot=ID[e.key]!==undefined&&E[ID[e.key]]._mod===m.id?ID[e.key]:undefined;
   const d=Object.assign({},e);d._mod=m.id;
@@ -1145,6 +1321,7 @@ function modHide(k,erase){
  if(typeof lastEl!=="undefined"&&lastEl===k)lastEl=0;
 }
 function unapplyMod(id,erase,keep){
+ for(const k of Object.keys(MODCATS))if(MODCATS[k].mod===id){delete MODCATS[k];const ix=CATORDER.indexOf(k);if(ix>=0)CATORDER.splice(ix,1);}
  for(let k=1;k<E.length;k++){
   const e=E[k];
   if(e._mod===id){if(e.category&&!(keep&&keep.has(e.key)))modHide(k,erase);}
@@ -1152,7 +1329,7 @@ function unapplyMod(id,erase,keep){
  }
 }
 function modSave(){try{localStorage.setItem(MOD_KEY,JSON.stringify(MODS.map(m=>({id:m.id,enabled:m.enabled,text:m.text}))));}catch(e){}}
-function modRecord(m,text,enabled){return{id:m.id,name:m.name,version:m.version,author:m.author,description:m.description,enabled,text,keys:m.elements.map(e=>e.key),patches:m.patches.reduce((a,p)=>a+p.reactions.length,0),error:null};}
+function modRecord(m,text,enabled){return{id:m.id,name:m.name,version:m.version,author:m.author,description:m.description,enabled,text,keys:m.elements.map(e=>e.key),patches:m.patches.reduce((a,p)=>a+p.reactions.length,0),buttons:m.buttons||[],error:null};}
 // Install (or update) a mod from its text. Returns {ok:true,rec,updated} or {ok:false,errors}.
 function installMod(text){
  const p=parseMod(text);
@@ -1166,7 +1343,7 @@ function installMod(text){
  modSave();buildUI();
  const first=m.elements[0];
  if(first&&!searchMode){const ix=catList.findIndex(c=>c.key===first.category);if(ix>=0){catIdx=ix;renderCats();renderTools();}}
- return{ok:true,rec,updated:!!old};
+ return{ok:true,rec,updated:!!old,notes:p.notes||[]};
 }
 function modToggle(id){
  const m=MODS.find(x=>x.id===id);if(!m)return;
@@ -1198,11 +1375,56 @@ function modsLoad(){
   MODS.push(modRecord(m,r.text,on));
  }
 }
+/* ----- buttons added by mods (Settings) ----- */
+// A button runs a list of built-in actions. A mod can only pick an action and its numbers, it cannot add actions.
+function modArea(name){
+ const x1=Math.floor(W/4),y1=Math.floor(H/4);
+ return{all:[0,W,0,H],top:[0,W,0,y1],bottom:[0,W,H-y1,H],left:[0,x1,0,H],right:[W-x1,W,0,H],center:[x1,W-x1,y1,H-y1]}[name||"all"];
+}
+function modRunActions(list){
+ snapshot();   // every button can be undone with Undo
+ for(const a of list){
+  const [x0,x1,y0,y1]=modArea(a.area),usable=id=>id!==undefined&&E[id]&&E[id].category;
+  if(a.action==="scatter"){
+   const id=ID[a.element];if(!usable(id))continue;
+   let placed=0;for(let t=0;t<a.count*12&&placed<a.count;t++){const i=(y0+((rnd()*(y1-y0))|0))*W+x0+((rnd()*(x1-x0))|0);if(!g[i]){setCell(i,id);placed++;}}
+  }else if(a.action==="fill"){
+   const id=ID[a.element];if(!usable(id))continue;
+   for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++)if(!g[y*W+x])setCell(y*W+x,id);
+  }else if(a.action==="convert"){
+   const mt=withMatcher(a.from),to=a.to==="air"?0:ID[a.to];if(a.to!=="air"&&!usable(to))continue;
+   for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const i=y*W+x;if(g[i]&&mt(g[i],-1)){if(to)setCell(i,to);else{g[i]=0;life[i]=0;CH[i]=0;}}}
+  }else if(a.action==="setAmbient"){amb=a.value;showRoom();}
+  else if(a.action==="setBrush"){
+   if(a.size!==undefined&&!sizeLocked){size=a.size;sizeEl.value=size;}
+   if(a.shape!==undefined){shape=a.shape;shapeBtns.forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.shape===shape)));}
+  }
+ }
+}
+function renderModButtons(){
+ const box=document.getElementById("modButtonsBox"),host=document.getElementById("modButtons");
+ if(!box||!host)return;
+ host.textContent="";let n=0;
+ for(const m of MODS){
+  if(!m.enabled||!m.buttons)continue;
+  for(const b of m.buttons){
+   const bt=document.createElement("button"),label=(b.lang&&b.lang[lang])||b.label;
+   bt.textContent=label;bt.title=m.name;
+   const risky=b.confirm||b.do.some(a=>a.action==="convert"||a.action==="fill");
+   bt.onclick=()=>{
+    if(risky&&!bt.dataset.sure){bt.dataset.sure="1";bt.textContent=T("modConfirm");setTimeout(()=>{bt.dataset.sure="";bt.textContent=label;},3000);return;}
+    bt.dataset.sure="";bt.textContent=label;modRunActions(b.do);
+   };
+   host.appendChild(bt);n++;
+  }
+ }
+ box.hidden=n===0;
+}
 /* ----- mod panel ----- */
 const modsPanel=document.getElementById("modsPanel"),modMsg=document.getElementById("modMsg"),modList=document.getElementById("modList"),modText=document.getElementById("modText"),modFile=document.getElementById("modFile");
 const MOD_TEMPLATE={mod:"Example Pack",version:"1.0",author:"Your name",description:"Sodium that blows up in water, a glowing slime and a neon gas.",
  elements:[
-  {key:"sodium",name:"Sodium",lang:{es:"Sodio",zh:"钠"},category:"solids",movement:"solid",color:[205,208,214],density:970,heatConduct:1.4,electroConduct:.7,
+  {key:"sodium",name:"Sodium",lang:{es:"Sodio",zh:"钠"},category:"solids",movement:"solid",color:[205,208,214],density:970,heatConduct:1.4,conductivity:36,
    reactions:[{with:"water",chance:.35,to:"fire",other:"hydrogen",heat:400},{above:98,chance:.1,to:"fire"}]},
   {key:"glow_slime",name:"Glow Slime",lang:{es:"Baba brillante",zh:"发光黏液"},category:"liquids",movement:"liquid",color:{from:[40,200,80],to:[170,255,120],animated:true},density:1200,viscosity:40,
    reactions:[{with:"fire",chance:.2,to:"smoke"}]},
@@ -1217,7 +1439,7 @@ document.getElementById("modDocs").textContent=
     "movement": "solid|powder|liquid|gas|clump",
     "color": [r,g,b]   or   {"from":[r,g,b], "to":[r,g,b], "animated":true},
     "swatch": "#rrggbb",
-    "density", "heatConduct", "electroConduct", "acidr", "viscosity",
+    "density", "heatConduct", "conductivity", "acidr", "viscosity",
     "rise", "side", "sink", "spray", "startMin", "startMax", "radiate",
     "lifetime": [min,max],  "decay": {"below":T, "into":"key", "chance":0-1},
     "burn": {"at","chance","heat","spread","water","flames","speed","into","emit"},
@@ -1226,7 +1448,22 @@ document.getElementById("modDocs").textContent=
     "rustRate", "rustInto": "key", "rusts", "rustUses",
     "reactions": [ {"with":"water", "chance":0.3, "to":"steam", "other":"air", "above":100} ]
   } ],
-  "patches": [ {"element":"water", "first":false, "reactions":[ ... ]} ] }
+  "patches": [ {"element":"water", "first":false, "reactions":[ ... ]} ],
+  "categories": [ {"key":"space", "name":"Space", "lang":{"es":"Espacio"}, "after":"gases"} ],
+  "buttons": [ {"label":"Rain", "lang":{"es":"Lluvia"}, "confirm":false,
+                "do":[ {"action":"scatter", "element":"water", "count":200, "area":"top"} ]} ] }
+
+categories add a tab (put it after another one, elements use it as their "category"). buttons appear
+in Settings and run built-in actions: scatter {element,count 1-2000,area}, fill {element,area},
+convert {from,to,area} (from is like "with" below, to may be "air"), setAmbient {value},
+setBrush {size,shape}. area: all, top, bottom, left, right, center. fill and convert ask to confirm.
+
+conductivity is the electrical conductivity in %IACS, 0 to 1000 (copper 100, silver 106, gold 73,
+aluminium 61, iron 17). Leave it out for something that does not conduct electricity.
+
+"with" can be an element key, "*" (any other element), "category:liquids" (every element of a
+category) or a list such as ["sand", "category:gases"]. "*" and categories never match air, the
+element itself or unbreakable things like Wall (name those by key).
 
 Reaction fields: with, to, other (element or "air"), emit, chance,
 above, below, heat, warm, setT, capT, life, lifeBelow, rest, top, keepLife.
@@ -1248,7 +1485,7 @@ function modShow(ok,lines,title){
 }
 function modRun(text){
  const r=installMod(text);
- if(r.ok){modShow(true,[],(r.updated?T("modUpdated"):T("modOk"))+": "+r.rec.name+" ("+r.rec.keys.length+" "+T("modElements")+")");modText.value="";renderModsUI();}
+ if(r.ok){modShow(true,r.notes,(r.updated?T("modUpdated"):T("modOk"))+": "+r.rec.name+" ("+r.rec.keys.length+" "+T("modElements")+")");modText.value="";renderModsUI();}
  else modShow(false,r.errors);
  return r.ok;
 }
@@ -1299,13 +1536,26 @@ addEventListener("drop",e=>{const f=e.dataTransfer&&e.dataTransfer.files&&e.data
    The game itself contains no mods: only people who can change those files can change the library.
    Entry tags: "new", "warning" (may break the game), "outdated". */
 const LIB_URL="library.json";
-const MOD_TAGS=["new","warning","outdated"],MOD_TAGKEY={new:"modNew",warning:"modWarn",outdated:"modOld",normal:"modNormal"};
+const BUILD="2026-11-08 library-from-files";   // changes whenever the game file changes, shown at the bottom of Add mods
+const MOD_TAGS=["new","broken","outdated"],MOD_TAGKEY={new:"modNew",broken:"modBroken",outdated:"modOld",normal:"modNormal"};
+// Tags: new / broken ("Broken or Deprecated") / outdated have their own look; any other word (up to 20 characters, 8 per mod) is a free tag.
+// "hot", "warning" and "normal" were removed tags and are ignored.
+const LIB_DROP=["hot","warning","normal"];
+function libCleanTags(a){
+ const out=[];if(!Array.isArray(a))return out;
+ for(let t of a){
+  if(typeof t!=="string")continue;t=t.trim();if(!t||t.length>20)continue;
+  const l=t.toLowerCase();if(LIB_DROP.includes(l)||out.some(x=>x.toLowerCase()===l))continue;
+  out.push(MOD_TAGS.includes(l)?l:t);if(out.length>=8)break;
+ }
+ return out;
+}
 const ADMIN=/(^|[?&#])admin(\b|=|$)/.test(location.search+location.hash);   // shows the author's tools; the real lock is who can change library.json
 const libToday=()=>new Date().toISOString().slice(0,10);
 const libCut=(x,n)=>typeof x==="string"?x.slice(0,n):"";
 function libFromMod(m,x){   // m: a mod object (file contents)
  const id=modSlug(m.mod);
- return{id,file:"mods/"+id+".json",title:libCut(m.mod,40),author:libCut(m.author,40),version:libCut(m.version,20),description:libCut(m.description,200),added:x.added||"",tags:(x.tags||[]).slice(),note:x.note||"",mod:m};
+ return{id,file:"mods/"+id+".json",title:libCut(m.mod,40),author:libCut(m.author,40),version:libCut(m.version,20),description:libCut(m.description,200),added:x.added||"",tags:libCleanTags(x.tags),note:x.note||"",mod:m};
 }
 let libList=[],libSource="loading",libFilter="all",libFiles={},libDirty=0;
 // Reads library.json. Returns a clean list or null if it is not a valid library.
@@ -1319,7 +1569,7 @@ function libClean(d,notes){   // notes (optional): receives one sentence for eve
   if(typeof x.file!=="string"||!/^mods\/[a-z0-9._-]{1,60}\.json$/.test(x.file)){say_(who+' is skipped: "file" must look like mods/name.json, all lowercase, '+(typeof x.file==="string"?'but it is "'+x.file.slice(0,60)+'"':"but it is missing")+".");return;}
   out.push({id:modSlug(typeof x.id==="string"&&x.id?x.id:x.title),file:x.file,title:x.title.trim(),author:libCut(x.author,40),version:libCut(x.version,20),description:libCut(x.description,200),
    added:/^\d{4}-\d\d-\d\d$/.test(x.added||"")?x.added:"",
-   tags:(Array.isArray(x.tags)?x.tags:[]).filter(t=>MOD_TAGS.includes(t)),note:libCut(x.note,200)});
+   tags:libCleanTags(x.tags),note:libCut(x.note,200)});
  });
  return out;
 }
@@ -1334,7 +1584,7 @@ async function libLoad(){
    try{j=JSON.parse(text);}
    catch(e1){
     try{j=JSON.parse(text.replace(/,(\s*[}\]])/g,"$1"));fixed=true;}
-    catch(e2){libNotes.push(LIB_URL+" is not valid JSON ("+e1.message+"). Check the commas and brackets, for example by pasting it into jsonlint.com.");}
+    catch(e2){const w=jsonCheck(text);libNotes.push(LIB_URL+" is not valid JSON: "+(w?jsonWhere(w):e1.message)+". Check the commas and brackets.");}
    }
    const list=j?libClean(j,libNotes):null;
    if(list){
@@ -1345,10 +1595,15 @@ async function libLoad(){
  }catch(e){libList=[];libSource="offline";}
  libFiles={};libDirty=0;renderLibrary();
 }
-const libTags=e=>(e.tags||[]).filter(t=>MOD_TAGS.includes(t));
-const libRank=e=>{const t=libTags(e);return(t.includes("outdated")?-100:0)+(t.includes("warning")?-5:0)+(t.includes("new")?10:0);};
-const libIsNormal=e=>libTags(e).length===0,LIB_FILTERS=["new","normal","warning","outdated"];
-const libMatch=(e,k)=>k==="all"||(k==="normal"?libIsNormal(e):libTags(e).includes(k));
+const libTags=e=>libCleanTags(e.tags),libStatus=e=>libTags(e).filter(t=>MOD_TAGS.includes(t));
+const libRank=e=>{const t=libTags(e);return t.includes("outdated")?-100:t.includes("broken")?-50:t.includes("new")?10:0;};
+const libIsNormal=e=>libStatus(e).length===0;   // normal = none of new / broken / outdated (free tags do not matter)
+const libMatch=(e,k)=>k==="all"||(k==="normal"?libIsNormal(e):libTags(e).some(t=>t.toLowerCase()===k.toLowerCase()));
+function libFilters(){   // status filters that are in use, Normal, then every free tag in use
+ const f=["new","normal","broken","outdated"].filter(k=>libList.some(e=>libMatch(e,k))),seen=new Set();
+ for(const e of libList)for(const t of libTags(e)){const l=t.toLowerCase();if(!MOD_TAGS.includes(l)&&!seen.has(l)){seen.add(l);}}
+ return f.concat([...seen].sort());
+}
 function libDate(s){try{return new Date(s+"T00:00:00Z").toLocaleDateString(lang,{year:"numeric",month:"short",day:"numeric",timeZone:"UTC"});}catch(e){return s;}}
 function modView(view){
  const lib=view!=="mine";
@@ -1374,6 +1629,21 @@ async function libDownload(e){   // save the mod's .json so it can be installed 
   const r=await fetch(url,{cache:"no-cache"});if(!r.ok)throw new Error("http "+r.status);
   await modSaveFile(e.id+".json",await r.text());
  }catch(err){libFetchError(e,url,err);}
+}
+async function libCheck(e){   // author: is the mod file really there, and does it match library.json?
+ const url=new URL(e.file,new URL(LIB_URL,location.href)).href;
+ try{
+  const r=await fetch(url,{cache:"no-store"});
+  if(!r.ok){modShow(false,[url+"  ->  NOT FOUND (http "+r.status+")"],e.title);return;}
+  const text=await r.text(),p=parseMod(text),lines=[url+"  ->  found ("+text.length+" characters)"];let bad=false;
+  if(!p.mod){bad=true;lines.push("But it is not a valid mod: "+p.errors[0]);}
+  else{
+   lines.push('Mod name "'+p.mod.name+'", version "'+p.mod.version+'" (library.json says "'+(e.version||"")+'"), '+p.mod.elements.length+" elements, "+p.mod.patches.length+" patches.");
+   if(p.mod.id!==e.id){bad=true;lines.push('The id in library.json ("'+e.id+'") does not match the mod name ("'+p.mod.id+'"): installs will not be recognised.');}
+   if((p.mod.version||"")!==(e.version||"")){bad=true;lines.push("The version in the mod file and in library.json differ: make them the same.");}
+  }
+  modShow(!bad,lines,e.title);
+ }catch(err){modShow(false,[url+"  ->  "+(err&&err.message?err.message:String(err))],e.title);}
 }
 /* ----- author tools (only with #admin in the address) ----- */
 function zipStore(files){   // files:[{name,data:string}] -> Uint8Array of a .zip (stored, not compressed)
@@ -1425,34 +1695,35 @@ function renderAdminBar(){
 function renderLibrary(){
  const fb=document.getElementById("modFilters"),ls=document.getElementById("modLibList");
  fb.textContent="";ls.textContent="";renderAdminBar();
+ document.getElementById("modBuild").textContent="Game build "+BUILD+" - library.json: "+(libSource==="online"?"read, "+libList.length+" mod"+(libList.length===1?"":"s"):libSource==="error"?"problem":libSource==="offline"?"not reachable":"loading");
  if(libSource==="loading"){const p=document.createElement("p");p.className="msub";p.textContent=T("libLoading");ls.appendChild(p);return;}
  if(libSource==="error"){
   const p=document.createElement("p");p.className="msub";p.textContent=T("modLibEmpty");ls.appendChild(p);
   libNotes.forEach(n=>{const d=document.createElement("div");d.className="modNote warning";d.style.margin="6px 0";d.textContent="Problem: "+n;ls.appendChild(d);});
   return;
  }
- const used=LIB_FILTERS.filter(t=>libList.some(e=>libMatch(e,t)));
+ const used=libFilters();
  if(libFilter!=="all"&&!used.includes(libFilter))libFilter="all";
- [["all","modAll"]].concat(used.map(t=>[t,MOD_TAGKEY[t]])).forEach(([k,key])=>{
-  const b=document.createElement("button");b.textContent=T(key);b.setAttribute("aria-pressed",libFilter===k?"true":"false");
+ [["all","all"]].concat(used.map(t=>[t,t])).forEach(([k,key])=>{
+  const b=document.createElement("button");b.textContent=k==="all"?T("modAll"):MOD_TAGKEY[k]?T(MOD_TAGKEY[k]):k;b.setAttribute("aria-pressed",libFilter===k?"true":"false");
   b.onclick=()=>{libFilter=k;renderLibrary();};fb.appendChild(b);
  });
  const items=libList.filter(e=>libMatch(e,libFilter)).sort((a,b)=>libRank(b)-libRank(a)||String(b.added).localeCompare(String(a.added)));
  if(!items.length){const p=document.createElement("p");p.className="msub";p.textContent=T("modLibEmpty");ls.appendChild(p);return;}
  for(const e of items){
   const tags=libTags(e),inst=MODS.find(x=>x.id===e.id);
-  const it=document.createElement("div");it.className="modItem"+(tags.includes("warning")?" warn":"")+(tags.includes("outdated")?" off":"");
+  const it=document.createElement("div");it.className="modItem"+(tags.includes("broken")?" warn":"")+(tags.includes("outdated")?" off":"");
   const t=document.createElement("div");t.className="mt";
   const nb=document.createElement("b");nb.textContent=e.title;t.appendChild(nb);
   const meta=[e.version&&("v"+e.version),e.author].filter(Boolean).join(" · ");
   if(meta){const sm=document.createElement("small");sm.textContent=meta;t.appendChild(sm);}
-  tags.forEach(tg=>{const c=document.createElement("span");c.className="chip "+tg;c.textContent=T(MOD_TAGKEY[tg]);t.appendChild(c);});
+  tags.forEach(tg=>{const c=document.createElement("span");c.className="chip "+(MOD_TAGS.includes(tg)?tg:"tag");c.textContent=MOD_TAGKEY[tg]?T(MOD_TAGKEY[tg]):tg;t.appendChild(c);});
   it.appendChild(t);
   const d=document.createElement("div");d.className="md";
   d.textContent=[e.description,e.added?T("modAdded")+" "+libDate(e.added):""].filter(Boolean).join(" - ");
   it.appendChild(d);
-  const note=e.note||(tags.includes("outdated")?T("modOldText"):tags.includes("warning")?T("modWarnText"):"");
-  if(note){const n=document.createElement("div");n.className="modNote "+(tags.includes("outdated")?"outdated":tags.includes("warning")?"warning":"");n.textContent=note;it.appendChild(n);}
+  const note=e.note||(tags.includes("broken")?T("modBrokenText"):tags.includes("outdated")?T("modOldText"):"");
+  if(note){const n=document.createElement("div");n.className="modNote "+(tags.includes("broken")?"broken":tags.includes("outdated")?"outdated":"");n.textContent=note;it.appendChild(n);}
   const row=document.createElement("div");row.className="grp";
   const bt=document.createElement("button");
   const same=inst&&inst.version===(e.version||"");
@@ -1460,7 +1731,7 @@ function renderLibrary(){
   bt.textContent=label;
   if(same&&!ADMIN){bt.disabled=true;}
   else bt.onclick=()=>{
-   const risky=tags.includes("warning")||tags.includes("outdated");
+   const risky=tags.includes("broken")||tags.includes("outdated");
    if(risky&&!bt.dataset.sure){bt.dataset.sure="1";bt.textContent=T("modAnyway");setTimeout(()=>{bt.dataset.sure="";bt.textContent=label;},4000);return;}
    libInstall(e);
   };
@@ -1468,8 +1739,14 @@ function renderLibrary(){
   row.appendChild(bt);row.appendChild(dlb);it.appendChild(row);
   if(ADMIN){
    const ar=document.createElement("div");ar.className="grp";ar.style.cssText="border-top:1px dashed var(--line);padding-top:6px;margin-top:2px";
+   const fi=document.createElement("span");fi.className="md";fi.textContent=e.file+(inst?" · installed here: v"+inst.version:"");ar.appendChild(fi);
+   const ck=document.createElement("button");ck.textContent="Check file";ck.onclick=()=>libCheck(e);ar.appendChild(ck);
    MOD_TAGS.forEach(tg=>{const tb=document.createElement("button");tb.textContent=tg;tb.setAttribute("aria-pressed",tags.includes(tg)?"true":"false");
     tb.onclick=()=>{e.tags=tags.includes(tg)?tags.filter(x=>x!==tg):tags.concat(tg);libDirty++;renderLibrary();};ar.appendChild(tb);});
+   tags.filter(tg=>!MOD_TAGS.includes(tg)).forEach(tg=>{const fb_=document.createElement("button");fb_.textContent="#"+tg+" x";fb_.title="remove this tag";
+    fb_.onclick=()=>{e.tags=tags.filter(x=>x!==tg);libDirty++;renderLibrary();};ar.appendChild(fb_);});
+   const ti=document.createElement("input");ti.type="text";ti.maxLength=20;ti.placeholder="add a tag";ti.style.minWidth="90px";ti.style.flex="0 1 110px";
+   ti.onchange=()=>{const v=ti.value.trim();if(v){e.tags=libCleanTags(tags.concat(v));libDirty++;}renderLibrary();};ar.appendChild(ti);
    const ni=document.createElement("input");ni.type="text";ni.maxLength=200;ni.placeholder="note";ni.value=e.note||"";
    ni.onchange=()=>{e.note=ni.value.trim();libDirty++;renderLibrary();};ar.appendChild(ni);
    const rb=document.createElement("button");rb.textContent="Remove from library";
@@ -1548,7 +1825,7 @@ shapeBtns.forEach(b=>b.onclick=()=>{shape=b.dataset.shape;shapeBtns.forEach(x=>x
 room.oninput=()=>{const n=parseFloat(room.value);if(isNaN(n))return;amb=Math.max(-273,Math.min(9999,fromU(n)));};room.onchange=showRoom;
 // Changelog: newest first. Add a new entry at the top whenever something changes.
 const CHANGELOG=[
-  {v:"v1.2.0",items:["Mod library: the game contains no mods of its own, it only shows what is in library.json, and the author is told what is wrong with it (open the game with #admin)", "Mods: a Send to author button in My mods copies your mod and opens the Mod Submission form", "Mod library: a Normal filter for mods without a tag, and a Download button to save any mod as a .json file", "Mod library: a list of mods picked by the author (read from library.json), tagged New, Warning (may break the game) or Outdated, with one-click install", "Mods: the new Add mods button lets you install .json mods that add your own elements and reactions. Pick a file, drop it onto the game or paste it, then turn mods on and off, export them or remove them. A mod template is included", "Copper, Oxidized Copper and Rose Gold, plus Molten Copper, Molten Oxidized Copper and Molten Rose Gold", "Copper slowly oxidizes when it touches Oxygen, Carbon Dioxide or water (Chlorine makes a blue-green Oxidized Copper)", "Molten Copper oxidizes too, much faster than solid Copper", "Copper resists acid, but Oxidized Copper does not", "Molten Gold mixed with Molten Copper makes Molten Rose Gold", "Undo now also restores electric charge", "Molten Purple Gold now glows orange like real molten metal instead of purple"]},
+  {v:"v1.2.0",items:["Mods can add their own categories (tabs) and buttons in Settings that run built-in actions: scatter, fill, convert, set room temperature, set brush", "Reactions can now react with everything (\"*\"), with a whole category (\"category:liquids\") or with a list of elements", "Electrical conductivity is now one number, conductivity, in %IACS (copper 100, silver 106, gold 73, aluminium 61, iron 17), 0 to 1000; elements without it do not conduct. The old electroConduct was removed, old mods that use it still load", "Electricity now heats metals about 40 times more slowly, so wires and blocks no longer melt in a few seconds (iron in a closed box levels off around 110 degrees)", "Brush cursor: it now shows one clean white outline of the outermost cells of the brush", "New brushes: Square outline and Circle outline paint only the outer edge of the brush (Settings, Brush shape)", "Mods and library.json: a JSON mistake is now reported with its line and column, and an extra comma before a } or ] is ignored instead of breaking the file", "Mod library: the game contains no mods of its own, it only shows what is in library.json, and the author is told what is wrong with it (open the game with #admin)", "Mods: a Send to author button in My mods copies your mod and opens the Mod Submission form", "Mod library: a Normal filter for mods without a tag, and a Download button to save any mod as a .json file", "Mod library: a list of mods picked by the author (read from library.json), tagged New, Broken or Deprecated or Outdated (a mod can have several tags, and the author can add free tags such as chemistry), with one-click install", "Mods: the new Add mods button lets you install .json mods that add your own elements and reactions. Pick a file, drop it onto the game or paste it, then turn mods on and off, export them or remove them. A mod template is included", "Copper, Oxidized Copper and Rose Gold, plus Molten Copper, Molten Oxidized Copper and Molten Rose Gold", "Copper slowly oxidizes when it touches Oxygen, Carbon Dioxide or water (Chlorine makes a blue-green Oxidized Copper)", "Molten Copper oxidizes too, much faster than solid Copper", "Copper resists acid, but Oxidized Copper does not", "Molten Gold mixed with Molten Copper makes Molten Rose Gold", "Undo now also restores electric charge", "Molten Purple Gold now glows orange like real molten metal instead of purple"]},
  {v:"v1.1.0",d:"November 2, 2026",items:["Search box above the category tabs: type to find any element, or click it to see recently used elements", "Pin elements and tools: right-click one to give it a gold border and move it to the front of its category", "Press C or F2 to take a screenshot of the play area", "New category: Life (Sapling, Root, Leaf)", "Saplings grow into trees", "Roots drink water from mud, wet sand and water; leaves turn carbon dioxide into oxygen", "Cloud: steam that rises very high turns into clouds, and clouds slowly turn into rain", "Obsidian and Basalt: magma cooled quickly becomes obsidian, magma cooled slowly becomes basalt, and both melt back into magma", "Carbonated Ice, Dirty Ice and Pool Ice", "Salt Ice, Sugar Ice and the other special ices moved to the Phase tab (Ice stays in Solids)", "Iron and steel now rust in salt water, sugar water, pool water, carbonated water and dirty water", "Acid now eats Slag", "Cooked meat can rot too", "Cloner is now yellow", "Feedback button: report bugs or share ideas with the developer through a Google Form", "Molten Aluminum, Molten Iron and Molten Steel now oxidize into Slag when they touch Oxygen (using up the oxygen)", "Molten Purple Gold touching Oxygen turns into Slag (21%) or Gold (79%)", "Molten Steel no longer rusts", "Fixed: the Line, Rectangle and Circle preview did not match what was placed (it now shows exactly the cells that will be painted)", "Fixed: Cooler could cool below absolute zero (now limited to -273°, Heater limited to 9999°)", "Fixed: Lightning drawn on the bottom row never disappeared", "Fixed: shortcut keys (P, R, S, C...) also triggered while a drop-down list was selected", "Fixed: a Cloner's remembered element could change after loading an older world", "Fixed: v0.1.0 changelog was missing the Eraser"]},
  {v:"v1.0.1",items:["Fixed: gases could block other gases from rising", "Carbon Dioxide is now darker", "Heavy gases no longer fall to the floor, they spread out instead"]},
  {v:"v1.0.0",items:["Undo button, Picker, Replace, Save and Load", "Electrum is slowly eaten by acid, or turns into gold", "4 new languages: English (UK), English (US), Chinese and Spanish", "Aluminum, Molten Aluminum, Purple Gold, Thermite, Salt Ice, Sugar Ice, Molten Dirt, Molten Ash, Slag, Molten Slag, Acid Gas, Molten Rust, Molten Salt, Molten Thermite, Chlorine, Pool Water, Bleach, Poison, Poison Gas, Liquid Chlorine, Chlorine Ice, Carbonated Water, Rotten Meat", "Cloner, Select, Copy, Paste, Cut, Electric, Lightning, Shock, Battery, Wire", "Rust turns water into dirty water", "Salt water, sugar water, pool water and oil can turn sand into wet sand", "FPS counter and FPS limit settings", "New official name: Elementarium"]},
@@ -1678,7 +1955,7 @@ function loop(){
  const t0=fpsOn?performance.now():0;if(down&&!picking)stamp(lx,ly);if(!paused){if(dragging)for(const h of held)mv[h.i]=tick+1;step();heat();radiate();electrify();convect();}draw();updateInfo();if(fpsOn){const t1=performance.now();fpsTick(t1,t1-t0);}requestAnimationFrame(loop);}
 loop();
 
-window.Sand={define,E,ID,g,v,temp,life,W,H,rnd,fr,setCell,swap,become,rm,nbrs,burn,ignite,emit,ELEMENTS,LANGS,addLanguage,setLang,CH,ECA,explode,installMod,parseMod,mods:()=>MODS,libList:()=>libList,libExportFiles,zipStore,libLoad,libAdd,ADMIN};
+window.Sand={define,E,ID,g,v,temp,life,W,H,rnd,fr,setCell,swap,become,rm,nbrs,burn,ignite,emit,ELEMENTS,LANGS,addLanguage,setLang,CH,ECA,explode,installMod,parseMod,mods:()=>MODS,libList:()=>libList,libExportFiles,zipStore,libLoad,libAdd,ADMIN,BUILD,jsonCheck};
 })();
 </script>
 </body>
